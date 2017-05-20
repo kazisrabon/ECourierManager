@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">ECourier Manager</string>
+    <string name="button_login">LOGIN</string>
+    <string name="copyright">Copyright eCourier Ltd.</string>
+    <string name="user_name">Username</string>
+    <string name="user_password">Password</string>
+    <string name="user_type">User Type:</string>
+    <string name="user_agent">Agent</string>
+    <string name="user_admin">Admin</string>
+    <string name="button_submit">Submit</string>
+
+    <string name="empty_field">Empty Field!</string>
+    <string name="loading">Loading…</string>
+    <string name="no_data_found">NO DATA FOUND!</string>
 </resources>

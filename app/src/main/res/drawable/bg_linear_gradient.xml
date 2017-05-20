@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) kazi srabon 2017. Contact, kaziiit@gmail.com.
+  -->
+
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape>
+            <gradient
+                android:angle="90"
+                android:startColor="@color/half_transparent_black"
+                android:endColor="@color/full_transparent_black"
+                android:type="linear" />
+        </shape>
+    </item>
+</selector>
