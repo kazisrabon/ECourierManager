@@ -24,4 +24,5 @@
     <color name="full_transparent_black">#00000000</color>
 
     <color name="list_row_hover_end_color">#2ca614</color>
+    <color name="material_drawer_dark_hint_text">#42FFFFFF</color>
 </resources>

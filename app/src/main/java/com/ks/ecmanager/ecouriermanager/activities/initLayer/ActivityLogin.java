@@ -37,7 +37,7 @@ public class ActivityLogin extends ActivityBase {
 
     private Button mSubmit;
     private TextInputEditText mName, mPassword;
-    private SessionUserData sessionUserData;
+    public static SessionUserData sessionUserData;
     private final String TAG = "LOGIN";
 
     @Override
@@ -46,6 +46,9 @@ public class ActivityLogin extends ActivityBase {
         setContentView(R.layout.activity_login);
 
         sessionUserData = new SessionUserData(this);
+//        redirect
+//        if (sessionUserData.isLoggedIn())
+//                startActivity(new Intent(ActivityLogin.this, ActivityMain.class));
 
         mName = (TextInputEditText) findViewById(R.id.editUserName);
         mPassword = (TextInputEditText) findViewById(R.id.editPassword);

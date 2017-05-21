@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Copyright (c) kazi srabon 2017. Contact, kaziiit@gmail.com.-->
+<resources>
+    <string name="spinner_consignment_no">CONSIGNMENT NO</string>
+    <string name="spinner_receiver_no">RECEIVER NO</string>
+    <string name="spinner_product_id">PRODUCT ID</string>
+    <!--spinnerSearchValue-->
+    <string-array name="searchValuesArray">
+        <item>@string/spinner_consignment_no</item>
+        <item>@string/spinner_receiver_no</item>
+        <item>@string/spinner_product_id</item>
+    </string-array>
+
+    <string name="spinner_consignment_type_none">None</string>
+    <string name="spinner_consignment_type_init">Initiated</string>
+    <string name="spinner_consignment_type_onTheWayTodelivery">On the Way to Delivery</string>
+    <string name="spinner_consignment_type_hold">Hold</string>
+    <string name="spinner_consignment_type_return">Returned</string>
+    <string name="spinner_consignment_type_pick">Picked</string>
+    <string name="spinner_consignment_type_delivery">Delivered</string>
+    <string name="spinner_consignment_type_partial">partial delivered</string>
+
+    <string-array name="consignmentTypeValuesArray">
+        <item>@string/spinner_consignment_type_none</item>
+        <item>@string/spinner_consignment_type_init</item>
+        <item>@string/spinner_consignment_type_onTheWayTodelivery</item>
+        <item>@string/spinner_consignment_type_hold</item>
+        <item>@string/spinner_consignment_type_return</item>
+    </string-array>
+
+    <string-array name="consignmentTypeValuesArrayForReport">
+        <item>@string/spinner_consignment_type_pick</item>
+        <item>@string/spinner_consignment_type_delivery</item>
+        <item>@string/spinner_consignment_type_hold</item>
+        <item>@string/spinner_consignment_type_return</item>
+    </string-array>
+
+    <!-- spinner parcel update items starts-->
+    <string name="spinner_parcel_status_s2">Picked Up</string>
+    <string name="spinner_parcel_status_s4">Delivered</string>
+    <string name="spinner_parcel_status_s5">Partial Delivered</string>
+    <string name="spinner_parcel_status_s7">Hold at eCourier Hub</string>
+    <string name="spinner_parcel_status_s24">Parcel Return</string>
+
+    <!--search-->
+    <string-array name="parcelStatusValuesArray">
+        <item>@string/spinner_parcel_status_s2</item>
+        <item>@string/spinner_parcel_status_s4</item>
+        <item>@string/spinner_parcel_status_s5</item>
+        <item>@string/spinner_parcel_status_s7</item>
+        <item>@string/spinner_parcel_status_s24</item>
+    </string-array>
+
+    <!--initiated-->
+    <string-array name="parcelStatusValuesArray1">
+        <item>@string/spinner_parcel_status_s2</item>
+    </string-array>
+
+    <!--On the way to Delivery-->
+    <string-array name="parcelStatusValuesArray2">
+        <item>@string/spinner_parcel_status_s4</item>
+        <item>@string/spinner_parcel_status_s5</item>
+        <item>@string/spinner_parcel_status_s7</item>
+    </string-array>
+
+    <!--Delivered-->
+    <string-array name="parcelStatusValuesArray3">
+        <item>@string/spinner_parcel_status_s5</item>
+        <item>@string/spinner_parcel_status_s7</item>
+        <item>@string/spinner_parcel_status_s24</item>
+    </string-array>
+
+    <!--Partial Delivered-->
+    <string-array name="parcelStatusValuesArray4">
+        <item>@string/spinner_parcel_status_s7</item>
+        <item>@string/spinner_parcel_status_s24</item>
+    </string-array>
+
+    <!--HOLD at ECOURIER HUB-->
+    <string-array name="parcelStatusValuesArray5">
+        <item>@string/spinner_parcel_status_s24</item>
+    </string-array>
+
+    <!--jamela-->
+    <string name="s2">S2</string>
+    <string name="s4">S4</string>
+    <string name="s5">S5</string>
+    <string name="s6">S6</string>
+    <string name="s7">S7</string>
+    <string name="s8">S8</string>
+    <string name="s10">S10</string>
+    <string name="s12">S12</string>
+    <string name="s13">S13</string>
+    <string name="s14">S14</string>
+    <string name="s15">S15</string>
+    <string name="s20">S20</string>
+    <string name="s21">S21</string>
+    <string name="s22">S22</string>
+    <string name="s23">S23</string>
+    <string name="s24">S24</string>
+    <string name="s25">S25</string>
+    <string-array name="parcelStatusKeysArray">
+        <item>@string/s2</item>
+        <item>@string/s4</item>
+        <item>@string/s5</item>
+        <item>@string/s7</item>
+        <item>@string/s24</item>
+    </string-array>
+
+    <string-array name="parcelCommentKeysArray">
+        <item>Product problem</item>
+        <item>Size mismatch</item>
+        <item>Color problem</item>
+        <item>Price mismatch</item>
+        <item>Wrong product</item>
+        <item>After confirmation didn’t pick call</item>
+        <item>Mobile off</item>
+        <item>Wanted to receive the product after 3/5/7 days</item>
+        <item>Receive one product out of two</item>
+        <item>Replace product</item>
+        <item>Out of Address</item>
+        <item>Not Interested</item>
+        <item>Financial Problem</item>
+        <item>No Response From Customer</item>
+        <item>Multiple Time Visit</item>
+        <item>Cancel by customer</item>
+        <item>Hold by merchant</item>
+        <item>Hold by customer</item>
+        <item>Other</item>
+    </string-array>
+
+    <string-array name="parcelCommentKeysArrayDelivered">
+        <item>Product problem</item>
+        <item>Other</item>
+    </string-array>
+    <!-- spinner parcel update items ends-->
+
+    <!--blood group-->
+    <string-array name="blood_group">
+        <item>A+</item>
+        <item>B+</item>
+        <item>AB+</item>
+        <item>O+</item>
+        <item>A-</item>
+        <item>B-</item>
+        <item>AB-</item>
+        <item>O-</item>
+        <item>Don\'t know!!!</item>
+    </string-array>
+
+</resources>

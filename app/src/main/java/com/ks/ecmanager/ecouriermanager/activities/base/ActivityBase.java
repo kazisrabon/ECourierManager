@@ -30,6 +30,7 @@ public class ActivityBase extends AppCompatActivity {
     public static final int MIDDLE = 2;
     public static final int START = 1;
     public static final int END = 3;
+    public static final int CAMERA_PERMISSIONS_REQUEST = 301;
     private final String TAG = "Base";
     private Activity activity;
     private Context context;
