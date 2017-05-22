@@ -22,7 +22,7 @@ public class Login
 
     @SerializedName("status")
     @Expose
-    private boolean status;
+    private Boolean status;
 
     @SerializedName("do_name")
     @Expose
@@ -66,12 +66,12 @@ public class Login
         this.do_mobile = do_mobile;
     }
 
-    public boolean getStatus ()
+    public Boolean getStatus ()
     {
         return status;
     }
 
-    public void setStatus (boolean status)
+    public void setStatus (Boolean status)
     {
         this.status = status;
     }

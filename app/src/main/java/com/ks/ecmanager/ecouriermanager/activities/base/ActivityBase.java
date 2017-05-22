@@ -30,7 +30,12 @@ public class ActivityBase extends AppCompatActivity {
     public static final int MIDDLE = 2;
     public static final int START = 1;
     public static final int END = 3;
-    public static final int CAMERA_PERMISSIONS_REQUEST = 301;
+    public static final int CAMERA_PERMISSIONS_REQUEST = 301,
+            SELECT_PICTURE = 302,
+            TAKE_PHOTO = 303,
+            REQUEST_EXTERNAL_STORAGE = 401,
+            REQUEST_READ_EXTERNAL_STORAGE = 402,
+            calender_type = 110;
     private final String TAG = "Base";
     private Activity activity;
     private Context context;
@@ -46,9 +51,10 @@ public class ActivityBase extends AppCompatActivity {
         LayoutInflater inflater = activity.getLayoutInflater();
         View layout = inflater.inflate(R.layout.custom_toast_layout,
                 (ViewGroup) activity.findViewById(R.id.toast_layout_root));
-        layout.setBackgroundColor(Color.WHITE);
+        layout.setBackgroundColor(Color.BLACK);
         TextView text = (TextView) layout.findViewById(R.id.text);
         text.setText(message);
+        text.setTextColor(Color.WHITE);
 
         Toast toast = new Toast(this);
         toast.setDuration(duration);
@@ -65,6 +71,7 @@ public class ActivityBase extends AppCompatActivity {
         layout.setBackgroundColor(Color.RED);
         TextView text = (TextView) layout.findViewById(R.id.text);
         text.setText(message);
+        text.setTextColor(Color.WHITE);
 
         Toast toast = new Toast(this);
         toast.setDuration(duration);
@@ -78,9 +85,10 @@ public class ActivityBase extends AppCompatActivity {
         LayoutInflater inflater = activity.getLayoutInflater();
         View layout = inflater.inflate(R.layout.custom_toast_layout,
                 (ViewGroup) activity.findViewById(R.id.toast_layout_root));
-        layout.setBackgroundColor(Color.BLACK);
+        layout.setBackgroundColor(Color.GREEN);
         TextView text = (TextView) layout.findViewById(R.id.text);
         text.setText(message);
+        text.setTextColor(Color.WHITE);
 
         Toast toast = new Toast(this);
         toast.setDuration(duration);
@@ -109,11 +117,20 @@ public class ActivityBase extends AppCompatActivity {
 
     }
 
-    public void printHash(HashMap<String, String> map){
+    public void printHash(String where_from ,HashMap<String, String> map){
         for (String name: map.keySet()){
             String key =name.toString();
             String value = map.get(name).toString();
-            Log.e(TAG ,key + " " + value);
+            Log.e(where_from +" "+TAG ,key + " " + value);
         }
+    }
+
+    public boolean checkText(String s) {
+        boolean isValid;
+        if(s != null && !s.isEmpty())
+            isValid = true;
+        else isValid = false;
+
+        return isValid;
     }
 }

@@ -6,7 +6,9 @@ package com.ks.ecmanager.ecouriermanager.activities.firstLayer;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.FragmentManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -14,6 +16,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -24,6 +27,7 @@ import android.widget.Toast;
 
 import com.ks.ecmanager.ecouriermanager.R;
 import com.ks.ecmanager.ecouriermanager.activities.base.ActivityBase;
+import com.ks.ecmanager.ecouriermanager.activities.initLayer.ActivityLogin;
 import com.ks.ecmanager.ecouriermanager.pojo.ConsignmentList;
 import com.ks.ecmanager.ecouriermanager.pojo.ConsignmentListDatum;
 import com.ks.ecmanager.ecouriermanager.session.SessionUserData;
@@ -51,7 +55,7 @@ public class ActivityMain extends ActivityBase {
     private String searchTypeValue = "";
     private String[] searchValues;
     private EditText mSearchValue;
-    private Button mSearch, mQRScan;
+    private Button mSearch, mQRScan, mProfile;
     private ArrayList<String> searchValuesArray;
     private Spinner searchValueSpinner;
     private ArrayAdapter<String> adapterSpinner;
@@ -98,6 +102,7 @@ public class ActivityMain extends ActivityBase {
         mSearchValue = (EditText) findViewById(R.id.editSearchValue);
         mSearch = (Button) findViewById(R.id.btnSearch);
         mQRScan = (Button) findViewById(R.id.btnScan);
+        mProfile = (Button) findViewById(R.id.btnProfile);
 
         mSearch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,6 +115,13 @@ public class ActivityMain extends ActivityBase {
             @Override
             public void onClick(View v) {
                 scanButtonClick();
+            }
+        });
+
+        mProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ActivityMain.this, ActivityProfile.class));
             }
         });
 
@@ -200,7 +212,7 @@ public class ActivityMain extends ActivityBase {
         map.put(ApiParams.PARAM_AUTHENTICATION_KEY, "" + authentication_key);
         map.put(searchTypeValue, "" + search_value);
 
-        printHash(map);
+        printHash(TAG, map);
         myApiCallback.getData(ApiParams.TAG_CONSIGNMENT_SEARCH_KEY, map, new Callback<ConsignmentList>() {
             @Override
             public void success(ConsignmentList consignment_list, Response response) {
@@ -244,6 +256,38 @@ public class ActivityMain extends ActivityBase {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             showErrorToast("You must provide access to use this app!", Toast.LENGTH_SHORT, MIDDLE);
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSIONS_REQUEST);
+        }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+
+            AlertDialog.Builder alert_box = new AlertDialog.Builder(this);
+            alert_box.setTitle(getResources().getString(R.string.exit_title));
+            alert_box.setMessage(getResources().getString(R.string.exit_confirmation));
+
+            alert_box.setPositiveButton("Yes",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface arg0, int arg1) {
+                            sessionUserData.endSession();
+                            Intent loginActivity =  new Intent(ActivityMain.this,ActivityLogin.class);
+                            loginActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(loginActivity);
+                        }
+                    });
+
+            alert_box.setNeutralButton("No",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface arg0, int arg1) {
+                        }
+                    });
+
+            alert_box.show();
+
+            return true;
+        } else {
+            return super.onKeyDown(keyCode, event);
         }
     }
 }

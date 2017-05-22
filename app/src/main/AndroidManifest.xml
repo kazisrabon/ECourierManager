@@ -1,13 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
-  ~ Copyright (c) 2017. kazi srabon. Contact : kaziiit@gmail.com
-  -->
-
+<?xml version="1.0" encoding="utf-8"?><!--   ~ Copyright (c) 2017. kazi srabon. Contact : kaziiit@gmail.com -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.ks.ecmanager.ecouriermanager">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
+
     <uses-feature android:name="android.hardware.camera" />
 
     <application
@@ -17,21 +14,23 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.initLayer.ActivityLogin"
+        <activity
+            android:name=".activities.initLayer.ActivityLogin"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-            android:windowSoftInputMode="stateHidden|adjustPan|adjustNothing"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustPan|adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".activities.firstLayer.ActivityMain"
+        <activity
+            android:name=".activities.firstLayer.ActivityMain"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-            android:windowSoftInputMode="stateHidden|adjustPan|adjustNothing"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustPan|adjustNothing" />
+        <activity android:name=".activities.firstLayer.ActivityProfile"></activity>
     </application>
 
 </manifest>

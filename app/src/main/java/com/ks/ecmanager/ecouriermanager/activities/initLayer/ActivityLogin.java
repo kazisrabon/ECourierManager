@@ -4,12 +4,15 @@
 
 package com.ks.ecmanager.ecouriermanager.activities.initLayer;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -47,8 +50,8 @@ public class ActivityLogin extends ActivityBase {
 
         sessionUserData = new SessionUserData(this);
 //        redirect
-//        if (sessionUserData.isLoggedIn())
-//                startActivity(new Intent(ActivityLogin.this, ActivityMain.class));
+        if (sessionUserData.isLoggedIn())
+                startActivity(new Intent(ActivityLogin.this, ActivityMain.class));
 
         mName = (TextInputEditText) findViewById(R.id.editUserName);
         mPassword = (TextInputEditText) findViewById(R.id.editPassword);
@@ -87,7 +90,7 @@ public class ActivityLogin extends ActivityBase {
         map.put(ApiParams.PARAM_USER_NAME, name);
         map.put(ApiParams.PARAM_PASSWORD, password);
         map.put(ApiParams.PARAM_USER_TYPE, ApiParams.USER_TYPE_ADMIN);
-        printHash(map);
+        printHash(TAG, map);
 
         //Now, we will to call for response
         //Retrofit using gson for JSON-POJO conversion
@@ -154,4 +157,33 @@ public class ActivityLogin extends ActivityBase {
             return false;
         }
     }
+
+@Override
+public boolean onKeyDown(int keyCode, KeyEvent event) {
+    if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+
+        AlertDialog.Builder alert_box = new AlertDialog.Builder(this);
+        alert_box.setTitle(getResources().getString(R.string.exit_title));
+        alert_box.setMessage(getResources().getString(R.string.exit_confirmation));
+
+        alert_box.setPositiveButton("Yes",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        finish();
+                    }
+                });
+
+        alert_box.setNeutralButton("No",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int arg1) {
+                    }
+                });
+
+        alert_box.show();
+
+        return true;
+    } else {
+        return super.onKeyDown(keyCode, event);
+    }
+}
 }
