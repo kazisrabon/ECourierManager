@@ -14,4 +14,7 @@
     <string name="no_data_found">NO DATA FOUND!</string>
     <string name="exit_title">Exit the app?</string>
     <string name="exit_confirmation">Would you like to exit the application?</string>
+    <string name="select_type">Select Picture</string>
+    <string name="take_new_photo">Take New Photo</string>
+    <string name="choose_from_gallery">Open Gallery</string>
 </resources>
