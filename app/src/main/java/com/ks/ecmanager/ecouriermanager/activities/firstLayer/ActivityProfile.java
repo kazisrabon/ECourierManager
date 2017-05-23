@@ -387,7 +387,7 @@ public class ActivityProfile extends ActivityBase {
 
             AlertDialog.Builder alert_box = new AlertDialog.Builder(this);
             alert_box.setTitle(getResources().getString(R.string.exit_title));
-            alert_box.setMessage(getResources().getString(R.string.exit_confirmation));
+            alert_box.setMessage(getResources().getString(R.string.logout_confirmation));
 
             alert_box.setPositiveButton("Yes",
                     new DialogInterface.OnClickListener() {

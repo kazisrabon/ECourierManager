@@ -28,6 +28,7 @@ import android.widget.Toast;
 import com.ks.ecmanager.ecouriermanager.R;
 import com.ks.ecmanager.ecouriermanager.activities.base.ActivityBase;
 import com.ks.ecmanager.ecouriermanager.activities.initLayer.ActivityLogin;
+import com.ks.ecmanager.ecouriermanager.activities.secondLayer.ActivityConsignmentDetails;
 import com.ks.ecmanager.ecouriermanager.pojo.ConsignmentList;
 import com.ks.ecmanager.ecouriermanager.pojo.ConsignmentListDatum;
 import com.ks.ecmanager.ecouriermanager.session.SessionUserData;
@@ -199,7 +200,6 @@ public class ActivityMain extends ActivityBase {
         ConsignmentListInterface myApiCallback = restAdapter.create(ConsignmentListInterface.class);
 
         // get user data from session
-        String user_type = user.get(SessionUserData.KEY_USER_TYPE);
         String id = user.get(SessionUserData.KEY_USER_ID);
         String group = user.get(SessionUserData.KEY_USER_GROUP);
         String authentication_key = user.get(SessionUserData.KEY_USER_AUTH_KEY);
@@ -220,22 +220,21 @@ public class ActivityMain extends ActivityBase {
 
                 boolean status = consignment_list.getStatus();
                 Log.e(TAG, status+" ");
-                Log.e(TAG, consignment_list.getMsg());
-                if (status == ApiParams.TAG_SUCCESS) {
+                if (status) {
                     mSearchValue.setText("");
                     consignmentListDatumList = consignment_list.getData();
 
 // convert the list to array list and pass via intent
-//                    ArrayList<ConsignmentListDatum> ItemArray = ((ArrayList<ConsignmentListDatum>) consignmentListDatumList);
-////                    ConsignmentListDatum datum = ItemArray.get(0);
-//                    Intent i = new Intent(ActivityMain.this, ActivityConsignmentDetails.class);
+                    ArrayList<ConsignmentListDatum> ItemArray = ((ArrayList<ConsignmentListDatum>) consignmentListDatumList);
+//                    ConsignmentListDatum datum = ItemArray.get(0);
+                    Intent i = new Intent(ActivityMain.this, ActivityConsignmentDetails.class);
 //                    i.putExtra("is_search", true);
 //                    i.putExtra("visible_state", "0");
-//                    i.putExtra("consignment_data_position", "0");
-//                    i.putExtra("consignment_data_array", ItemArray);
-////                    i.putExtra("consignment_data", datum);
-//                    i.putExtra("where_from", "search");
-//                    startActivity(i);
+                    i.putExtra(KEY_CN_POS, 0);
+                    i.putExtra(KEY_CN_DATA, ItemArray);
+//                    i.putExtra("consignment_data", datum);
+                    i.putExtra(KEY_WHERE_FROM, CN_TYPE_SEARCH);
+                    startActivity(i);
 
                     showToast("" + consignment_list.getStatus() + "!", Toast.LENGTH_SHORT, MIDDLE);
                 }
@@ -265,7 +264,7 @@ public class ActivityMain extends ActivityBase {
 
             AlertDialog.Builder alert_box = new AlertDialog.Builder(this);
             alert_box.setTitle(getResources().getString(R.string.exit_title));
-            alert_box.setMessage(getResources().getString(R.string.exit_confirmation));
+            alert_box.setMessage(getResources().getString(R.string.logout_confirmation));
 
             alert_box.setPositiveButton("Yes",
                     new DialogInterface.OnClickListener() {

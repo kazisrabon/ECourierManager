@@ -14,7 +14,36 @@
     <string name="no_data_found">NO DATA FOUND!</string>
     <string name="exit_title">Exit the app?</string>
     <string name="exit_confirmation">Would you like to exit the application?</string>
+    <string name="logout_confirmation">Would you like to logout from the application?</string>
     <string name="select_type">Select Picture</string>
     <string name="take_new_photo">Take New Photo</string>
     <string name="choose_from_gallery">Open Gallery</string>
+    <string name="button_update">UPDATE</string>
+
+
+    <!--CN-->
+    <string name="consignment_id">Consignment ID: %1$s</string>
+    <string name="sender_group">Sender Group: %1$s</string>
+    <string name="eso">ESO: %1$s</string>
+    <string name="agent_name">Agent: %1$s</string>
+    <string name="company">Company: %1$s</string>
+    <string name="contact">Contact: %1$s</string>
+    <string name="product_id">Product ID: %1$s</string>
+    <string name="product_price">Product Price: %1$s</string>
+    <string name="recipient_name">Recipient Name: %1$s</string>
+    <string name="recipient_mobile">Recipient Mobile: %1$s</string>
+    <string name="recipient_address">Recipient Address: %1$s</string>
+    <string name="recipient_area">Recipient Area: %1$s</string>
+    <string name="order_time">Order Time: %1$s</string>
+    <string name="parcel_status">Parcel Status: %1$s</string>
+    <string name="shipping_price">Shipping Price: %1$s</string>
+    <string name="cod_price">COD Price: %1$s</string>
+    <string name="payment_method">Payment Method: %1$s</string>
+    <string name="pacel_id">Parcel ID: %1$s</string>
+    <string name="payment_clear">Payment Clear: %1$s</string>
+    <string name="comments">Comment: %1$s</string>
+    <string name="delivery_time">Delivery Time: %1$s</string>
+    <string name="collected_items">Collected Items: %1$s</string>
+    <string name="collected_amounts">Collected Amount: %1$s</string>
+    <string name="none">NONE</string>
 </resources>

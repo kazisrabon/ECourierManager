@@ -38,6 +38,10 @@ import java.util.HashMap;
 public class ActivityBase extends AppCompatActivity {
 
     public static final String ALBUM_NAME = "eCourier";
+    public static final String CN_TYPE_SEARCH = "search";
+    public static final String KEY_CN_POS = "consignment_data_position";
+    public static final String KEY_CN_DATA = "consignment_data_array";
+    public static final String KEY_WHERE_FROM = "where_from";
     public static final int MIDDLE = 2;
     public static final int START = 1;
     public static final int END = 3;
@@ -215,5 +219,12 @@ public class ActivityBase extends AppCompatActivity {
         Bitmap rotatedBitmap = Bitmap.createBitmap(bm, 0, 0, bounds.outWidth, bounds.outHeight, matrix, true);
         // Return result
         return rotatedBitmap;
+    }
+
+    public boolean stringNotNullCheck(String s){
+        Log.e(TAG+" CN", s);
+        if (s!= null && !s.isEmpty() && !s.equals(""))
+            return true;
+        else return false;
     }
 }
