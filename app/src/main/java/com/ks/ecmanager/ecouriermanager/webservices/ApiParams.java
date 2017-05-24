@@ -95,4 +95,10 @@ public class ApiParams {
     public static final String PARAM_BLOOD_GROUP= "blood_group";
     public static final String PARAM_NID= "nid";
     public static final String PARAM_DOB= "dob";
+
+//    do list
+    public static final String TAG_DO_LIST_KEY = "getDoList.php";
+
+//    do agents list
+    public static final String TAG_DO_AGENT_LIST_KEY = "getAgentList.php";
 }

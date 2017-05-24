@@ -8,31 +8,48 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ks.ecmanager.ecouriermanager.R;
 import com.ks.ecmanager.ecouriermanager.activities.base.ActivityBase;
 import com.ks.ecmanager.ecouriermanager.activities.firstLayer.ActivityMain;
 import com.ks.ecmanager.ecouriermanager.activities.initLayer.ActivityLogin;
+import com.ks.ecmanager.ecouriermanager.pojo.AgentDOListDatum;
+import com.ks.ecmanager.ecouriermanager.pojo.AgentList;
+import com.ks.ecmanager.ecouriermanager.pojo.DoList;
 import com.ks.ecmanager.ecouriermanager.pojo.ConsignmentListDatum;
+import com.ks.ecmanager.ecouriermanager.session.SessionUserData;
+import com.ks.ecmanager.ecouriermanager.webservices.ApiParams;
+import com.ks.ecmanager.ecouriermanager.webservices.interfaces.AgentListInterface;
+import com.ks.ecmanager.ecouriermanager.webservices.interfaces.DoListInterface;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import retrofit.Callback;
+import retrofit.RestAdapter;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 import static com.ks.ecmanager.ecouriermanager.activities.initLayer.ActivityLogin.sessionUserData;
 
-public class ActivityConsignmentDetails extends ActivityBase {
+public class ActivityConsignmentDetails extends ActivityBase{
 
+    private final int FROM_AGENT = 2, FROM_DO = 1, FROM_NONE = 0;
     private final String TAG = "CN DETAILS";
-    private Button mUpdate;
+    private Button mUpdate, mSelectDO, mSelectDOAgent;
     private LinearLayout mLayoutConsignmentInformation, mLayoutParcelInformation;
     private RelativeLayout altPhoneNumberLayout;
     private TextView mConsignmentId, mSenderGroup, mCompany, mCompanyPhone, editComment, mCallCompany,
@@ -41,16 +58,60 @@ public class ActivityConsignmentDetails extends ActivityBase {
     private EditText editInput, etItem, etCollectedAmount, editProductPrice, editRecipientName, editRecipientMobile,editRecipientMobileAlt, editRecipientAddress;
     private ConsignmentListDatum datum = null;
     private Resources res;
-    private String consignment_no = "", current_parcel_status_code = "";
+    private String consignment_no = "", current_parcel_status_code = "", agent_name = "", d_do = "";
+    private HashMap<String, String> user = new HashMap<String, String>();
+    private HashMap<String, String> map = new HashMap<String, String>();
+    private HashMap<String, String> statusMap = new HashMap<String, String>();
+    private HashMap<String, String> listData = new HashMap<String, String>();
+    private String changedAgentorDO;
+    private int changedValue = FROM_NONE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_consignment_details);
         res = getResources();
+        user = sessionUserData.getSessionDetails();
+        setHashMap();
 
         initialize();
         receiveDataFromIntent();
+    }
+
+    private void setHashMap() {
+        String id = user.get(SessionUserData.KEY_USER_ID);
+        String group = user.get(SessionUserData.KEY_USER_GROUP);
+        String authentication_key = user.get(SessionUserData.KEY_USER_AUTH_KEY);
+
+        //Lets pass the desired parameters
+        map.put(ApiParams.PARAM_ADMIN_ID, "" + id);
+        map.put(ApiParams.PARAM_GROUP, group);
+        map.put(ApiParams.PARAM_AUTHENTICATION_KEY, "" + authentication_key);
+
+        map.put(res.getString(R.string.s2), res.getString(R.string.s13));
+        map.put(res.getString(R.string.s4), res.getString(R.string.s0));
+        map.put(res.getString(R.string.s5), res.getString(R.string.s0));
+        map.put(res.getString(R.string.s6), res.getString(R.string.s0));
+//        map.put(res.getString(R.string.s7), res.getString(R.string.s));
+        map.put(res.getString(R.string.s8), res.getString(R.string.s0));
+        map.put(res.getString(R.string.s10), res.getString(R.string.s0));
+        map.put(res.getString(R.string.s12), res.getString(R.string.s22));
+        map.put(res.getString(R.string.s13), res.getString(R.string.s14));
+        map.put(res.getString(R.string.s14), res.getString(R.string.s15));
+        map.put(res.getString(R.string.s15), res.getString(R.string.s21));
+        map.put(res.getString(R.string.s20), res.getString(R.string.s0));
+        map.put(res.getString(R.string.s21), res.getString(R.string.s0));
+        map.put(res.getString(R.string.s22), res.getString(R.string.s0));
+        map.put(res.getString(R.string.s23), res.getString(R.string.s25));
+        map.put(res.getString(R.string.s24), res.getString(R.string.s0));
+        map.put(res.getString(R.string.s25), res.getString(R.string.s0));
+    }
+
+    private void setHashMap(String s) {
+        //Lets pass the desired parameters
+//        map.put(ApiParams.PARAM_ADMIN_ID, "" + id);
+//        map.put(ApiParams.PARAM_GROUP, group);
+//        map.put(ApiParams.PARAM_AUTHENTICATION_KEY, "" + authentication_key);
     }
 
     private void receiveDataFromIntent() {
@@ -166,6 +227,8 @@ public class ActivityConsignmentDetails extends ActivityBase {
 
     private void initialize() {
         mUpdate = (Button) findViewById(R.id.btnUpdate);
+        mSelectDO = (Button) findViewById(R.id.btnSelectDo);
+        mSelectDOAgent = (Button) findViewById(R.id.btnSelectDoAgent);
         mLayoutConsignmentInformation = (LinearLayout) findViewById(R.id.layoutConsignmentInformation);
         mLayoutParcelInformation = (LinearLayout) findViewById(R.id.layoutParcelInformation);
         altPhoneNumberLayout =  (RelativeLayout) findViewById(R.id.altPhoneNumberLayout);
@@ -187,6 +250,43 @@ public class ActivityConsignmentDetails extends ActivityBase {
         mParcelStatus = (TextView) findViewById(R.id.textParcelStatus);
         mParcelStatusReason = (TextView) findViewById(R.id.textParcelStatusReason);
         mItemType = (TextView) findViewById(R.id.tvItemType);
+
+        mUpdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                updateParcel();
+            }
+        });
+
+        mSelectDO.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadDO();
+            }
+        });
+        mSelectDOAgent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadDoAgent();
+            }
+        });
+    }
+
+    private void updateParcel() {
+        if (changedValue != FROM_NONE){
+            printHash(TAG, listData);
+            if (changedValue == FROM_DO){
+                String s = listData.get(d_do);
+                Log.e(TAG, s);
+            }
+            else if (changedValue == FROM_AGENT){
+                String s = listData.get(agent_name);
+                Log.e(TAG, s);
+            }
+        }
+        else
+            Log.e(TAG, "Nothing Selected");
+
     }
 
     @Override
@@ -228,4 +328,129 @@ public class ActivityConsignmentDetails extends ActivityBase {
         }
     }
 
+    private void loadDO() {
+        showProgressDialog(false, "", getResources().getString(R.string.loading));
+
+        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(ApiParams.TAG_BASE_URL).build();
+        DoListInterface myApiCallback = restAdapter.create(DoListInterface.class);
+
+        printHash(TAG, map);
+        myApiCallback.getData(ApiParams.TAG_DO_LIST_KEY, map, new Callback<DoList>() {
+            @Override
+            public void success(DoList doList, Response response) {
+                hideProgressDialog();
+
+                boolean status = doList.getStatus();
+                Log.e(TAG, status+" ");
+                if (status) {
+                    showToast("Total Do : " + doList.getTotal_dos() + "!", Toast.LENGTH_SHORT, MIDDLE);
+                    showList(doList.getDo_list(), FROM_DO);
+                }
+                else
+                    showErrorToast(getString(R.string.no_data_found), Toast.LENGTH_SHORT, MIDDLE);
+
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                hideProgressDialog();
+                showErrorToast("" + error.getMessage() + "!", Toast.LENGTH_SHORT, MIDDLE);
+            }
+        });
+    }
+
+    private void loadDoAgent() {
+        showProgressDialog(false, "", getResources().getString(R.string.loading));
+
+        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(ApiParams.TAG_BASE_URL).build();
+        AgentListInterface myApiCallback = restAdapter.create(AgentListInterface.class);
+
+        printHash(TAG, map);
+        myApiCallback.getData(ApiParams.TAG_DO_AGENT_LIST_KEY, map, new Callback<AgentList>() {
+            @Override
+            public void success(AgentList agentList, Response response) {
+                hideProgressDialog();
+
+                boolean status = agentList.getStatus();
+                Log.e(TAG, status+" ");
+                if (status) {
+                    showToast("Total Agent : " + agentList.getTotal_agents() + "!", Toast.LENGTH_SHORT, MIDDLE);
+                    showList(agentList.getAgent_list(), FROM_AGENT);
+                }
+                else
+                    showErrorToast(getString(R.string.no_data_found), Toast.LENGTH_SHORT, MIDDLE);
+
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                hideProgressDialog();
+                showErrorToast("" + error.getMessage() + "!", Toast.LENGTH_SHORT, MIDDLE);
+            }
+        });
+    }
+
+    private void showList(List<AgentDOListDatum> list, final int where_from) {
+        final String[] s = {""};
+        AlertDialog.Builder builderSingle = new AlertDialog.Builder(ActivityConsignmentDetails.this);
+        builderSingle.setIcon(R.mipmap.ic_launcher);
+        builderSingle.setTitle("Select One Name:-");
+
+        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(ActivityConsignmentDetails.this,
+                android.R.layout.select_dialog_singlechoice);
+        listData = new HashMap<String, String>();
+        for (int i = 0; i < list.size(); i++){
+            listData.put(list.get(i).getValue(), list.get(i).getId());
+            arrayAdapter.add(list.get(i).getValue());
+        }
+        builderSingle.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        builderSingle.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                AlertDialog.Builder builderInner = new AlertDialog.Builder(ActivityConsignmentDetails.this);
+                if (where_from == FROM_DO)
+                    d_do = arrayAdapter.getItem(which);
+                else if (where_from == FROM_AGENT)
+                    agent_name = arrayAdapter.getItem(which);
+
+                s[0] = arrayAdapter.getItem(which);
+                builderInner.setMessage(s[0]);
+                builderInner.setTitle("Your Selection is");
+                builderInner.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog,int which) {
+                        Log.e(TAG, "selected "+s[0]+" Agent "+agent_name+" D_Do "+d_do);
+                        setChangedAgentorDO(s[0], where_from);
+                        dialog.dismiss();
+                    }
+                });
+                builderInner.setNegativeButton("Cancle", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog,int which) {
+                        if (where_from == FROM_DO)
+                            d_do = "";
+                        else if (where_from == FROM_AGENT)
+                            agent_name = "";
+                        s[0]="";
+                        setChangedAgentorDO(s[0], FROM_NONE);
+                        Log.e(TAG, "selected "+s[0]+" Agent "+agent_name+" D_Do "+d_do);
+                        dialog.dismiss();
+                    }
+                });
+                builderInner.show();
+            }
+        });
+        builderSingle.show();
+    }
+
+    public void setChangedAgentorDO(String s, int i){
+        changedAgentorDO = s;
+        changedValue = i;
+    }
 }

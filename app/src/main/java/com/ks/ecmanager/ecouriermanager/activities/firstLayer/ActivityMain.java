@@ -212,7 +212,7 @@ public class ActivityMain extends ActivityBase {
         map.put(ApiParams.PARAM_AUTHENTICATION_KEY, "" + authentication_key);
         map.put(searchTypeValue, "" + search_value);
 
-        printHash(TAG, map);
+//        printHash(TAG, map);
         myApiCallback.getData(ApiParams.TAG_CONSIGNMENT_SEARCH_KEY, map, new Callback<ConsignmentList>() {
             @Override
             public void success(ConsignmentList consignment_list, Response response) {
@@ -226,13 +226,9 @@ public class ActivityMain extends ActivityBase {
 
 // convert the list to array list and pass via intent
                     ArrayList<ConsignmentListDatum> ItemArray = ((ArrayList<ConsignmentListDatum>) consignmentListDatumList);
-//                    ConsignmentListDatum datum = ItemArray.get(0);
                     Intent i = new Intent(ActivityMain.this, ActivityConsignmentDetails.class);
-//                    i.putExtra("is_search", true);
-//                    i.putExtra("visible_state", "0");
                     i.putExtra(KEY_CN_POS, 0);
                     i.putExtra(KEY_CN_DATA, ItemArray);
-//                    i.putExtra("consignment_data", datum);
                     i.putExtra(KEY_WHERE_FROM, CN_TYPE_SEARCH);
                     startActivity(i);
 

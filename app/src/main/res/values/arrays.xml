@@ -82,6 +82,7 @@
     </string-array>
 
     <!--jamela-->
+    <string name="s0">S0</string>
     <string name="s2">S2</string>
     <string name="s4">S4</string>
     <string name="s5">S5</string>

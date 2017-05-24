@@ -19,6 +19,8 @@
     <string name="take_new_photo">Take New Photo</string>
     <string name="choose_from_gallery">Open Gallery</string>
     <string name="button_update">UPDATE</string>
+    <string name="button_select_do">SELECT DO</string>
+    <string name="button_select_do_agent">SELECT AGENT</string>
 
 
     <!--CN-->
