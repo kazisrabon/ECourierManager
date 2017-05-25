@@ -20,16 +20,31 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ks.ecmanager.ecouriermanager.R;
+import com.ks.ecmanager.ecouriermanager.pojo.AgentList;
+import com.ks.ecmanager.ecouriermanager.pojo.DoList;
+import com.ks.ecmanager.ecouriermanager.webservices.ApiParams;
+import com.ks.ecmanager.ecouriermanager.webservices.interfaces.AgentListInterface;
+import com.ks.ecmanager.ecouriermanager.webservices.interfaces.DoListInterface;
+
+import org.apache.commons.collections4.BidiMap;
+import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+
+import retrofit.Callback;
+import retrofit.RestAdapter;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 /**
  * Created by Kazi Srabon on 5/20/2017.
@@ -53,10 +68,80 @@ public class ActivityBase extends AppCompatActivity {
             calender_type = 110;
     public static Drawable IMG_DRAWABLE = null;
     public static Bitmap mBitmap = null;
+    public static boolean isAgentRefreshed = false, isDoRefreshed = false;
     private final String TAG = "Base";
     private Activity activity;
     private Context context;
     private ProgressDialog progressDialog;
+    public static BidiMap<String, String> agentBidiList;
+    public static BidiMap<String, String> doBidiList;
+
+    public void setDoBidiList(HashMap<String, String> map) {
+        doBidiList = new DualHashBidiMap();
+        showProgressDialog(false, "", getResources().getString(R.string.loading));
+
+        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(ApiParams.TAG_BASE_URL).build();
+        DoListInterface myApiCallback = restAdapter.create(DoListInterface.class);
+
+        myApiCallback.getData(ApiParams.TAG_DO_LIST_KEY, map, new Callback<DoList>() {
+            @Override
+            public void success(DoList doList, Response response) {
+                hideProgressDialog();
+
+                boolean status = doList.getStatus();
+                Log.e(TAG, status+" ");
+                if (status) {
+                    isDoRefreshed = true;
+                    for (int i = 0; i < doList.getDo_list().size(); i++) {
+                        doBidiList.put(doList.getDo_list().get(i).getId(), doList.getDo_list().get(i).getValue());
+                    }
+                }
+                else
+                    showErrorToast(getString(R.string.no_data_found), Toast.LENGTH_SHORT, MIDDLE);
+
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                hideProgressDialog();
+                showErrorToast("" + error.getMessage() + "!", Toast.LENGTH_SHORT, MIDDLE);
+            }
+        });
+    }
+
+    public void setAgentBidiList(HashMap<String, String> map) {
+        agentBidiList = new DualHashBidiMap();
+        showProgressDialog(false, "", getResources().getString(R.string.loading));
+
+        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(ApiParams.TAG_BASE_URL).build();
+        AgentListInterface myApiCallback = restAdapter.create(AgentListInterface.class);
+
+        printHash(TAG, map);
+        myApiCallback.getData(ApiParams.TAG_DO_AGENT_LIST_KEY, map, new Callback<AgentList>() {
+            @Override
+            public void success(AgentList agentList, Response response) {
+                hideProgressDialog();
+
+                boolean status = agentList.getStatus();
+                Log.e(TAG, status+" ");
+                if (status) {
+                    isAgentRefreshed = true;
+                    for (int i = 0; i < agentList.getAgent_list().size(); i++) {
+                        agentBidiList.put(agentList.getAgent_list().get(i).getId(), agentList.getAgent_list().get(i).getValue());
+                    }
+                }
+                else
+                    showErrorToast(getString(R.string.no_data_found), Toast.LENGTH_SHORT, MIDDLE);
+
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                hideProgressDialog();
+                showErrorToast("" + error.getMessage() + "!", Toast.LENGTH_SHORT, MIDDLE);
+            }
+        });
+    }
 
     public ActivityBase() {
         this.activity = ActivityBase.this;
@@ -226,5 +311,11 @@ public class ActivityBase extends AppCompatActivity {
         if (s!= null && !s.isEmpty() && !s.equals(""))
             return true;
         else return false;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
     }
 }

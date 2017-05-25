@@ -345,6 +345,18 @@
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/subtitle_text"
                     android:visibility="visible"/>
+
+                <TextView
+                    android:id="@+id/textDDO"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/subtitle_text" />
+
+                <TextView
+                    android:id="@+id/textDeliveryAgent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/subtitle_text" />
             </LinearLayout>
 
             <LinearLayout
@@ -352,6 +364,38 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="6dp"
                 android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/llHold"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btnStatusCancel"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_gravity="center"
+                        android:layout_margin="@dimen/card_margin"
+                        android:background="@color/colorPrimaryDark"
+                        android:gravity="center"
+                        android:text="@string/button_status_cancel"
+                        android:textColor="@color/white" />
+
+                    <Button
+                        android:id="@+id/btnStatusOTW"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_gravity="center"
+                        android:layout_margin="@dimen/card_margin"
+                        android:background="@color/colorPrimaryDark"
+                        android:gravity="center"
+                        android:text="@string/button_status_OTW"
+                        android:textColor="@color/white" />
+
+                </LinearLayout>
 
                 <LinearLayout
                 android:layout_width="match_parent"

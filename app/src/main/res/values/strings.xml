@@ -11,6 +11,7 @@
 
     <string name="empty_field">Empty Field!</string>
     <string name="loading">Loading…</string>
+    <string name="refreshing">Refreshing…</string>
     <string name="no_data_found">NO DATA FOUND!</string>
     <string name="exit_title">Exit the app?</string>
     <string name="exit_confirmation">Would you like to exit the application?</string>
@@ -47,5 +48,15 @@
     <string name="delivery_time">Delivery Time: %1$s</string>
     <string name="collected_items">Collected Items: %1$s</string>
     <string name="collected_amounts">Collected Amount: %1$s</string>
+    <string name="destination_do">Destination DO: %1$s</string>
+    <string name="delivery_agent">Delivery Agent: %1$s</string>
     <string name="none">NONE</string>
+    <string name="button_status_cancel">CANCLE PRODUCT</string>
+    <string name="button_status_OTW">ON THE WAY TO DELIVERY</string>
+    <string name="not_allowed">You are not allowed to chage status</string>
+
+    <!--menu-->
+    <string name="refresh">REFRESH</string>
+    <string name="do_refresh">DO REFRESH</string>
+    <string name="agent_refresh">AGENT REFRESH</string>
 </resources>

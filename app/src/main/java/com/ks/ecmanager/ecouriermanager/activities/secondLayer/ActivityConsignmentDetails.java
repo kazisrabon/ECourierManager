@@ -8,10 +8,10 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -34,6 +34,9 @@ import com.ks.ecmanager.ecouriermanager.webservices.ApiParams;
 import com.ks.ecmanager.ecouriermanager.webservices.interfaces.AgentListInterface;
 import com.ks.ecmanager.ecouriermanager.webservices.interfaces.DoListInterface;
 
+import org.apache.commons.collections4.BidiMap;
+import org.apache.commons.collections4.bidimap.DualHashBidiMap;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,22 +50,25 @@ import static com.ks.ecmanager.ecouriermanager.activities.initLayer.ActivityLogi
 
 public class ActivityConsignmentDetails extends ActivityBase{
 
-    private final int FROM_AGENT = 2, FROM_DO = 1, FROM_NONE = 0;
+    private final int FROM_AGENT = 2, FROM_DO = 1, FROM_NONE = 0, AGENT_VISIBLE = 1, DO_VISIBLE = 2,
+            INVISIBLE = 0;
     private final String TAG = "CN DETAILS";
-    private Button mUpdate, mSelectDO, mSelectDOAgent;
-    private LinearLayout mLayoutConsignmentInformation, mLayoutParcelInformation;
+    private Button mUpdate, mSelectDO, mSelectDOAgent, mStatusCancel, mStatusOTW;
+    private LinearLayout mLayoutConsignmentInformation, mLayoutParcelInformation, mLLHold;
     private RelativeLayout altPhoneNumberLayout;
     private TextView mConsignmentId, mSenderGroup, mCompany, mCompanyPhone, editComment, mCallCompany,
             mProductId, mOrderTime, mDeliveryTime, mParcelStatus, mCallRecipient,mCallRecipientAlt, mParcelStatusReason,
-            mItemType;
+            mItemType, mDeliveryAgent, mDDO;
     private EditText editInput, etItem, etCollectedAmount, editProductPrice, editRecipientName, editRecipientMobile,editRecipientMobileAlt, editRecipientAddress;
     private ConsignmentListDatum datum = null;
     private Resources res;
-    private String consignment_no = "", current_parcel_status_code = "", agent_name = "", d_do = "";
+    private String consignment_no = "", current_parcel_status_code = "", agent_name = "", d_do = "",
+            changed_parcel_status_code = "";
     private HashMap<String, String> user = new HashMap<String, String>();
     private HashMap<String, String> map = new HashMap<String, String>();
     private HashMap<String, String> statusMap = new HashMap<String, String>();
-    private HashMap<String, String> listData = new HashMap<String, String>();
+    private BidiMap<String, String> listData = new DualHashBidiMap();
+    private HashMap<String, Integer> visibility = new HashMap<String, Integer>();
     private String changedAgentorDO;
     private int changedValue = FROM_NONE;
 
@@ -76,6 +82,23 @@ public class ActivityConsignmentDetails extends ActivityBase{
 
         initialize();
         receiveDataFromIntent();
+//        setVisibility(INVISIBLE);
+    }
+
+    private void setVisibility(int visibility) {
+        if (visibility == INVISIBLE){
+            mSelectDO.setVisibility(View.GONE);
+            mSelectDOAgent.setVisibility(View.GONE);
+        }
+        else if (visibility == AGENT_VISIBLE){
+            mSelectDO.setVisibility(View.GONE);
+            mSelectDOAgent.setVisibility(View.VISIBLE);
+        }
+        else if (visibility == DO_VISIBLE){
+            mSelectDO.setVisibility(View.VISIBLE);
+            mSelectDOAgent.setVisibility(View.GONE);
+        }
+
     }
 
     private void setHashMap() {
@@ -88,23 +111,33 @@ public class ActivityConsignmentDetails extends ActivityBase{
         map.put(ApiParams.PARAM_GROUP, group);
         map.put(ApiParams.PARAM_AUTHENTICATION_KEY, "" + authentication_key);
 
-        map.put(res.getString(R.string.s2), res.getString(R.string.s13));
-        map.put(res.getString(R.string.s4), res.getString(R.string.s0));
-        map.put(res.getString(R.string.s5), res.getString(R.string.s0));
-        map.put(res.getString(R.string.s6), res.getString(R.string.s0));
-//        map.put(res.getString(R.string.s7), res.getString(R.string.s));
-        map.put(res.getString(R.string.s8), res.getString(R.string.s0));
-        map.put(res.getString(R.string.s10), res.getString(R.string.s0));
-        map.put(res.getString(R.string.s12), res.getString(R.string.s22));
-        map.put(res.getString(R.string.s13), res.getString(R.string.s14));
-        map.put(res.getString(R.string.s14), res.getString(R.string.s15));
-        map.put(res.getString(R.string.s15), res.getString(R.string.s21));
-        map.put(res.getString(R.string.s20), res.getString(R.string.s0));
-        map.put(res.getString(R.string.s21), res.getString(R.string.s0));
-        map.put(res.getString(R.string.s22), res.getString(R.string.s0));
-        map.put(res.getString(R.string.s23), res.getString(R.string.s25));
-        map.put(res.getString(R.string.s24), res.getString(R.string.s0));
-        map.put(res.getString(R.string.s25), res.getString(R.string.s0));
+//        status changing hashMap
+        statusMap.put(res.getString(R.string.s2), res.getString(R.string.s13));
+        statusMap.put(res.getString(R.string.s4), res.getString(R.string.s0));
+        statusMap.put(res.getString(R.string.s5), res.getString(R.string.s0));
+        statusMap.put(res.getString(R.string.s6), res.getString(R.string.s0));
+//      statusMap.put(res.getString(R.string.s7), res.getString(R.string.s));
+        statusMap.put(res.getString(R.string.s8), res.getString(R.string.s0));
+        statusMap.put(res.getString(R.string.s10), res.getString(R.string.s0));
+        statusMap.put(res.getString(R.string.s12), res.getString(R.string.s22));
+        statusMap.put(res.getString(R.string.s13), res.getString(R.string.s14));
+        statusMap.put(res.getString(R.string.s14), res.getString(R.string.s15));
+        statusMap.put(res.getString(R.string.s15), res.getString(R.string.s21));
+        statusMap.put(res.getString(R.string.s20), res.getString(R.string.s0));
+        statusMap.put(res.getString(R.string.s21), res.getString(R.string.s0));
+        statusMap.put(res.getString(R.string.s22), res.getString(R.string.s0));
+        statusMap.put(res.getString(R.string.s23), res.getString(R.string.s25));
+        statusMap.put(res.getString(R.string.s24), res.getString(R.string.s0));
+        statusMap.put(res.getString(R.string.s25), res.getString(R.string.s0));
+
+//        visibility hashMap
+        visibility.put(res.getString(R.string.s0), INVISIBLE);
+        visibility.put(res.getString(R.string.s13), INVISIBLE);
+        visibility.put(res.getString(R.string.s14), DO_VISIBLE);
+        visibility.put(res.getString(R.string.s15), INVISIBLE);
+        visibility.put(res.getString(R.string.s21), AGENT_VISIBLE);
+        visibility.put(res.getString(R.string.s22), INVISIBLE);
+        visibility.put(res.getString(R.string.s25), AGENT_VISIBLE);
     }
 
     private void setHashMap(String s) {
@@ -135,6 +168,16 @@ public class ActivityConsignmentDetails extends ActivityBase{
     }
 
     private void setConsignmentDetails(ConsignmentListDatum datum) {
+        if (!datum.getStatus_code().equals(res.getString(R.string.s7))){
+            changed_parcel_status_code = statusMap.get(datum.getStatus_code());
+            setVisibility(visibility.get(changed_parcel_status_code));
+            mLLHold.setVisibility(View.GONE);
+        }
+        else if (datum.getStatus_code().equals(res.getString(R.string.s7))){
+            mLLHold.setVisibility(View.VISIBLE);
+            setVisibility(INVISIBLE);
+        }
+
         if (stringNotNullCheck(datum.getConsignment_no())){
             consignment_no = datum.getConsignment_no();
             mConsignmentId.setText(String.format(res.getString(R.string.consignment_id), consignment_no));
@@ -223,14 +266,38 @@ public class ActivityConsignmentDetails extends ActivityBase{
         else
             mDeliveryTime.setText(String.format(res.getString(R.string.delivery_time), res.getString(R.string.none)));
 
+        if (stringNotNullCheck(datum.getDestination_do())){
+            String s = doBidiList.get(datum.getDestination_do());
+            if (stringNotNullCheck(s))
+                mDDO.setText(String.format(res.getString(R.string.destination_do), s));
+            else
+                mDDO.setText(String.format(res.getString(R.string.destination_do), datum.getDestination_do()));
+        }
+
+        else
+            mDDO.setText(String.format(res.getString(R.string.destination_do), res.getString(R.string.none)));
+
+        if (stringNotNullCheck(datum.getDelivery_agent())){
+            String s = agentBidiList.get(datum.getDelivery_agent());
+            if (stringNotNullCheck(s))
+                mDeliveryAgent.setText(String.format(res.getString(R.string.delivery_agent), s));
+            else
+                mDeliveryAgent.setText(String.format(res.getString(R.string.delivery_agent), datum.getDelivery_agent()));
+        }
+        else
+            mDeliveryAgent.setText(String.format(res.getString(R.string.delivery_agent), res.getString(R.string.none)));
+
     }
 
     private void initialize() {
         mUpdate = (Button) findViewById(R.id.btnUpdate);
         mSelectDO = (Button) findViewById(R.id.btnSelectDo);
         mSelectDOAgent = (Button) findViewById(R.id.btnSelectDoAgent);
+        mStatusCancel = (Button) findViewById(R.id.btnStatusCancel);
+        mStatusOTW = (Button) findViewById(R.id.btnStatusOTW);
         mLayoutConsignmentInformation = (LinearLayout) findViewById(R.id.layoutConsignmentInformation);
         mLayoutParcelInformation = (LinearLayout) findViewById(R.id.layoutParcelInformation);
+        mLLHold = (LinearLayout) findViewById(R.id.llHold);
         altPhoneNumberLayout =  (RelativeLayout) findViewById(R.id.altPhoneNumberLayout);
         mConsignmentId = (TextView) findViewById(R.id.textConsignmentId);
         mSenderGroup = (TextView) findViewById(R.id.textSenderGroup);
@@ -250,6 +317,8 @@ public class ActivityConsignmentDetails extends ActivityBase{
         mParcelStatus = (TextView) findViewById(R.id.textParcelStatus);
         mParcelStatusReason = (TextView) findViewById(R.id.textParcelStatusReason);
         mItemType = (TextView) findViewById(R.id.tvItemType);
+        mDDO = (TextView) findViewById(R.id.textDDO);
+        mDeliveryAgent = (TextView) findViewById(R.id.textDeliveryAgent);
 
         mUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -270,23 +339,48 @@ public class ActivityConsignmentDetails extends ActivityBase{
                 loadDoAgent();
             }
         });
+
+        mStatusCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changed_parcel_status_code = res.getString(R.string.s12);
+                setVisibility(INVISIBLE);
+                showToast("Parcel Status : Cancle", Toast.LENGTH_SHORT, END);
+            }
+        });
+        mStatusOTW.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changed_parcel_status_code = res.getString(R.string.s21);
+                setVisibility(AGENT_VISIBLE);
+                showToast("Parcel Status : On the Way", Toast.LENGTH_SHORT, END);
+            }
+        });
     }
 
     private void updateParcel() {
-        if (changedValue != FROM_NONE){
-            printHash(TAG, listData);
-            if (changedValue == FROM_DO){
-                String s = listData.get(d_do);
-                Log.e(TAG, s);
-            }
-            else if (changedValue == FROM_AGENT){
-                String s = listData.get(agent_name);
-                Log.e(TAG, s);
-            }
+        if (changed_parcel_status_code.equals(res.getString(R.string.s0))){
+            showErrorToast(res.getString(R.string.not_allowed), Toast.LENGTH_LONG, MIDDLE);
         }
-        else
-            Log.e(TAG, "Nothing Selected");
-
+        else {
+            if (changedValue != FROM_NONE){
+                String s = "";
+//            printHash(TAG, listData);
+                if (changedValue == FROM_DO){
+                    s = listData.get(d_do);
+                    Log.e(TAG, s);
+                }
+                else if (changedValue == FROM_AGENT){
+                    s = listData.get(agent_name);
+                    Log.e(TAG, s);
+                }
+                Log.e(TAG, s+" "+current_parcel_status_code+" " +changed_parcel_status_code+" "+
+                        visibility.get(changed_parcel_status_code));
+            }
+            else
+                Log.e(TAG, "Nothing Selected" +" "+current_parcel_status_code+" "
+                        +changed_parcel_status_code+" "+visibility.get(changed_parcel_status_code));
+        }
     }
 
     @Override
@@ -398,7 +492,7 @@ public class ActivityConsignmentDetails extends ActivityBase{
 
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(ActivityConsignmentDetails.this,
                 android.R.layout.select_dialog_singlechoice);
-        listData = new HashMap<String, String>();
+        listData = new DualHashBidiMap();
         for (int i = 0; i < list.size(); i++){
             listData.put(list.get(i).getValue(), list.get(i).getId());
             arrayAdapter.add(list.get(i).getValue());
@@ -452,5 +546,22 @@ public class ActivityConsignmentDetails extends ActivityBase{
     public void setChangedAgentorDO(String s, int i){
         changedAgentorDO = s;
         changedValue = i;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.do_refresh:
+                showToast(getString(R.string.refreshing), Toast.LENGTH_LONG, END);
+                setDoBidiList(map);
+                break;
+
+            case R.id.agent_refresh:
+                showToast(getString(R.string.refreshing), Toast.LENGTH_LONG, END);
+                setAgentBidiList(map);
+                break;
+        }
+        return true;
     }
 }
