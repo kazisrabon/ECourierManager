@@ -29,15 +29,20 @@ import com.ks.ecmanager.ecouriermanager.pojo.AgentDOListDatum;
 import com.ks.ecmanager.ecouriermanager.pojo.AgentList;
 import com.ks.ecmanager.ecouriermanager.pojo.DoList;
 import com.ks.ecmanager.ecouriermanager.pojo.ConsignmentListDatum;
+import com.ks.ecmanager.ecouriermanager.pojo.ParcelList;
 import com.ks.ecmanager.ecouriermanager.session.SessionUserData;
 import com.ks.ecmanager.ecouriermanager.webservices.ApiParams;
 import com.ks.ecmanager.ecouriermanager.webservices.interfaces.AgentListInterface;
 import com.ks.ecmanager.ecouriermanager.webservices.interfaces.DoListInterface;
+import com.ks.ecmanager.ecouriermanager.webservices.interfaces.ParcelStatusUpdateInterface;
 
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -138,13 +143,7 @@ public class ActivityConsignmentDetails extends ActivityBase{
         visibility.put(res.getString(R.string.s21), AGENT_VISIBLE);
         visibility.put(res.getString(R.string.s22), INVISIBLE);
         visibility.put(res.getString(R.string.s25), AGENT_VISIBLE);
-    }
-
-    private void setHashMap(String s) {
-        //Lets pass the desired parameters
-//        map.put(ApiParams.PARAM_ADMIN_ID, "" + id);
-//        map.put(ApiParams.PARAM_GROUP, group);
-//        map.put(ApiParams.PARAM_AUTHENTICATION_KEY, "" + authentication_key);
+        visibility.put(res.getString(R.string.s12), INVISIBLE);
     }
 
     private void receiveDataFromIntent() {
@@ -267,6 +266,7 @@ public class ActivityConsignmentDetails extends ActivityBase{
             mDeliveryTime.setText(String.format(res.getString(R.string.delivery_time), res.getString(R.string.none)));
 
         if (stringNotNullCheck(datum.getDestination_do())){
+//            printBidiHash(TAG, doBidiList);
             String s = doBidiList.get(datum.getDestination_do());
             if (stringNotNullCheck(s))
                 mDDO.setText(String.format(res.getString(R.string.destination_do), s));
@@ -278,6 +278,8 @@ public class ActivityConsignmentDetails extends ActivityBase{
             mDDO.setText(String.format(res.getString(R.string.destination_do), res.getString(R.string.none)));
 
         if (stringNotNullCheck(datum.getDelivery_agent())){
+            printBidiHash(TAG, agentBidiList);
+            Log.e(TAG, datum.getDelivery_agent());
             String s = agentBidiList.get(datum.getDelivery_agent());
             if (stringNotNullCheck(s))
                 mDeliveryAgent.setText(String.format(res.getString(R.string.delivery_agent), s));
@@ -330,13 +332,15 @@ public class ActivityConsignmentDetails extends ActivityBase{
         mSelectDO.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadDO();
+                setHashMap();
+                loadDO(map);
             }
         });
         mSelectDOAgent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadDoAgent();
+                setHashMap();
+                loadDoAgent(map);
             }
         });
 
@@ -363,23 +367,51 @@ public class ActivityConsignmentDetails extends ActivityBase{
             showErrorToast(res.getString(R.string.not_allowed), Toast.LENGTH_LONG, MIDDLE);
         }
         else {
-            if (changedValue != FROM_NONE){
-                String s = "";
+            if (stringNotNullCheck(consignment_no)) {
+//            consignment_no
+                map.put(ApiParams.PARAM_CONSIGNMENT_NO, consignment_no);
+                if (changedValue != FROM_NONE) {
+                    String s = "";
 //            printHash(TAG, listData);
-                if (changedValue == FROM_DO){
-                    s = listData.get(d_do);
-                    Log.e(TAG, s);
+                    if (changedValue == FROM_DO) {
+                        s = listData.get(d_do);
+                        //Lets pass the desired parameters
+                        map.put(ApiParams.PARAM_D_DO, s);
+                        map.put(ApiParams.PARAM_STATUS, changed_parcel_status_code);
+                        map.put(ApiParams.PARAM_COMMENT, res.getString(R.string.testing));
+                        parcelStatusUpdate(map);
+                        Log.e(TAG, s);
+                    } else if (changedValue == FROM_AGENT) {
+                        s = listData.get(agent_name);
+                        map.put(ApiParams.PARAM_STATUS, changed_parcel_status_code);
+                        map.put(ApiParams.PARAM_COMMENT, res.getString(R.string.testing));
+                        if (changed_parcel_status_code.equals(res.getString(R.string.s21))) {
+                            map.put(ApiParams.PARAM_AGENT_ID, "" + s);
+                        } else if (changed_parcel_status_code.equals(res.getString(R.string.s25))) {
+                            map.put(ApiParams.PARAM_RETURN_AGENT, "" + s);
+                        }
+                        parcelStatusUpdate(map);
+                        Log.e(TAG, s);
+                    }
+                    Log.e(TAG, s + " " + current_parcel_status_code + " " + changed_parcel_status_code + " " +
+                            visibility.get(changed_parcel_status_code));
+                } else {
+                    if (changed_parcel_status_code.equals(res.getString(R.string.s12))) {
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        String currentDateandTime = sdf.format(new Date());
+                        map.put(ApiParams.PARAM_STATUS, changed_parcel_status_code);
+                        map.put(ApiParams.PARAM_COMMENT, res.getString(R.string.testing));
+                        map.put(ApiParams.PARAM_CANCEL_CALL_TIME, currentDateandTime);
+                        parcelStatusUpdate(map);
+                        Log.e(TAG, currentDateandTime);
+                    } else {
+                        Log.e(TAG, "Nothing Selected" + " " + current_parcel_status_code + " "
+                                + changed_parcel_status_code + " " + visibility.get(changed_parcel_status_code));
+                    }
                 }
-                else if (changedValue == FROM_AGENT){
-                    s = listData.get(agent_name);
-                    Log.e(TAG, s);
-                }
-                Log.e(TAG, s+" "+current_parcel_status_code+" " +changed_parcel_status_code+" "+
-                        visibility.get(changed_parcel_status_code));
             }
             else
-                Log.e(TAG, "Nothing Selected" +" "+current_parcel_status_code+" "
-                        +changed_parcel_status_code+" "+visibility.get(changed_parcel_status_code));
+                showErrorToast("PLEASE SEARCH AGAIN!!!", Toast.LENGTH_SHORT, MIDDLE);
         }
     }
 
@@ -422,7 +454,7 @@ public class ActivityConsignmentDetails extends ActivityBase{
         }
     }
 
-    private void loadDO() {
+    private void loadDO(HashMap<String, String> map) {
         showProgressDialog(false, "", getResources().getString(R.string.loading));
 
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(ApiParams.TAG_BASE_URL).build();
@@ -453,7 +485,7 @@ public class ActivityConsignmentDetails extends ActivityBase{
         });
     }
 
-    private void loadDoAgent() {
+    private void loadDoAgent(HashMap<String, String> map) {
         showProgressDialog(false, "", getResources().getString(R.string.loading));
 
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(ApiParams.TAG_BASE_URL).build();
@@ -546,6 +578,37 @@ public class ActivityConsignmentDetails extends ActivityBase{
     public void setChangedAgentorDO(String s, int i){
         changedAgentorDO = s;
         changedValue = i;
+    }
+
+    private void parcelStatusUpdate (HashMap<String, String> statusMap){
+//        showProgressDialog(false, "", getResources().getString(R.string.loading));
+
+        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(ApiParams.TAG_BASE_URL).build();
+        ParcelStatusUpdateInterface myApiCallback = restAdapter.create(ParcelStatusUpdateInterface.class);
+
+        printHash(TAG, statusMap);
+
+        myApiCallback.getData(ApiParams.TAG_PARCEL_STATUS_UPDATE_KEY, map, new Callback<ParcelList>() {
+            @Override
+            public void success(ParcelList parcelList, Response response) {
+                hideProgressDialog();
+
+                boolean status = parcelList.getStatus();
+                Log.e(TAG, status+" ");
+                if (status) {
+                    showSuccessToast("Status Updated", Toast.LENGTH_LONG, MIDDLE);
+                    startActivity(new Intent(ActivityConsignmentDetails.this, ActivityMain.class));
+                }
+                else
+                    showErrorToast(getString(R.string.no_data_found), Toast.LENGTH_SHORT, MIDDLE);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                hideProgressDialog();
+                showErrorToast("" + error.getMessage() + "!", Toast.LENGTH_SHORT, MIDDLE);
+            }
+        });
     }
 
     @Override

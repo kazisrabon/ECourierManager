@@ -59,4 +59,5 @@
     <string name="refresh">REFRESH</string>
     <string name="do_refresh">DO REFRESH</string>
     <string name="agent_refresh">AGENT REFRESH</string>
+    <string name="testing">TESTING FROM APP</string>
 </resources>

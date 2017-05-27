@@ -219,10 +219,18 @@ public class ActivityBase extends AppCompatActivity {
 
     }
 
-    public void printHash(String where_from ,HashMap<String, String> map){
+    public void printHash(String where_from, HashMap<String, String> map){
         for (String name: map.keySet()){
             String key =name.toString();
             String value = map.get(name).toString();
+            Log.e(where_from +" "+TAG ,key + " " + value);
+        }
+    }
+
+    public void printBidiHash(String where_from, BidiMap<String, String> bidiMap){
+        for (String name : bidiMap.keySet()){
+            String key =name;
+            String value = bidiMap.get(name).toString();
             Log.e(where_from +" "+TAG ,key + " " + value);
         }
     }
@@ -307,10 +315,7 @@ public class ActivityBase extends AppCompatActivity {
     }
 
     public boolean stringNotNullCheck(String s){
-        Log.e(TAG+" CN", s);
-        if (s!= null && !s.isEmpty() && !s.equals(""))
-            return true;
-        else return false;
+        return s != null && !s.isEmpty() && !s.equals("");
     }
 
     @Override

@@ -29,7 +29,6 @@ public class ApiParams {
 
     // common params
     public static final String PARAM_AUTHENTICATION_KEY = "authentication_key";//authentication_key
-    public static final String PARAM_AGENT_ID = "agent_id";//agent_id
     public static final String PARAM_ADMIN_ID = "admin_id";
     public static final String PARAM_GROUP = "group";//group
 
@@ -63,15 +62,6 @@ public class ApiParams {
     public static final String PARAM_PRODUCT_REVIEW = "product_reviw";//product_reviw
     public static final String PARAM_FILE_NAME = "filename";
 
-    // product status update
-    public static final String TAG_PARCEL_UPDATE_KEY = "andParcelStatusUpdate.php";
-
-    public static final String PARAM_STATUS = "status";
-    public static final String PARAM_POD = "pod";
-    public static final String PARAM_COMMENT = "comment";
-    public static final String PARAM_COLLECTED_AMOUNT = "collected_amount";
-    public static final String PARAM_COLLECTED_ITEMS = "items";
-
     // reports
     public static final String TAG_REPORTS_KEY = "andReports.php";
     public static final String PARAM_FROM_DATE = "from_date";
@@ -101,4 +91,16 @@ public class ApiParams {
 
 //    do agents list
     public static final String TAG_DO_AGENT_LIST_KEY = "getAgentList.php";
+
+//    parcel status update
+    public static final String TAG_PARCEL_STATUS_UPDATE_KEY = "andParcelStatusUpdate.php";
+    public static final String PARAM_CANCEL_CALL_TIME= "cancel_call_time";
+    public static final String PARAM_RETURN_AGENT= "rtn_agent";
+    public static final String PARAM_D_DO= "d_do";
+    public static final String PARAM_AGENT_ID = "agent_id";
+    public static final String PARAM_STATUS = "status";
+    public static final String PARAM_COMMENT = "comment";
+    public static final String PARAM_COLLECTED_AMOUNT = "collected_amount";
+    public static final String PARAM_COLLECTED_ITEMS = "items";
+    public static final String PARAM_CONSIGNMENT_NO = "consignment_no";
 }
