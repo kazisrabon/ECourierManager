@@ -36,8 +36,8 @@ import retrofit.client.Response;
 
 public class ActivityLogin extends ActivityBase {
 
+    public static int isLoggedIN;
     private String name, password;
-
     private Button mSubmit;
     private TextInputEditText mName, mPassword;
     public static SessionUserData sessionUserData;
@@ -116,7 +116,7 @@ public class ActivityLogin extends ActivityBase {
                             loginModel.getDo_name(),
                             loginModel.getDo_mobile()
                     );
-                    showToast("" + loginModel.getStatus() + "!", Toast.LENGTH_SHORT, MIDDLE);
+                    isLoggedIN = 0;
                     Intent i = new Intent(ActivityLogin.this, ActivityMain.class);
                     i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(i);

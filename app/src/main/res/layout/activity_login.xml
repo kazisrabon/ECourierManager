@@ -7,6 +7,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/bg_login"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.ks.ecmanager.ecouriermanager.activities.initLayer.ActivityLogin">
@@ -54,6 +55,7 @@
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:passwordToggleEnabled="true"
                 android:layout_marginLeft="4dp"
                 android:layout_marginRight="4dp">
 

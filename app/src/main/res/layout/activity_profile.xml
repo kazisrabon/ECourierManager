@@ -113,5 +113,6 @@
         android:layout_marginRight="@dimen/map_FAB_marginRight"
         android:layout_marginBottom="@dimen/locate_user_FAB_marginBottom"
         app:backgroundTint="@color/white"
-        android:background="@drawable/bg_linear_gradient" />
+        android:background="@drawable/bg_linear_gradient"
+        android:visibility="gone"/>
 </RelativeLayout>

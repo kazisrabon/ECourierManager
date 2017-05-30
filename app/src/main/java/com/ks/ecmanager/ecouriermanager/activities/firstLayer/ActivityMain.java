@@ -48,6 +48,7 @@ import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
+import static com.ks.ecmanager.ecouriermanager.activities.initLayer.ActivityLogin.isLoggedIN;
 import static com.ks.ecmanager.ecouriermanager.activities.initLayer.ActivityLogin.sessionUserData;
 
 public class ActivityMain extends ActivityBase {
@@ -76,6 +77,14 @@ public class ActivityMain extends ActivityBase {
         user = sessionUserData.getSessionDetails();
         setHashMap();
         initialize();
+        if (isLoggedIN == 0){
+            showToast(getString(R.string.refreshing), Toast.LENGTH_SHORT, END);
+            setDoBidiList(map);
+            showToast(getString(R.string.refreshing), Toast.LENGTH_SHORT, END);
+            setAgentBidiList(map);
+            isLoggedIN = 1;
+        }
+
     }
 
     private void setHashMap() {
@@ -335,13 +344,9 @@ public class ActivityMain extends ActivityBase {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id) {
-            case R.id.do_refresh:
+            case R.id.refresh:
                 showToast(getString(R.string.refreshing), Toast.LENGTH_LONG, END);
                 setDoBidiList(map);
-                break;
-
-            case R.id.agent_refresh:
-                showToast(getString(R.string.refreshing), Toast.LENGTH_LONG, END);
                 setAgentBidiList(map);
                 break;
         }

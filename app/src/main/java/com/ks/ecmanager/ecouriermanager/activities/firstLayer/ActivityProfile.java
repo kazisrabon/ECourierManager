@@ -25,6 +25,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -226,12 +227,11 @@ public class ActivityProfile extends ActivityBase {
         {
             folder.mkdir();
         }
-        final Calendar c = Calendar.getInstance();
         path = String.format(Environment.getExternalStorageDirectory() +"/"+ALBUM_NAME+"_%d.jpg", System.currentTimeMillis());
         mPhoto = new File(path);
         Log.e("URI", Uri.fromFile(mPhoto).toString());
         Uri uri = FileProvider.getUriForFile(
-                this,
+                ActivityProfile.this,
                 getApplicationContext().getPackageName()+".provider",
                 mPhoto);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
@@ -420,4 +420,15 @@ public class ActivityProfile extends ActivityBase {
         }
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.refresh:
+                showToast(getString(R.string.refreshing), Toast.LENGTH_LONG, END);
+                getProfileData();
+                break;
+        }
+        return true;
+    }
 }

@@ -405,6 +405,9 @@ public class ActivityConsignmentDetails extends ActivityBase{
                         parcelStatusUpdate(map);
                         Log.e(TAG, currentDateandTime);
                     } else {
+                        map.put(ApiParams.PARAM_STATUS, changed_parcel_status_code);
+                        map.put(ApiParams.PARAM_COMMENT, res.getString(R.string.testing));
+                        parcelStatusUpdate(map);
                         Log.e(TAG, "Nothing Selected" + " " + current_parcel_status_code + " "
                                 + changed_parcel_status_code + " " + visibility.get(changed_parcel_status_code));
                     }
@@ -519,7 +522,7 @@ public class ActivityConsignmentDetails extends ActivityBase{
     private void showList(List<AgentDOListDatum> list, final int where_from) {
         final String[] s = {""};
         AlertDialog.Builder builderSingle = new AlertDialog.Builder(ActivityConsignmentDetails.this);
-        builderSingle.setIcon(R.mipmap.ic_launcher);
+        builderSingle.setIcon(R.mipmap.ic_launcher_new);
         builderSingle.setTitle("Select One Name:-");
 
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(ActivityConsignmentDetails.this,
@@ -581,7 +584,7 @@ public class ActivityConsignmentDetails extends ActivityBase{
     }
 
     private void parcelStatusUpdate (HashMap<String, String> statusMap){
-//        showProgressDialog(false, "", getResources().getString(R.string.loading));
+        showProgressDialog(false, "", getResources().getString(R.string.loading));
 
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(ApiParams.TAG_BASE_URL).build();
         ParcelStatusUpdateInterface myApiCallback = restAdapter.create(ParcelStatusUpdateInterface.class);
@@ -615,13 +618,9 @@ public class ActivityConsignmentDetails extends ActivityBase{
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id) {
-            case R.id.do_refresh:
+            case R.id.refresh:
                 showToast(getString(R.string.refreshing), Toast.LENGTH_LONG, END);
                 setDoBidiList(map);
-                break;
-
-            case R.id.agent_refresh:
-                showToast(getString(R.string.refreshing), Toast.LENGTH_LONG, END);
                 setAgentBidiList(map);
                 break;
         }

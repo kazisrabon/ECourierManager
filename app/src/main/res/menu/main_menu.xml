@@ -6,11 +6,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
             <item
-                android:id="@+id/do_refresh"
-                android:title="@string/do_refresh"
+                android:id="@+id/refresh"
+                android:title="@string/refresh"
                 app:showAsAction="never" />
-            <item
-                android:id="@+id/agent_refresh"
-                android:title="@string/agent_refresh"
-                app:showAsAction="never" />
+            <!--<item-->
+                <!--android:id="@+id/agent_refresh"-->
+                <!--android:title="@string/agent_refresh"-->
+                <!--app:showAsAction="never" />-->
 </menu>
