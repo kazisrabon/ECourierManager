@@ -109,6 +109,38 @@ public class ActivityBase extends AppCompatActivity {
         });
     }
 
+    public void setAgentDoBidiList(HashMap<String, String> map) {
+        doBidiList = new DualHashBidiMap();
+        agentBidiList = new DualHashBidiMap();
+        showProgressDialog(false, "", getResources().getString(R.string.loading));
+
+        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(ApiParams.TAG_BASE_URL).build();
+        DoListInterface myApiCallback = restAdapter.create(DoListInterface.class);
+
+        myApiCallback.getData(ApiParams.TAG_DO_LIST_KEY, map, new Callback<DoList>() {
+            @Override
+            public void success(DoList doList, Response response) {
+                boolean status = doList.getStatus();
+                Log.e(TAG, status+" ");
+                if (status) {
+                    isDoRefreshed = true;
+                    for (int i = 0; i < doList.getDo_list().size(); i++) {
+                        doBidiList.put(doList.getDo_list().get(i).getId(), doList.getDo_list().get(i).getValue());
+                    }
+                }
+                else
+                    showErrorToast(getString(R.string.no_data_found), Toast.LENGTH_SHORT, MIDDLE);
+
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                hideProgressDialog();
+                showErrorToast("" + error.getMessage() + "!", Toast.LENGTH_SHORT, MIDDLE);
+            }
+        });
+    }
+
     public void setAgentBidiList(HashMap<String, String> map) {
         agentBidiList = new DualHashBidiMap();
         showProgressDialog(false, "", getResources().getString(R.string.loading));
@@ -116,7 +148,6 @@ public class ActivityBase extends AppCompatActivity {
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(ApiParams.TAG_BASE_URL).build();
         AgentListInterface myApiCallback = restAdapter.create(AgentListInterface.class);
 
-        printHash(TAG, map);
         myApiCallback.getData(ApiParams.TAG_DO_AGENT_LIST_KEY, map, new Callback<AgentList>() {
             @Override
             public void success(AgentList agentList, Response response) {

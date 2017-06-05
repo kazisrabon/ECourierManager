@@ -36,11 +36,31 @@
     </string-array>
 
     <!-- spinner parcel update items starts-->
-    <string name="spinner_parcel_status_s2">Picked Up</string>
-    <string name="spinner_parcel_status_s4">Delivered</string>
-    <string name="spinner_parcel_status_s5">Partial Delivered</string>
-    <string name="spinner_parcel_status_s7">Hold at eCourier Hub</string>
-    <string name="spinner_parcel_status_s24">Parcel Return</string>
+    <string name="spinner_parcel_status_s2">@string/status_s2</string>
+    <string name="spinner_parcel_status_s4">@string/status_s4</string>
+    <string name="spinner_parcel_status_s5">@string/status_s5</string>
+    <string name="spinner_parcel_status_s7">@string/status_s7</string>
+    <string name="spinner_parcel_status_s24">@string/status_s24</string>
+
+    <!--status-->
+    <string name="status_s0">Back</string>
+    <string name="status_s2">Picked Up</string>
+    <string name="status_s4">Delivered</string>
+    <string name="status_s5">Partial Delivered</string>
+    <string name="status_s6">Out of Address</string>
+    <string name="status_s7">Hold at eCourier Hub</string>
+    <string name="status_s8">Initiated Api</string>
+    <string name="status_s10">Initiated</string>
+    <string name="status_s12">Cancle</string>
+    <string name="status_s13">In Source Hub</string>
+    <string name="status_s14">In Transit</string>
+    <string name="status_s15">In Destination Hub</string>
+    <string name="status_s20">Deleted</string>
+    <string name="status_s21">On the Way</string>
+    <string name="status_s22">Return to RTN</string>
+    <string name="status_s23">Return to Sorce Do</string>
+    <string name="status_s24">Parcel Return</string>
+    <string name="status_s25">Returning to Sender</string>
 
     <!--search-->
     <string-array name="parcelStatusValuesArray">

@@ -51,7 +51,8 @@ public class ActivityLogin extends ActivityBase {
         sessionUserData = new SessionUserData(this);
 //        redirect
         if (sessionUserData.isLoggedIn())
-                startActivity(new Intent(ActivityLogin.this, ActivityMain.class));
+//            isLoggedIN = 1;
+            startActivity(new Intent(ActivityLogin.this, ActivityMain.class));
 
         mName = (TextInputEditText) findViewById(R.id.editUserName);
         mPassword = (TextInputEditText) findViewById(R.id.editPassword);

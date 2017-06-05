@@ -80,7 +80,6 @@ public class ActivityMain extends ActivityBase {
         if (isLoggedIN == 0){
             showToast(getString(R.string.refreshing), Toast.LENGTH_SHORT, END);
             setDoBidiList(map);
-            showToast(getString(R.string.refreshing), Toast.LENGTH_SHORT, END);
             setAgentBidiList(map);
             isLoggedIN = 1;
         }
@@ -233,9 +232,9 @@ public class ActivityMain extends ActivityBase {
                 if (status) {
                     mSearchValue.setText("");
                     consignmentListDatumList = consignment_list.getData();
-                    Log.e("SOURCE DO", consignmentListDatumList.get(0).getSource_do());
-                    Log.e("DESTINATION DO", consignmentListDatumList.get(0).getDestination_do());
-                    Log.e("MY DO", user.get(SessionUserData.KEY_DO_NAME)+" "+doBidiList.getKey(user.get(SessionUserData.KEY_DO_NAME)));
+//                    Log.e("SOURCE DO", consignmentListDatumList.get(0).getSource_do());
+//                    Log.e("DESTINATION DO", consignmentListDatumList.get(0).getDestination_do());
+//                    Log.e("MY DO", user.get(SessionUserData.KEY_DO_NAME)+" "+doBidiList.getKey(user.get(SessionUserData.KEY_DO_NAME)));
                     int i = 0;
                     if (consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s2))
                             ||consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s4))
@@ -247,8 +246,8 @@ public class ActivityMain extends ActivityBase {
                             ||consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s12))
                             ||consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s13))
                             ){
-                        if (consignmentListDatumList.get(0).getSource_do().equals(doBidiList
-                                .getKey(user.get(SessionUserData.KEY_DO_NAME)))){
+                        if (consignmentListDatumList.get(0).getSource_do()
+                                .equals(doBidiList.getKey(user.get(SessionUserData.KEY_DO_NAME)))){
                             i = 1;
 
                         }

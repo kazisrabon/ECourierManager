@@ -11,6 +11,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -24,15 +25,18 @@ import android.widget.Toast;
 import com.ks.ecmanager.ecouriermanager.R;
 import com.ks.ecmanager.ecouriermanager.activities.base.ActivityBase;
 import com.ks.ecmanager.ecouriermanager.activities.firstLayer.ActivityMain;
+import com.ks.ecmanager.ecouriermanager.activities.firstLayer.ActivityProfile;
 import com.ks.ecmanager.ecouriermanager.activities.initLayer.ActivityLogin;
 import com.ks.ecmanager.ecouriermanager.pojo.AgentDOListDatum;
 import com.ks.ecmanager.ecouriermanager.pojo.AgentList;
+import com.ks.ecmanager.ecouriermanager.pojo.ConsignmentList;
 import com.ks.ecmanager.ecouriermanager.pojo.DoList;
 import com.ks.ecmanager.ecouriermanager.pojo.ConsignmentListDatum;
 import com.ks.ecmanager.ecouriermanager.pojo.ParcelList;
 import com.ks.ecmanager.ecouriermanager.session.SessionUserData;
 import com.ks.ecmanager.ecouriermanager.webservices.ApiParams;
 import com.ks.ecmanager.ecouriermanager.webservices.interfaces.AgentListInterface;
+import com.ks.ecmanager.ecouriermanager.webservices.interfaces.ConsignmentListInterface;
 import com.ks.ecmanager.ecouriermanager.webservices.interfaces.DoListInterface;
 import com.ks.ecmanager.ecouriermanager.webservices.interfaces.ParcelStatusUpdateInterface;
 
@@ -72,10 +76,13 @@ public class ActivityConsignmentDetails extends ActivityBase{
     private HashMap<String, String> user = new HashMap<String, String>();
     private HashMap<String, String> map = new HashMap<String, String>();
     private HashMap<String, String> statusMap = new HashMap<String, String>();
+    private HashMap<String, String> updateButtonMap = new HashMap<String, String>();
     private BidiMap<String, String> listData = new DualHashBidiMap();
     private HashMap<String, Integer> visibility = new HashMap<String, Integer>();
     private String changedAgentorDO;
     private int changedValue = FROM_NONE;
+    private List<ConsignmentListDatum> consignmentListDatumList;
+    private AlertDialog b;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,6 +142,24 @@ public class ActivityConsignmentDetails extends ActivityBase{
         statusMap.put(res.getString(R.string.s24), res.getString(R.string.s0));
         statusMap.put(res.getString(R.string.s25), res.getString(R.string.s0));
 
+       updateButtonMap.put(res.getString(R.string.s0) , res.getString(R.string.status_s0) );
+        updateButtonMap.put(res.getString(R.string.s2) , res.getString(R.string.status_s2) );
+       updateButtonMap.put(res.getString(R.string.s4) , res.getString(R.string.status_s4) );
+       updateButtonMap.put(res.getString(R.string.s5) , res.getString(R.string.status_s5) );
+       updateButtonMap.put(res.getString(R.string.s6) , res.getString(R.string.status_s6) );
+       updateButtonMap.put(res.getString(R.string.s8) , res.getString(R.string.status_s8) );
+       updateButtonMap.put(res.getString(R.string.s10), res.getString(R.string.status_s10));
+       updateButtonMap.put(res.getString(R.string.s12), res.getString(R.string.status_s12));
+       updateButtonMap.put(res.getString(R.string.s13), res.getString(R.string.status_s13));
+       updateButtonMap.put(res.getString(R.string.s14), res.getString(R.string.status_s14));
+       updateButtonMap.put(res.getString(R.string.s15), res.getString(R.string.status_s15));
+       updateButtonMap.put(res.getString(R.string.s20), res.getString(R.string.status_s20));
+       updateButtonMap.put(res.getString(R.string.s21), res.getString(R.string.status_s21));
+       updateButtonMap.put(res.getString(R.string.s22), res.getString(R.string.status_s22));
+       updateButtonMap.put(res.getString(R.string.s23), res.getString(R.string.status_s23));
+       updateButtonMap.put(res.getString(R.string.s24), res.getString(R.string.status_s24));
+       updateButtonMap.put(res.getString(R.string.s25), res.getString(R.string.status_s25));
+
 //        visibility hashMap
         visibility.put(res.getString(R.string.s0), INVISIBLE);
         visibility.put(res.getString(R.string.s13), INVISIBLE);
@@ -156,7 +181,6 @@ public class ActivityConsignmentDetails extends ActivityBase{
 //                    setConsignmentDetails(datum);
                 }
                 else if (where_from.equals(CN_TYPE_SEARCH)){
-//                    int position = Integer.parseInt(getIntent().getStringExtra("consignment_data_position"));
                     int position = getIntent().getIntExtra(KEY_CN_POS, 0);
                     ArrayList<ConsignmentListDatum> myList = (ArrayList<ConsignmentListDatum>) getIntent().getSerializableExtra(KEY_CN_DATA);
                     datum = myList.get(position);
@@ -255,6 +279,11 @@ public class ActivityConsignmentDetails extends ActivityBase{
             mParcelStatus.setText(res.getString(R.string.none));
 
         current_parcel_status_code = datum.getStatus_code();
+        String status = statusMap.get(current_parcel_status_code);
+        status= updateButtonMap.get(status);
+        mUpdate.setText(status);
+        if (current_parcel_status_code.equals(res.getString(R.string.s7)))
+            mUpdate.setText("Update");
         if (stringNotNullCheck(current_parcel_status_code)){
             if (!current_parcel_status_code.equals(res.getString(R.string.s10))){
                 mDeliveryTime.setText(String.format(res.getString(R.string.delivery_time), datum.getActual_delivery_time()));
@@ -348,6 +377,7 @@ public class ActivityConsignmentDetails extends ActivityBase{
             @Override
             public void onClick(View v) {
                 changed_parcel_status_code = res.getString(R.string.s12);
+                mUpdate.setText(res.getString(R.string.status_s12));
                 setVisibility(INVISIBLE);
                 showToast("Parcel Status : Cancle", Toast.LENGTH_SHORT, END);
             }
@@ -356,6 +386,7 @@ public class ActivityConsignmentDetails extends ActivityBase{
             @Override
             public void onClick(View v) {
                 changed_parcel_status_code = res.getString(R.string.s21);
+                mUpdate.setText(res.getString(R.string.status_s21));
                 setVisibility(AGENT_VISIBLE);
                 showToast("Parcel Status : On the Way", Toast.LENGTH_SHORT, END);
             }
@@ -365,6 +396,7 @@ public class ActivityConsignmentDetails extends ActivityBase{
     private void updateParcel() {
         if (changed_parcel_status_code.equals(res.getString(R.string.s0))){
             showErrorToast(res.getString(R.string.not_allowed), Toast.LENGTH_LONG, MIDDLE);
+            startActivity(new Intent(ActivityConsignmentDetails.this, ActivityMain.class));
         }
         else {
             if (stringNotNullCheck(consignment_no)) {
@@ -584,6 +616,8 @@ public class ActivityConsignmentDetails extends ActivityBase{
     }
 
     private void parcelStatusUpdate (HashMap<String, String> statusMap){
+        confirmPopup();
+
         showProgressDialog(false, "", getResources().getString(R.string.loading));
 
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(ApiParams.TAG_BASE_URL).build();
@@ -599,11 +633,75 @@ public class ActivityConsignmentDetails extends ActivityBase{
                 boolean status = parcelList.getStatus();
                 Log.e(TAG, status+" ");
                 if (status) {
-                    showSuccessToast("Status Updated", Toast.LENGTH_LONG, MIDDLE);
-                    startActivity(new Intent(ActivityConsignmentDetails.this, ActivityMain.class));
+                    reloadCN(map.get(ApiParams.PARAM_CONSIGNMENT_NO));
                 }
                 else
                     showErrorToast(getString(R.string.no_data_found), Toast.LENGTH_SHORT, MIDDLE);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                hideProgressDialog();
+                showErrorToast("" + error.getMessage() + "!", Toast.LENGTH_SHORT, MIDDLE);
+            }
+        });
+    }
+
+    private void confirmPopup() {
+        Log.e(TAG+"confirm_popup", changedAgentorDO+" "+changedValue);
+//        AlertDialog.Builder builderInner = new AlertDialog.Builder(ActivityConsignmentDetails.this);
+//        if (changedValue == FROM_NONE){
+//            builderInner.setMessage("");
+//        }
+//        else if (changedValue == FROM_AGENT) {
+//            builderInner.setMessage("");
+//        }
+//        else if (changedValue == FROM_DO) {
+//
+//        }
+//        builderInner.setMessage("");
+//        builderInner.setTitle("Your Selection is");
+//        builderInner.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog,int which) {
+//
+//                dialog.dismiss();
+//            }
+//        });
+//        builderInner.setNegativeButton("Cancle", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog,int which) {
+//
+//                dialog.dismiss();
+//            }
+//        });
+//        builderInner.show();
+    }
+
+    private void reloadCN(String search_value){
+        showProgressDialog(false, "", getResources().getString(R.string.loading));
+
+        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(ApiParams.TAG_BASE_URL).build();
+        ConsignmentListInterface myApiCallback = restAdapter.create(ConsignmentListInterface.class);
+        setHashMap();
+        map.put(ApiParams.TAG_CONSIGNMENT_NO, "" + search_value);
+
+//        printHash(TAG, map);
+        myApiCallback.getData(ApiParams.TAG_CONSIGNMENT_SEARCH_KEY, map, new Callback<ConsignmentList>() {
+            @Override
+            public void success(ConsignmentList consignment_list, Response response) {
+                hideProgressDialog();
+
+                boolean status = consignment_list.getStatus();
+                Log.e(TAG, status+" ");
+                if (status) {
+                    consignmentListDatumList = consignment_list.getData();
+                    Log.e("SOURCE DO", consignmentListDatumList.get(0).getSource_do());
+                    setConsignmentDetails(consignmentListDatumList.get(0));
+                }
+                else
+                    showErrorToast(getString(R.string.no_data_found), Toast.LENGTH_SHORT, MIDDLE);
+
             }
 
             @Override

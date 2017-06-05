@@ -337,7 +337,8 @@
                     android:id="@+id/textParcelStatus"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/subtitle_text" />
+                    android:textStyle="bold"
+                    android:textSize="@dimen/title_text"/>
 
                 <TextView
                     android:id="@+id/textParcelStatusReason"
