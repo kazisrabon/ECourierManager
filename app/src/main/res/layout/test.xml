@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2017. kazi srabon. Contact : kaziiit@gmail.com
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Spinner
+                android:id="@+id/spinner_pick_address"
+                android:layout_width="match_parent"
+                android:layout_height="26sp"
+                android:gravity="center"/>
+
+
+            <TextView
+                android:id="@+id/tvRecepient"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="4dp"
+                android:background="@color/colorPrimary"
+                android:text="Recepient"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="4dp">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/ETRName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Recepient Name"
+                    android:imeOptions="actionNext"
+                    android:inputType="text"
+                    android:padding="7dp"
+                    android:lines="1"
+                    android:maxLines="1"
+                    android:text="" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="4dp">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/ETRNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Recepient Number"
+                    android:imeOptions="actionNext"
+                    android:inputType="phone"
+                    android:padding="7dp"
+                    android:lines="1"
+                    android:maxLines="1"
+                    android:text="" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="4dp">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/ETRAlteNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Recepient Alternate Number"
+                    android:imeOptions="actionNext"
+                    android:inputType="phone"
+                    android:padding="7dp"
+                    android:lines="1"
+                    android:maxLines="1"
+                    android:text="" />
+            </android.support.design.widget.TextInputLayout>
+            <Spinner
+                android:id="@+id/spinner_r_city"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"/>
+
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="4dp">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/ETRAddres"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Recepient Landmark"
+                    android:imeOptions="actionNext"
+                    android:inputType="text"
+                    android:padding="7dp"
+                    android:lines="1"
+                    android:maxLines="1"
+                    android:text="" />
+            </android.support.design.widget.TextInputLayout>
+
+
+            <!--#2-->
+
+            <TextView
+                android:id="@+id/tvParcel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimary"
+                android:layout_marginTop="4dp"
+                android:padding="4dp"
+                android:text="Parcel"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+
+            <Spinner
+                android:id="@+id/spinner_payment_method"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"/>
+            <Spinner
+                android:id="@+id/spinner_parcel_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"/>
+            <Spinner
+                android:id="@+id/spinner_package"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"/>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="4dp">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/ETPMethod"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Recepient Landmark"
+                    android:imeOptions="actionNext"
+                    android:inputType="text"
+                    android:padding="7dp"
+                    android:lines="1"
+                    android:maxLines="1"
+                android:text="" />
+            </android.support.design.widget.TextInputLayout>
+
+            <!--#3-->
+
+            <TextView
+                android:id="@+id/tvItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimary"
+                android:layout_marginTop="4dp"
+                android:padding="4dp"
+                android:text="Item"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="4dp">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/ETItemNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Item Number"
+                    android:imeOptions="actionNext"
+                    android:inputType="text"
+                    android:padding="7dp"
+                    android:lines="1"
+                    android:maxLines="1"
+                android:text="" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="4dp">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/ETItemType"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Item Type"
+                    android:imeOptions="actionNext"
+                    android:inputType="text"
+                    android:padding="7dp"
+                    android:lines="1"
+                    android:maxLines="1"
+                android:text="" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="4dp">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/ETInstruction"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Instruction"
+                    android:imeOptions="actionNext"
+                    android:inputType="text"
+                    android:padding="7dp"
+                    android:lines="1"
+                    android:maxLines="1"
+                android:text="" />
+            </android.support.design.widget.TextInputLayout>
+
+
+            <!--#4-->
+
+            <TextView
+                android:id="@+id/tvDelivery"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimary"
+                android:layout_marginTop="4dp"
+                android:padding="4dp"
+                android:text="Delivery Time &amp; Date "
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="4dp">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/ETIDeliveryDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Delivery Date"
+                    android:imeOptions="actionNext"
+                    android:inputType="text"
+                    android:padding="7dp"
+                    android:lines="1"
+                    android:maxLines="1"
+                android:text="" />
+            </android.support.design.widget.TextInputLayout>
+
+            <Spinner
+                android:id="@+id/spinner_delivery_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+
+</LinearLayout>
