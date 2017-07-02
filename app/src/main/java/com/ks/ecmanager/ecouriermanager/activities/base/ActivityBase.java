@@ -28,11 +28,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ks.ecmanager.ecouriermanager.R;
+import com.ks.ecmanager.ecouriermanager.database.DatabaseHandler;
 import com.ks.ecmanager.ecouriermanager.pojo.AgentList;
 import com.ks.ecmanager.ecouriermanager.pojo.DoList;
+import com.ks.ecmanager.ecouriermanager.pojo.ProfileList;
 import com.ks.ecmanager.ecouriermanager.webservices.ApiParams;
 import com.ks.ecmanager.ecouriermanager.webservices.interfaces.AgentListInterface;
 import com.ks.ecmanager.ecouriermanager.webservices.interfaces.DoListInterface;
+import com.ks.ecmanager.ecouriermanager.webservices.interfaces.ProfileListInterface;
 
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
@@ -67,6 +70,7 @@ public class ActivityBase extends AppCompatActivity {
             REQUEST_READ_EXTERNAL_STORAGE = 402,
             calender_type = 110;
     public static Drawable IMG_DRAWABLE = null;
+    public static DatabaseHandler db;
     public static Bitmap mBitmap = null;
     public static boolean isAgentRefreshed = false, isDoRefreshed = false;
     private final String TAG = "Base";
@@ -78,7 +82,6 @@ public class ActivityBase extends AppCompatActivity {
 
     public void setDoBidiList(HashMap<String, String> map) {
         doBidiList = new DualHashBidiMap();
-        showProgressDialog(false, "", getResources().getString(R.string.loading));
 
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(ApiParams.TAG_BASE_URL).build();
         DoListInterface myApiCallback = restAdapter.create(DoListInterface.class);
@@ -86,24 +89,23 @@ public class ActivityBase extends AppCompatActivity {
         myApiCallback.getData(ApiParams.TAG_DO_LIST_KEY, map, new Callback<DoList>() {
             @Override
             public void success(DoList doList, Response response) {
-                hideProgressDialog();
-
                 boolean status = doList.getStatus();
                 Log.e(TAG, status+" ");
                 if (status) {
                     isDoRefreshed = true;
                     for (int i = 0; i < doList.getDo_list().size(); i++) {
                         doBidiList.put(doList.getDo_list().get(i).getId(), doList.getDo_list().get(i).getValue());
+                        db.addDo(doList.getDo_list().get(i));
+                        showSuccessToast("DO Loaded", 0, END);
                     }
                 }
-                else
-                    showErrorToast(getString(R.string.no_data_found), Toast.LENGTH_SHORT, MIDDLE);
-
+                else{
+                    showErrorToast(getString(R.string.no_do_found), Toast.LENGTH_SHORT, MIDDLE);
+                }
             }
 
             @Override
             public void failure(RetrofitError error) {
-                hideProgressDialog();
                 showErrorToast("" + error.getMessage() + "!", Toast.LENGTH_SHORT, MIDDLE);
             }
         });
@@ -143,7 +145,6 @@ public class ActivityBase extends AppCompatActivity {
 
     public void setAgentBidiList(HashMap<String, String> map) {
         agentBidiList = new DualHashBidiMap();
-        showProgressDialog(false, "", getResources().getString(R.string.loading));
 
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(ApiParams.TAG_BASE_URL).build();
         AgentListInterface myApiCallback = restAdapter.create(AgentListInterface.class);
@@ -151,30 +152,54 @@ public class ActivityBase extends AppCompatActivity {
         myApiCallback.getData(ApiParams.TAG_DO_AGENT_LIST_KEY, map, new Callback<AgentList>() {
             @Override
             public void success(AgentList agentList, Response response) {
-                hideProgressDialog();
-
                 boolean status = agentList.getStatus();
                 Log.e(TAG, status+" ");
                 if (status) {
                     isAgentRefreshed = true;
                     for (int i = 0; i < agentList.getAgent_list().size(); i++) {
                         agentBidiList.put(agentList.getAgent_list().get(i).getId(), agentList.getAgent_list().get(i).getValue());
+                        db.addAgent(agentList.getAgent_list().get(i));
+                        showSuccessToast("Agent Loaded", 0, END);
                     }
                 }
-                else
-                    showErrorToast(getString(R.string.no_data_found), Toast.LENGTH_SHORT, MIDDLE);
-
+                else{
+                    showErrorToast(getString(R.string.no_agent_found), Toast.LENGTH_SHORT, MIDDLE);
+                }
             }
 
             @Override
             public void failure(RetrofitError error) {
-                hideProgressDialog();
                 showErrorToast("" + error.getMessage() + "!", Toast.LENGTH_SHORT, MIDDLE);
             }
         });
     }
 
+    public void setProfileData(final HashMap<String, String> map) {
+        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(ApiParams.TAG_BASE_URL).build();
+        ProfileListInterface myApiCallback = restAdapter.create(ProfileListInterface.class);
 
+        myApiCallback.getData(ApiParams.TAG_PROFILE_KEY, map, new Callback<ProfileList>() {
+            @Override
+            public void success(ProfileList profileList, Response response) {
+                //we get json object from server to our POJO or model class
+
+                boolean status = profileList.getStatus();
+                Log.e(TAG, profileList.getStatus()+"");
+                if (status) {
+                    Log.e(TAG, profileList.getData().getName()+"");
+                    db.addProfile(profileList.getData(), map.get(ApiParams.PARAM_ADMIN_ID));
+                    showSuccessToast("Profile Loaded", 0, END);
+                } else {
+                    showErrorToast(getString(R.string.no_profile_data_found), Toast.LENGTH_SHORT, MIDDLE);
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                showErrorToast("" + error.getMessage() + "!", Toast.LENGTH_SHORT, MIDDLE);
+            }
+        });
+    }
 
     public ActivityBase() {
         this.activity = ActivityBase.this;

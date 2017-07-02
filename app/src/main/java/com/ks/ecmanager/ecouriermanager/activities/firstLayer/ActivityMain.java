@@ -77,11 +77,13 @@ public class ActivityMain extends ActivityBase {
         user = sessionUserData.getSessionDetails();
         setHashMap();
         initialize();
-        if (isLoggedIN == 0){
-            showToast(getString(R.string.refreshing), Toast.LENGTH_SHORT, END);
+        if (!sessionUserData.isLoggedIn()){
+            showProgressDialog(false, "", getResources().getString(R.string.loading));
             setDoBidiList(map);
             setAgentBidiList(map);
-            isLoggedIN = 1;
+            setProfileData(map);
+            sessionUserData.setLoggedIn();
+            hideProgressDialog();
         }
 
     }

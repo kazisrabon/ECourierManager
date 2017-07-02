@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.ks.ecmanager.ecouriermanager.R;
 import com.ks.ecmanager.ecouriermanager.activities.base.ActivityBase;
 import com.ks.ecmanager.ecouriermanager.activities.firstLayer.ActivityMain;
+import com.ks.ecmanager.ecouriermanager.database.DatabaseHandler;
 import com.ks.ecmanager.ecouriermanager.pojo.Login;
 import com.ks.ecmanager.ecouriermanager.session.SessionUserData;
 import com.ks.ecmanager.ecouriermanager.utils.FormValidator;
@@ -34,26 +35,35 @@ import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
+import static com.ks.ecmanager.ecouriermanager.database.DatabaseHandler.doesDatabaseExist;
+
 public class ActivityLogin extends ActivityBase {
 
+    private static final String TABLE_AGENTS = "agents";
+    private static final String TABLE_PROFILE = "profile";
     public static int isLoggedIN;
     private String name, password;
     private Button mSubmit;
     private TextInputEditText mName, mPassword;
     public static SessionUserData sessionUserData;
     private final String TAG = "LOGIN";
+    boolean alreadyExecuted;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        if (!doesDatabaseExist(this)){
+            db = new DatabaseHandler(this);
+        }
+
         sessionUserData = new SessionUserData(this);
 //        redirect
-        if (sessionUserData.isLoggedIn())
+        if (sessionUserData.isLoggedIn()){
 //            isLoggedIN = 1;
             startActivity(new Intent(ActivityLogin.this, ActivityMain.class));
-
+        }
         mName = (TextInputEditText) findViewById(R.id.editUserName);
         mPassword = (TextInputEditText) findViewById(R.id.editPassword);
 
@@ -117,7 +127,6 @@ public class ActivityLogin extends ActivityBase {
                             loginModel.getDo_name(),
                             loginModel.getDo_mobile()
                     );
-                    isLoggedIN = 0;
                     Intent i = new Intent(ActivityLogin.this, ActivityMain.class);
                     i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(i);
@@ -159,32 +168,32 @@ public class ActivityLogin extends ActivityBase {
         }
     }
 
-@Override
-public boolean onKeyDown(int keyCode, KeyEvent event) {
-    if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
 
-        AlertDialog.Builder alert_box = new AlertDialog.Builder(this);
-        alert_box.setTitle(getResources().getString(R.string.exit_title));
-        alert_box.setMessage(getResources().getString(R.string.exit_confirmation));
+            AlertDialog.Builder alert_box = new AlertDialog.Builder(this);
+            alert_box.setTitle(getResources().getString(R.string.exit_title));
+            alert_box.setMessage(getResources().getString(R.string.exit_confirmation));
 
-        alert_box.setPositiveButton("Yes",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        finish();
-                    }
-                });
+            alert_box.setPositiveButton("Yes",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface arg0, int arg1) {
+                            finish();
+                        }
+                    });
 
-        alert_box.setNeutralButton("No",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface arg0, int arg1) {
-                    }
-                });
+            alert_box.setNeutralButton("No",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface arg0, int arg1) {
+                        }
+                    });
 
-        alert_box.show();
+            alert_box.show();
 
-        return true;
-    } else {
-        return super.onKeyDown(keyCode, event);
+            return true;
+        } else {
+            return super.onKeyDown(keyCode, event);
+        }
     }
-}
 }

@@ -55,8 +55,6 @@ public class SessionUserData {
                                String key,
                                String do_name,
                                String do_mobile) {
-        // Storing job value as TRUE
-        editor.putBoolean(IS_AVAILABLE, true);
         editor.putString(KEY_USER_TYPE, type);
         editor.putString(KEY_USER_ID, id);
         editor.putString(KEY_USER_PASSWORD, password);
@@ -83,6 +81,13 @@ public class SessionUserData {
         user.put(KEY_DO_MOBILE, pref.getString(KEY_DO_MOBILE, ""));
         // return user
         return user;
+    }
+
+//    set Logged in
+    public void setLoggedIn(){
+        editor = pref.edit();
+        // Storing logged In value as TRUE
+        editor.putBoolean(IS_AVAILABLE, true);
     }
 
     /**
