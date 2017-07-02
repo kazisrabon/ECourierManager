@@ -174,6 +174,8 @@ public class ActivityBase extends AppCompatActivity {
         });
     }
 
+
+
     public ActivityBase() {
         this.activity = ActivityBase.this;
         this.context = ActivityBase.this;

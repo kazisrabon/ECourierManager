@@ -43,6 +43,18 @@ public class ProfileListDatum {
     @Expose
     private String deliveryZone;
 
+    public ProfileListDatum(){}
+    //BLOOD_GROUP, NID, M_NAME, DOB, PROFILE_PIC, JOIN_DATE, DO_LOCATION
+    public ProfileListDatum(String blood_group, String nid, String name, String dob, String profilePic, String joinDate, String deliveryZone) {
+        this.blood_group = blood_group;
+        this.nid = nid;
+        this.name = name;
+        this.dob = dob;
+        this.profilePic = profilePic;
+        this.joinDate = joinDate;
+        this.deliveryZone = deliveryZone;
+    }
+
     public String getName() {
         return name;
     }

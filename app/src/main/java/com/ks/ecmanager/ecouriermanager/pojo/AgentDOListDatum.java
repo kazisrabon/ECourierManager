@@ -19,6 +19,13 @@ public class AgentDOListDatum implements Serializable {
     @Expose
     private String value;
 
+    public AgentDOListDatum(String id, String value) {
+        this.id = id;
+        this.value = value;
+    }
+
+    public AgentDOListDatum() {
+    }
 
     public String getId() {
         return id;

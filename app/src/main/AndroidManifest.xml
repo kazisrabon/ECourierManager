@@ -17,8 +17,8 @@
             android:name=".activities.initLayer.ActivityLogin"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustPan|adjustNothing"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden|adjustPan|adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -31,7 +31,8 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan|adjustNothing" />
         <activity android:name=".activities.firstLayer.ActivityProfile" />
-        <activity android:name=".activities.secondLayer.ActivityConsignmentDetails"></activity>
+        <activity android:name=".activities.secondLayer.ActivityConsignmentDetails" />
+        <activity android:name=".KotlinActivity"></activity>
     </application>
 
 </manifest>
