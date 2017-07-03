@@ -12,7 +12,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.ks.ecmanager.ecouriermanager.pojo.AgentDOListDatum;
+import com.ks.ecmanager.ecouriermanager.pojo.AgentListDatum;
+import com.ks.ecmanager.ecouriermanager.pojo.DOListDatum;
 import com.ks.ecmanager.ecouriermanager.pojo.ProfileListDatum;
 
 import java.io.File;
@@ -25,6 +26,8 @@ import java.util.List;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
     // All Static variables
+//    dbhelper instance for singleton
+    private static DatabaseHandler mInstance = null;
     // Database Version
     private static final int DATABASE_VERSION = 1;
 
@@ -40,11 +43,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String AGENT_ID = "id";
     private static final String AGENT_API_ID = "agent_id";
     private static final String AGENT_NAME = "agent_name";
+    private static final String AGENT_DO_NAME = "do_name";
+    private static final String AGENT_DO_ID = "do_id";
 
     // Contacts Table dos Columns names
     private static final String DO_ID = "id";
-    private static final String DO_API_ID = "agent_id";
-    private static final String DO_NAME = "agent_name";
+    private static final String DO_API_ID = "do_id";
+    private static final String DO_NAME = "do_name";
 
     // Contacts Table Profile Columns names
     private static final String PROFILE_ID = "id";
@@ -56,6 +61,19 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String PROFILE_PIC = "profile_pic";
     private static final String JOIN_DATE = "join_date";
     private static final String DO_LOCATION = "do_location";
+
+    public static DatabaseHandler getInstance(Context ctx) {
+        /**
+         * use the application context as suggested by CommonsWare.
+         * this will ensure that you dont accidentally leak an Activitys
+         * context (see this article for more information:
+         * http://android-developers.blogspot.nl/2009/01/avoiding-memory-leaks.html)
+         */
+        if (mInstance == null) {
+            mInstance = new DatabaseHandler(ctx);
+        }
+        return mInstance;
+    }
 
     public DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -102,7 +120,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_AGENTS + "("
                 + AGENT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + AGENT_API_ID + " TEXT NOT NULL,"
-                + AGENT_NAME + " TEXT NOT NULL"
+                + AGENT_NAME + " TEXT NOT NULL,"
+                + AGENT_DO_NAME + " TEXT NOT NULL,"
+                + AGENT_DO_ID + " TEXT NOT NULL"
                 + ")";
         db.execSQL(CREATE_TABLE);
     }
@@ -126,12 +146,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 //    TABLE_AGENTS CRUD operations
 
     // Adding new agent
-    public void addAgent(AgentDOListDatum agentDatum) {
+    public void addAgent(AgentListDatum agentDatum) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(AGENT_NAME, agentDatum.getValue()); // Contact Name
-        values.put(AGENT_API_ID, agentDatum.getId()); // Contact Phone Number
+        values.put(AGENT_API_ID, agentDatum.getAgent_id()); // AGENT ID
+        values.put(AGENT_NAME, agentDatum.getAgent_name()); // AGENT Name
+        values.put(AGENT_DO_NAME, agentDatum.getDo_name()); // AGENT Do Name
+        values.put(AGENT_DO_ID, agentDatum.getDo_id()); // AGENT Do ID
 
         // Inserting Row
         db.insert(TABLE_AGENTS, null, values);
@@ -139,24 +161,26 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     // Getting single agent
-    public AgentDOListDatum getAgent(int id) {
+    public AgentListDatum getAgent(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query(TABLE_AGENTS, new String[] { AGENT_ID,
-                        AGENT_API_ID, AGENT_NAME }, AGENT_API_ID + "=?",
+        Cursor cursor = db.query(TABLE_AGENTS, new String[] { AGENT_ID, AGENT_API_ID, AGENT_NAME, AGENT_DO_NAME, AGENT_DO_ID },
+                AGENT_API_ID + "=?",
                 new String[] { String.valueOf(id) }, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
 
-        AgentDOListDatum agentDOListDatum = new AgentDOListDatum(cursor.getString(1),
-                cursor.getString(2));
+        AgentListDatum agentListDatum = new AgentListDatum(cursor.getString(1),
+                cursor.getString(2),
+                cursor.getString(3),
+                cursor.getString(4));
         // return contact
-        return agentDOListDatum;
+        return agentListDatum;
     }
 
     // Getting All Agents
-    public List<AgentDOListDatum> getAllAgents() {
-        List<AgentDOListDatum> agentList = new ArrayList<AgentDOListDatum>();
+    public List<AgentListDatum> getAllAgents() {
+        List<AgentListDatum> agentList = new ArrayList<AgentListDatum>();
         // Select All Query
         String selectQuery = "SELECT  * FROM " + TABLE_AGENTS;
 
@@ -166,9 +190,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
-                AgentDOListDatum datum = new AgentDOListDatum();
-                datum.setId(cursor.getString(1));
-                datum.setValue(cursor.getString(2));
+                AgentListDatum datum = new AgentListDatum();
+                datum.setAgent_id(cursor.getString(1));
+                datum.setAgent_name(cursor.getString(2));
+                datum.setDo_name(cursor.getString(3));
+                datum.setDo_id(cursor.getString(4));
                 // Adding contact to list
                 agentList.add(datum);
             } while (cursor.moveToNext());
@@ -190,23 +216,25 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     // Updating single agent
-    public int updateAgent(AgentDOListDatum agentDOListDatum) {
+    public int updateAgent(AgentListDatum agentListDatum) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(AGENT_API_ID, agentDOListDatum.getId());
-        values.put(AGENT_NAME, agentDOListDatum.getValue());
+        values.put(AGENT_API_ID, agentListDatum.getAgent_id());
+        values.put(AGENT_NAME, agentListDatum.getAgent_name());
+        values.put(AGENT_DO_NAME, agentListDatum.getDo_name());
+        values.put(AGENT_DO_ID, agentListDatum.getDo_id());
 
         // updating row
         return db.update(TABLE_AGENTS, values, AGENT_API_ID + " = ?",
-                new String[] { String.valueOf(agentDOListDatum.getId()) });
+                new String[] { String.valueOf(agentListDatum.getAgent_id()) });
     }
 
     // Deleting single agent
-    public void deleteAgent(AgentDOListDatum agentDOListDatum) {
+    public void deleteAgent(AgentListDatum agentListDatum) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_AGENTS, AGENT_API_ID + " = ?",
-                new String[] { String.valueOf(agentDOListDatum.getId()) });
+                new String[] { String.valueOf(agentListDatum.getAgent_id()) });
         db.close();
     }
 
@@ -219,7 +247,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 //    TABLE_DOS CRUD operations
 
     // Adding new do
-    public void addDo(AgentDOListDatum doListDatum) {
+    public void addDo(DOListDatum doListDatum) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -232,7 +260,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     // Getting single agent
-    public AgentDOListDatum getDo(int id) {
+    public DOListDatum getDo(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_DOS, new String[] { DO_ID,
@@ -241,15 +269,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         if (cursor != null)
             cursor.moveToFirst();
 
-        AgentDOListDatum agentDOListDatum = new AgentDOListDatum(cursor.getString(1),
+        DOListDatum doListDatum = new DOListDatum(cursor.getString(1),
                 cursor.getString(2));
         // return contact
-        return agentDOListDatum;
+        return doListDatum;
     }
 
     // Getting All Agents
-    public List<AgentDOListDatum> getAllDOs() {
-        List<AgentDOListDatum> doList = new ArrayList<AgentDOListDatum>();
+    public List<DOListDatum> getAllDOs() {
+        List<DOListDatum> doList = new ArrayList<DOListDatum>();
         // Select All Query
         String selectQuery = "SELECT  * FROM " + TABLE_DOS;
 
@@ -259,7 +287,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
-                AgentDOListDatum datum = new AgentDOListDatum();
+                DOListDatum datum = new DOListDatum();
                 datum.setId(cursor.getString(1));
                 datum.setValue(cursor.getString(2));
                 // Adding contact to list
@@ -283,23 +311,23 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     // Updating single agent
-    public int updateDO(AgentDOListDatum agentDOListDatum) {
+    public int updateDO(DOListDatum doListDatum) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(DO_API_ID, agentDOListDatum.getId());
-        values.put(DO_NAME, agentDOListDatum.getValue());
+        values.put(DO_API_ID, doListDatum.getId());
+        values.put(DO_NAME, doListDatum.getValue());
 
         // updating row
         return db.update(TABLE_DOS, values, DO_API_ID + " = ?",
-                new String[] { String.valueOf(agentDOListDatum.getId()) });
+                new String[] { String.valueOf(doListDatum.getId()) });
     }
 
     // Deleting single agent
-    public void deleteDO(AgentDOListDatum agentDOListDatum) {
+    public void deleteDO(DOListDatum doListDatum) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_DOS, DO_API_ID + " = ?",
-                new String[] { String.valueOf(agentDOListDatum.getId()) });
+                new String[] { String.valueOf(doListDatum.getId()) });
         db.close();
     }
 
