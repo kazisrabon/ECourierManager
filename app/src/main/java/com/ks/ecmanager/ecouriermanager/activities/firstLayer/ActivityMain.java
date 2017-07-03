@@ -30,6 +30,7 @@ import com.ks.ecmanager.ecouriermanager.R;
 import com.ks.ecmanager.ecouriermanager.activities.base.ActivityBase;
 import com.ks.ecmanager.ecouriermanager.activities.initLayer.ActivityLogin;
 import com.ks.ecmanager.ecouriermanager.activities.secondLayer.ActivityConsignmentDetails;
+import com.ks.ecmanager.ecouriermanager.database.DatabaseHandler;
 import com.ks.ecmanager.ecouriermanager.pojo.ConsignmentList;
 import com.ks.ecmanager.ecouriermanager.pojo.ConsignmentListDatum;
 import com.ks.ecmanager.ecouriermanager.session.SessionUserData;
@@ -48,7 +49,6 @@ import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-import static com.ks.ecmanager.ecouriermanager.activities.initLayer.ActivityLogin.isLoggedIN;
 import static com.ks.ecmanager.ecouriermanager.activities.initLayer.ActivityLogin.sessionUserData;
 
 public class ActivityMain extends ActivityBase {
@@ -77,6 +77,7 @@ public class ActivityMain extends ActivityBase {
         user = sessionUserData.getSessionDetails();
         setHashMap();
         initialize();
+        Log.e(TAG, "isLooggedIn "+ sessionUserData.isLoggedIn());
         if (!sessionUserData.isLoggedIn()){
             showProgressDialog(false, "", getResources().getString(R.string.loading));
             setDoBidiList(map);
@@ -85,6 +86,17 @@ public class ActivityMain extends ActivityBase {
             sessionUserData.setLoggedIn();
             hideProgressDialog();
         }
+        if (db == null)
+            db = DatabaseHandler.getInstance(this);
+//        for(DOListDatum agentDOListDatum : db.getAllAgents()){
+//            Log.e("Agent DB ", agentDOListDatum.getId() + " " + agentDOListDatum.getValue());
+//        }
+//        for (DOListDatum agentDOListDatum : db.getAllDOs()){
+//            Log.e("DO DB ", agentDOListDatum.getId() + " " + agentDOListDatum.getValue());
+//        }
+//        for (ProfileListDatum profileListDatum : db.getAllProfile()){
+//            Log.e("DO DB ", profileListDatum.getName() + " " + profileListDatum.getJoinDate());
+//        }
 
     }
 

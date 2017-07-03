@@ -15,6 +15,7 @@ import java.util.HashMap;
 
 public class SessionUserData {
 
+    private static SessionUserData mInstance = null;
     public static final String KEY_USER_TYPE = "user_type";
     public static final String KEY_USER_ID = "user_id";
     public static final String KEY_USER_PASSWORD = "user_password";
@@ -38,7 +39,14 @@ public class SessionUserData {
     int PRIVATE_MODE = 0;
 
     // Constructor
-    public SessionUserData(Context context) {
+    public static SessionUserData getSFInstance(Context ctx) {
+        if (mInstance == null) {
+            mInstance = new SessionUserData(ctx);
+        }
+        return mInstance;
+    }
+
+    private SessionUserData(Context context) {
         this._context = context;
         pref = _context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
         editor = pref.edit();

@@ -9,7 +9,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-public class AgentDOListDatum implements Serializable {
+public class DOListDatum implements Serializable {
 
     @SerializedName("id")
     @Expose
@@ -19,12 +19,12 @@ public class AgentDOListDatum implements Serializable {
     @Expose
     private String value;
 
-    public AgentDOListDatum(String id, String value) {
+    public DOListDatum(String id, String value) {
         this.id = id;
         this.value = value;
     }
 
-    public AgentDOListDatum() {
+    public DOListDatum() {
     }
 
     public String getId() {

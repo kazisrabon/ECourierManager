@@ -22,7 +22,7 @@ public class DoList {
 
     @SerializedName("do_list")
     @Expose
-    private List<AgentDOListDatum> do_list = new ArrayList<AgentDOListDatum>();
+    private List<DOListDatum> do_list = new ArrayList<DOListDatum>();
 
     @SerializedName("total_dos")
     @Expose
@@ -55,11 +55,11 @@ public class DoList {
         this.msg = msg;
     }
 
-    public List<AgentDOListDatum> getDo_list() {
+    public List<DOListDatum> getDo_list() {
         return do_list;
     }
 
-    public void setDo_list(List<AgentDOListDatum> do_list) {
+    public void setDo_list(List<DOListDatum> do_list) {
         this.do_list = do_list;
     }
 

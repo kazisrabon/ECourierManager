@@ -49,6 +49,8 @@ import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
+import static com.ks.ecmanager.ecouriermanager.database.DatabaseHandler.getInstance;
+
 /**
  * Created by Kazi Srabon on 5/20/2017.
  */
@@ -95,9 +97,10 @@ public class ActivityBase extends AppCompatActivity {
                     isDoRefreshed = true;
                     for (int i = 0; i < doList.getDo_list().size(); i++) {
                         doBidiList.put(doList.getDo_list().get(i).getId(), doList.getDo_list().get(i).getValue());
-                        db.addDo(doList.getDo_list().get(i));
-                        showSuccessToast("DO Loaded", 0, END);
+                        Log.e("Do data", doList.getDo_list().get(i).getId()+" "+doList.getDo_list().get(i).getValue());
+//                        db.addDo(doList.getDo_list().get(i));
                     }
+                    showSuccessToast("DO Loaded", 0, END);
                 }
                 else{
                     showErrorToast(getString(R.string.no_do_found), Toast.LENGTH_SHORT, MIDDLE);
@@ -157,10 +160,15 @@ public class ActivityBase extends AppCompatActivity {
                 if (status) {
                     isAgentRefreshed = true;
                     for (int i = 0; i < agentList.getAgent_list().size(); i++) {
-                        agentBidiList.put(agentList.getAgent_list().get(i).getId(), agentList.getAgent_list().get(i).getValue());
-                        db.addAgent(agentList.getAgent_list().get(i));
-                        showSuccessToast("Agent Loaded", 0, END);
+                        agentBidiList.put(agentList.getAgent_list().get(i).getAgent_id(), agentList.getAgent_list().get(i).getAgent_name());
+                        Log.e("Agent data",
+                                agentList.getAgent_list().get(i).getAgent_id()
+                                +" "+agentList.getAgent_list().get(i).getAgent_id()
+                                +" "+agentList.getAgent_list().get(i).getDo_id()
+                                +" "+agentList.getAgent_list().get(i).getDo_name());
+//                        db.addAgent(agentList.getAgent_list().get(i));
                     }
+                    showSuccessToast("Agent Loaded", 0, END);
                 }
                 else{
                     showErrorToast(getString(R.string.no_agent_found), Toast.LENGTH_SHORT, MIDDLE);
@@ -186,9 +194,9 @@ public class ActivityBase extends AppCompatActivity {
                 boolean status = profileList.getStatus();
                 Log.e(TAG, profileList.getStatus()+"");
                 if (status) {
-                    Log.e(TAG, profileList.getData().getName()+"");
-                    db.addProfile(profileList.getData(), map.get(ApiParams.PARAM_ADMIN_ID));
-                    showSuccessToast("Profile Loaded", 0, END);
+                    Log.e("Profile", profileList.getData().getName()+"");
+//                    db.addProfile(profileList.getData(), map.get(ApiParams.PARAM_ADMIN_ID));
+//                    showSuccessToast("Profile Loaded", 0, END);
                 } else {
                     showErrorToast(getString(R.string.no_profile_data_found), Toast.LENGTH_SHORT, MIDDLE);
                 }

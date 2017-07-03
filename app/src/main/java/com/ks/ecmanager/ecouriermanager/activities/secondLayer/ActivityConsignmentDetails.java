@@ -11,7 +11,6 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -25,9 +24,9 @@ import android.widget.Toast;
 import com.ks.ecmanager.ecouriermanager.R;
 import com.ks.ecmanager.ecouriermanager.activities.base.ActivityBase;
 import com.ks.ecmanager.ecouriermanager.activities.firstLayer.ActivityMain;
-import com.ks.ecmanager.ecouriermanager.activities.firstLayer.ActivityProfile;
 import com.ks.ecmanager.ecouriermanager.activities.initLayer.ActivityLogin;
-import com.ks.ecmanager.ecouriermanager.pojo.AgentDOListDatum;
+import com.ks.ecmanager.ecouriermanager.pojo.AgentListDatum;
+import com.ks.ecmanager.ecouriermanager.pojo.DOListDatum;
 import com.ks.ecmanager.ecouriermanager.pojo.AgentList;
 import com.ks.ecmanager.ecouriermanager.pojo.ConsignmentList;
 import com.ks.ecmanager.ecouriermanager.pojo.DoList;
@@ -45,7 +44,6 @@ import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -536,7 +534,13 @@ public class ActivityConsignmentDetails extends ActivityBase{
                 Log.e(TAG, status+" ");
                 if (status) {
                     showToast("Total Agent : " + agentList.getTotal_agents() + "!", Toast.LENGTH_SHORT, MIDDLE);
-                    showList(agentList.getAgent_list(), FROM_AGENT);
+//                    load agents as do. it may need to change in future 7.3.2017
+                    List<DOListDatum> listData = new ArrayList<>();
+                    for (AgentListDatum agentListDatum : agentList.getAgent_list()){
+                        DOListDatum doListDatum = new DOListDatum(agentListDatum.getAgent_id(), agentListDatum.getAgent_name());
+                        listData.add(doListDatum);
+                    }
+                    showList(listData, FROM_AGENT);
                 }
                 else
                     showErrorToast(getString(R.string.no_data_found), Toast.LENGTH_SHORT, MIDDLE);
@@ -551,7 +555,7 @@ public class ActivityConsignmentDetails extends ActivityBase{
         });
     }
 
-    private void showList(List<AgentDOListDatum> list, final int where_from) {
+    private void showList(List<DOListDatum> list, final int where_from) {
         final String[] s = {""};
         AlertDialog.Builder builderSingle = new AlertDialog.Builder(ActivityConsignmentDetails.this);
         builderSingle.setIcon(R.mipmap.ic_launcher_new);

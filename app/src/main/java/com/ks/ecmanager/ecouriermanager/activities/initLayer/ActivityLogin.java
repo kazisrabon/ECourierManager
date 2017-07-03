@@ -36,11 +36,11 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 import static com.ks.ecmanager.ecouriermanager.database.DatabaseHandler.doesDatabaseExist;
+import static com.ks.ecmanager.ecouriermanager.database.DatabaseHandler.getInstance;
+import static com.ks.ecmanager.ecouriermanager.session.SessionUserData.getSFInstance;
 
 public class ActivityLogin extends ActivityBase {
 
-    private static final String TABLE_AGENTS = "agents";
-    private static final String TABLE_PROFILE = "profile";
     public static int isLoggedIN;
     private String name, password;
     private Button mSubmit;
@@ -55,10 +55,11 @@ public class ActivityLogin extends ActivityBase {
         setContentView(R.layout.activity_login);
 
         if (!doesDatabaseExist(this)){
-            db = new DatabaseHandler(this);
+            db = getInstance(this);
         }
 
-        sessionUserData = new SessionUserData(this);
+        sessionUserData = getSFInstance(this);
+        Log.e(TAG, "isLooggedIn "+ sessionUserData.isLoggedIn());
 //        redirect
         if (sessionUserData.isLoggedIn()){
 //            isLoggedIN = 1;

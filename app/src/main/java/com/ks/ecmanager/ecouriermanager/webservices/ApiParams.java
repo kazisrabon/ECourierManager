@@ -18,8 +18,8 @@ public class ApiParams {
     public static final DateFormat timeFormat = new SimpleDateFormat("hh:mm a", Locale.ENGLISH);
     public static final DateFormat longTimeFormat = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
 //  http://ecourier.com.bd
-    public static final String TAG_BASE_URL = "http://ecourier.com.bd/manager";
-//    public static final String TAG_BASE_URL = "http://test.ecourier.com.bd/manager";
+//    public static final String TAG_BASE_URL = "http://ecourier.com.bd/manager";
+    public static final String TAG_BASE_URL = "http://test.ecourier.com.bd/manager";
 
     public static final boolean TAG_SUCCESS = true;
     public static final boolean TAG_FAILURE = false;
