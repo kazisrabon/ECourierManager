@@ -93,9 +93,9 @@ public class SessionUserData {
 
 //    set Logged in
     public void setLoggedIn(){
-        editor = pref.edit();
         // Storing logged In value as TRUE
         editor.putBoolean(IS_AVAILABLE, true);
+        editor.commit();
     }
 
     /**

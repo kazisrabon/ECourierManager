@@ -121,8 +121,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 + AGENT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + AGENT_API_ID + " TEXT NOT NULL,"
                 + AGENT_NAME + " TEXT NOT NULL,"
-                + AGENT_DO_NAME + " TEXT NOT NULL,"
-                + AGENT_DO_ID + " TEXT NOT NULL"
+                + AGENT_DO_NAME + " TEXT,"
+                + AGENT_DO_ID + " TEXT"
                 + ")";
         db.execSQL(CREATE_TABLE);
     }
@@ -206,13 +206,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     // Getting agents Count
     public int getAgentsCount() {
+        int count = 0;
         String countQuery = "SELECT  * FROM " + TABLE_AGENTS;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
+        count = cursor.getCount();
         cursor.close();
 
         // return count
-        return cursor.getCount();
+        return count;
     }
 
     // Updating single agent
@@ -259,7 +261,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close(); // Closing database connection
     }
 
-    // Getting single agent
+    // Getting single Do
     public DOListDatum getDo(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -275,7 +277,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return doListDatum;
     }
 
-    // Getting All Agents
+    // Getting All Dos
     public List<DOListDatum> getAllDOs() {
         List<DOListDatum> doList = new ArrayList<DOListDatum>();
         // Select All Query
@@ -299,18 +301,20 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return doList;
     }
 
-    // Getting agents Count
+    // Getting Dos Count
     public int getDOsCount() {
+        int count = 0;
         String countQuery = "SELECT  * FROM " + TABLE_DOS;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
+        count = cursor.getCount();
         cursor.close();
 
         // return count
-        return cursor.getCount();
+        return count;
     }
 
-    // Updating single agent
+    // Updating single Do
     public int updateDO(DOListDatum doListDatum) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -323,7 +327,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 new String[] { String.valueOf(doListDatum.getId()) });
     }
 
-    // Deleting single agent
+    // Deleting single Do
     public void deleteDO(DOListDatum doListDatum) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_DOS, DO_API_ID + " = ?",
@@ -331,7 +335,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close();
     }
 
-    // Deleting all agents
+    // Deleting all Dos
     public void  deleteDOs(){
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("delete from "+ TABLE_DOS);
@@ -413,13 +417,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     // Getting Profile Count
     public int getProfileCount() {
+        int count = 0;
         String countQuery = "SELECT  * FROM " + TABLE_PROFILE;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
+        count = cursor.getCount();
         cursor.close();
 
         // return count
-        return cursor.getCount();
+        return count;
     }
 
     // Updating single profile data

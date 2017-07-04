@@ -30,8 +30,11 @@ import android.widget.Toast;
 import com.ks.ecmanager.ecouriermanager.R;
 import com.ks.ecmanager.ecouriermanager.database.DatabaseHandler;
 import com.ks.ecmanager.ecouriermanager.pojo.AgentList;
+import com.ks.ecmanager.ecouriermanager.pojo.AgentListDatum;
+import com.ks.ecmanager.ecouriermanager.pojo.DOListDatum;
 import com.ks.ecmanager.ecouriermanager.pojo.DoList;
 import com.ks.ecmanager.ecouriermanager.pojo.ProfileList;
+import com.ks.ecmanager.ecouriermanager.pojo.ProfileListDatum;
 import com.ks.ecmanager.ecouriermanager.webservices.ApiParams;
 import com.ks.ecmanager.ecouriermanager.webservices.interfaces.AgentListInterface;
 import com.ks.ecmanager.ecouriermanager.webservices.interfaces.DoListInterface;
@@ -95,10 +98,19 @@ public class ActivityBase extends AppCompatActivity {
                 Log.e(TAG, status+" ");
                 if (status) {
                     isDoRefreshed = true;
+                    initDB();
+                    if (db.getDOsCount() > 0){
+                        db.deleteDOs();
+                    }
+                    Log.e("DO DB 1"+TAG, db.getDOsCount()+"");
                     for (int i = 0; i < doList.getDo_list().size(); i++) {
                         doBidiList.put(doList.getDo_list().get(i).getId(), doList.getDo_list().get(i).getValue());
-                        Log.e("Do data", doList.getDo_list().get(i).getId()+" "+doList.getDo_list().get(i).getValue());
-//                        db.addDo(doList.getDo_list().get(i));
+//                        Log.e("Do data", doList.getDo_list().get(i).getId()+" "+doList.getDo_list().get(i).getValue());
+                        db.addDo(doList.getDo_list().get(i));
+                    }
+                    Log.e("DO DB 2"+TAG, db.getDOsCount()+"");
+                    for (DOListDatum doListDatum : db.getAllDOs()){
+                        Log.e("DO DB 3"+TAG, doListDatum.getId() + " " + doListDatum.getValue());
                     }
                     showSuccessToast("DO Loaded", 0, END);
                 }
@@ -159,14 +171,22 @@ public class ActivityBase extends AppCompatActivity {
                 Log.e(TAG, status+" ");
                 if (status) {
                     isAgentRefreshed = true;
+                    initDB();
+                    if (db.getAgentsCount() > 0){
+                        db.deleteAgents();
+                    }
+                    Log.e("Agent DB 1"+TAG, db.getAgentsCount()+"");
                     for (int i = 0; i < agentList.getAgent_list().size(); i++) {
                         agentBidiList.put(agentList.getAgent_list().get(i).getAgent_id(), agentList.getAgent_list().get(i).getAgent_name());
-                        Log.e("Agent data",
-                                agentList.getAgent_list().get(i).getAgent_id()
-                                +" "+agentList.getAgent_list().get(i).getAgent_id()
-                                +" "+agentList.getAgent_list().get(i).getDo_id()
-                                +" "+agentList.getAgent_list().get(i).getDo_name());
-//                        db.addAgent(agentList.getAgent_list().get(i));
+                        db.addAgent(agentList.getAgent_list().get(i));
+                    }
+                    Log.e("Agent DB 2"+TAG, db.getAgentsCount()+"");
+                    for (AgentListDatum agentListDatum : db.getAllAgents()){
+                        Log.e("Agent DB 3"+TAG,
+                                agentListDatum.getAgent_id()
+                                + " " + agentListDatum.getAgent_name()
+                                + " " + agentListDatum.getDo_id()
+                                + " " + agentListDatum.getDo_name());
                     }
                     showSuccessToast("Agent Loaded", 0, END);
                 }
@@ -194,8 +214,20 @@ public class ActivityBase extends AppCompatActivity {
                 boolean status = profileList.getStatus();
                 Log.e(TAG, profileList.getStatus()+"");
                 if (status) {
-                    Log.e("Profile", profileList.getData().getName()+"");
-//                    db.addProfile(profileList.getData(), map.get(ApiParams.PARAM_ADMIN_ID));
+                    initDB();
+                    if (db.getProfileCount() > 0){
+                        db.deleteProfiles();
+                    }
+                    Log.e("Profile 1"+TAG, db.getProfileCount()+"");
+//                    Log.e("Profile", profileList.getData().getName()+"");
+                    db.addProfile(profileList.getData(), map.get(ApiParams.PARAM_ADMIN_ID));
+                    Log.e("Profile 2"+TAG, db.getProfileCount()+"");
+                    for (ProfileListDatum profileListDatum : db.getAllProfile()){
+                        Log.e("Profile 3"+TAG,
+                                profileListDatum.getName()
+                                +" "+profileListDatum.getProfilePic()
+                                +" "+profileListDatum.getJoinDate());
+                    }
 //                    showSuccessToast("Profile Loaded", 0, END);
                 } else {
                     showErrorToast(getString(R.string.no_profile_data_found), Toast.LENGTH_SHORT, MIDDLE);
@@ -210,9 +242,16 @@ public class ActivityBase extends AppCompatActivity {
     }
 
     public ActivityBase() {
+        initDB();
         this.activity = ActivityBase.this;
         this.context = ActivityBase.this;
 
+    }
+
+    public void initDB() {
+        if (db == null){
+            db = DatabaseHandler.getInstance(ActivityBase.this);
+        }
     }
 
     public void showToast(String message, int duration, int gravity) {

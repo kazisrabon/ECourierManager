@@ -33,6 +33,7 @@ import com.ks.ecmanager.ecouriermanager.activities.secondLayer.ActivityConsignme
 import com.ks.ecmanager.ecouriermanager.database.DatabaseHandler;
 import com.ks.ecmanager.ecouriermanager.pojo.ConsignmentList;
 import com.ks.ecmanager.ecouriermanager.pojo.ConsignmentListDatum;
+import com.ks.ecmanager.ecouriermanager.pojo.DOListDatum;
 import com.ks.ecmanager.ecouriermanager.session.SessionUserData;
 import com.ks.ecmanager.ecouriermanager.utils.FormValidator;
 import com.ks.ecmanager.ecouriermanager.utils.FragmentDialogQRScanner;
@@ -86,18 +87,12 @@ public class ActivityMain extends ActivityBase {
             sessionUserData.setLoggedIn();
             hideProgressDialog();
         }
-        if (db == null)
+        Log.e(TAG, "isLooggedIn "+ sessionUserData.isLoggedIn());
+        if (db == null){
             db = DatabaseHandler.getInstance(this);
-//        for(DOListDatum agentDOListDatum : db.getAllAgents()){
-//            Log.e("Agent DB ", agentDOListDatum.getId() + " " + agentDOListDatum.getValue());
-//        }
-//        for (DOListDatum agentDOListDatum : db.getAllDOs()){
-//            Log.e("DO DB ", agentDOListDatum.getId() + " " + agentDOListDatum.getValue());
-//        }
-//        for (ProfileListDatum profileListDatum : db.getAllProfile()){
-//            Log.e("DO DB ", profileListDatum.getName() + " " + profileListDatum.getJoinDate());
-//        }
-
+        }
+        else {
+        }
     }
 
     private void setHashMap() {
