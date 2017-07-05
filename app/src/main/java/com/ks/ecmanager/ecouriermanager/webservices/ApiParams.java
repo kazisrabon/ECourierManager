@@ -103,4 +103,7 @@ public class ApiParams {
     public static final String PARAM_COLLECTED_AMOUNT = "collected_amount";
     public static final String PARAM_COLLECTED_ITEMS = "items";
     public static final String PARAM_CONSIGNMENT_NO = "consignment_no";
+
+//    app config
+    public static final String TAG_APP_CONFIG = "appConfig.php";
 }
