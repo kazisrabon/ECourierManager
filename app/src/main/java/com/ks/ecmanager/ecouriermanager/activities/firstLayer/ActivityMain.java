@@ -79,11 +79,13 @@ public class ActivityMain extends ActivityBase {
         setHashMap();
         initialize();
         Log.e(TAG, "isLooggedIn "+ sessionUserData.isLoggedIn());
+        getConfigData();
         if (!sessionUserData.isLoggedIn()){
             showProgressDialog(false, "", getResources().getString(R.string.loading));
             setDoBidiList(map);
             setAgentBidiList(map);
             setProfileData(map);
+            getConfigData();
             sessionUserData.setLoggedIn();
             hideProgressDialog();
         }

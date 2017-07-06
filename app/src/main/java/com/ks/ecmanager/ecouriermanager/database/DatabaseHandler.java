@@ -34,24 +34,25 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     // Database Name
     private static final String DATABASE_NAME = "eCourierManager";
 
-    // Contacts table name
+    // eCourier Manager table name
     private static final String TABLE_AGENTS = "agents";
     private static final String TABLE_DOS = "dos";
     private static final String TABLE_PROFILE = "profile";
+    private static final String TABLE_CONFIG = "config";
 
-    // Contacts Table Agents Columns names
+    // Table Agents Columns names
     private static final String AGENT_ID = "id";
     private static final String AGENT_API_ID = "agent_id";
     private static final String AGENT_NAME = "agent_name";
     private static final String AGENT_DO_NAME = "do_name";
     private static final String AGENT_DO_ID = "do_id";
 
-    // Contacts Table dos Columns names
+    //Table dos Columns names
     private static final String DO_ID = "id";
     private static final String DO_API_ID = "do_id";
     private static final String DO_NAME = "do_name";
 
-    // Contacts Table Profile Columns names
+    // Table Profile Columns names
     private static final String PROFILE_ID = "id";
     private static final String PROFILE_API_ID = "agent_id";
     private static final String BLOOD_GROUP = "blood_group";
@@ -61,6 +62,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String PROFILE_PIC = "profile_pic";
     private static final String JOIN_DATE = "join_date";
     private static final String DO_LOCATION = "do_location";
+
+    // Table Config Columns names
+    private static final String CONFIG_ID = "id";
 
     public static DatabaseHandler getInstance(Context ctx) {
         /**

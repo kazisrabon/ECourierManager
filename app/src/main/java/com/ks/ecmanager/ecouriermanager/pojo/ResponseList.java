@@ -4,6 +4,8 @@
 
 package com.ks.ecmanager.ecouriermanager.pojo;
 
+import android.util.Log;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -12,62 +14,74 @@ import java.util.List;
 
 public class ResponseList {
 
+    private final String TAG = "ResponseList";
+
     @SerializedName("status")
     @Expose
-    private Boolean status;
+    private String status;
 
-    @SerializedName("msg")
+    @SerializedName("readable_status")
     @Expose
-    private String msg;
+    private String readable_status;
 
-    @SerializedName("agent_list")
+    @SerializedName("viewer")
     @Expose
-    private List<AgentListDatum> agent_list = new ArrayList<AgentListDatum>();
+    private String viewer;
 
-    @SerializedName("total_agents")
+    @SerializedName("updates")
     @Expose
-    private String total_agents;
-    /**
-     * @return The status
-     */
-    public Boolean getStatus() {
+    private List<UpdatesListDatum> updates = new ArrayList<UpdatesListDatum>();
+
+    public String getStatus() {
         return status;
     }
 
-    /**
-     * @param status The status
-     */
-    public void setStatus(Boolean status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
-    /**
-     * @return The msg
-     */
-    public String getMsg() {
-        return msg;
+    public String getReadable_status() {
+        return readable_status;
     }
 
-    /**
-     * @param msg The msg
-     */
-    public void setMsg(String msg) {
-        this.msg = msg;
+    public void setReadable_status(String readable_status) {
+        this.readable_status = readable_status;
     }
 
-    public List<AgentListDatum> getAgent_list() {
-        return agent_list;
+    public String getViewer() {
+        return viewer;
     }
 
-    public void setAgent_list(List<AgentListDatum> agent_list) {
-        this.agent_list = agent_list;
+    public void setViewer(String viewer) {
+        this.viewer = viewer;
     }
 
-    public String getTotal_agents() {
-        return total_agents;
+    public List<UpdatesListDatum> getUpdates() {
+        return updates;
     }
 
-    public void setTotal_agents(String total_agents) {
-        this.total_agents = total_agents;
+    public void setUpdates(List<UpdatesListDatum> updates) {
+        this.updates = updates;
+    }
+
+    @Override
+    public String toString() {
+        String[] viewers = new String[0];
+        String separateViewer = "";
+        viewer = viewer.replace("{", "");
+        viewer = viewer.replace("}", "");
+        if (viewer.contains(",")){
+            viewers = viewer.split(",");
+        }
+        for (String s: viewers) {
+            separateViewer = " "+s;
+            Log.e(TAG, separateViewer);
+        }
+
+        return "ResponseList{" +
+                "status=" + status +
+                ", readable_status=" + readable_status +
+                ", viewers=" + viewer +
+                '}';
     }
 }

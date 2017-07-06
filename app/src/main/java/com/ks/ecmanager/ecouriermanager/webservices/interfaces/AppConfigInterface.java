@@ -4,21 +4,20 @@
 
 package com.ks.ecmanager.ecouriermanager.webservices.interfaces;
 
-
-import com.ks.ecmanager.ecouriermanager.pojo.AgentList;
 import com.ks.ecmanager.ecouriermanager.pojo.ResponseList;
 
-import java.util.Map;
+import java.util.List;
 
 import retrofit.Callback;
-import retrofit.http.FieldMap;
 import retrofit.http.FormUrlEncoded;
+import retrofit.http.GET;
 import retrofit.http.POST;
 import retrofit.http.Path;
 
 public interface AppConfigInterface {
-    @FormUrlEncoded
-    public void getData(
-            Callback<ResponseList> response
+    @GET("/{operation}")
+    void getData(
+            @Path("operation") String operation,
+            Callback<List<ResponseList>> response
     );
 }

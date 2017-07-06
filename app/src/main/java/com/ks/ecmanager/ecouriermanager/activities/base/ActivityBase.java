@@ -35,8 +35,11 @@ import com.ks.ecmanager.ecouriermanager.pojo.DOListDatum;
 import com.ks.ecmanager.ecouriermanager.pojo.DoList;
 import com.ks.ecmanager.ecouriermanager.pojo.ProfileList;
 import com.ks.ecmanager.ecouriermanager.pojo.ProfileListDatum;
+import com.ks.ecmanager.ecouriermanager.pojo.ResponseList;
+import com.ks.ecmanager.ecouriermanager.pojo.UpdatesListDatum;
 import com.ks.ecmanager.ecouriermanager.webservices.ApiParams;
 import com.ks.ecmanager.ecouriermanager.webservices.interfaces.AgentListInterface;
+import com.ks.ecmanager.ecouriermanager.webservices.interfaces.AppConfigInterface;
 import com.ks.ecmanager.ecouriermanager.webservices.interfaces.DoListInterface;
 import com.ks.ecmanager.ecouriermanager.webservices.interfaces.ProfileListInterface;
 
@@ -46,6 +49,7 @@ import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 
 import retrofit.Callback;
 import retrofit.RestAdapter;
@@ -237,6 +241,39 @@ public class ActivityBase extends AppCompatActivity {
             @Override
             public void failure(RetrofitError error) {
                 showErrorToast("" + error.getMessage() + "!", Toast.LENGTH_SHORT, MIDDLE);
+            }
+        });
+    }
+
+    public void getConfigData() {
+        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(ApiParams.TAG_BASE_URL).build();
+        AppConfigInterface myApiCallback = restAdapter.create(AppConfigInterface.class);
+        Log.e(TAG, "getConfigData()");
+        myApiCallback.getData(ApiParams.TAG_APP_CONFIG, new Callback<List<ResponseList>>() {
+
+            public void test(ResponseList responseList, Response response) {
+                Log.e(TAG, "success");
+                initDB();
+                Log.e(TAG, responseList.toString());
+                for (UpdatesListDatum updatesListDatum : responseList.getUpdates())
+                Log.e(TAG, updatesListDatum.toString());
+            }
+
+            @Override
+            public void success(List<ResponseList> responseLists, Response response) {
+                Log.e(TAG, "success");
+                initDB();
+                for (ResponseList responseList : responseLists){
+                    Log.e(TAG, responseList.toString());
+                    for (UpdatesListDatum updatesListDatum : responseList.getUpdates()){
+//                        Log.e(TAG, updatesListDatum.toString());
+                    }
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Log.e(TAG, "failure "+error.getMessage());
             }
         });
     }
