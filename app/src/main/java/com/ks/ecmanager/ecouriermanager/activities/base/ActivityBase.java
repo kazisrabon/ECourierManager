@@ -5,8 +5,10 @@
 package com.ks.ecmanager.ecouriermanager.activities.base;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -24,6 +26,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,6 +51,7 @@ import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -271,6 +275,24 @@ public class ActivityBase extends AppCompatActivity {
         });
     }
 
+    public boolean canHeChangeTheStatus(){
+        boolean isChangeAble = false;
+
+        return true;
+    }
+
+    public boolean canHeChangeTheAgent(){
+        boolean isChangeAble = false;
+
+        return isChangeAble;
+    }
+
+    public boolean canHeChangeTheDO(){
+        boolean isChangeAble = false;
+
+        return isChangeAble;
+    }
+
     public ActivityBase() {
         initDB();
         this.activity = ActivityBase.this;
@@ -344,6 +366,70 @@ public class ActivityBase extends AppCompatActivity {
         }
     }
 
+    public String showListInPopUp(final Context context, BidiMap<String, String> mapData){
+        final String[] returnValue = {""};
+        AlertDialog.Builder builderSingle = new AlertDialog.Builder(context);
+        builderSingle.setIcon(R.mipmap.ic_launcher_new);
+        builderSingle.setTitle("Select One:-");
+
+        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context,
+                android.R.layout.select_dialog_singlechoice);
+        for (String key: mapData.keySet()) {
+            arrayAdapter.add(mapData.get(key));
+        }
+        builderSingle.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        builderSingle.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                AlertDialog.Builder builderInner = new AlertDialog.Builder(context);
+//                if (where_from == FROM_DO)
+//                    d_do = arrayAdapter.getItem(which);
+//                else if (where_from == FROM_AGENT)
+//                    agent_name = arrayAdapter.getItem(which);
+
+                final String[] s = {""};
+                s[0] = arrayAdapter.getItem(which);
+                builderInner.setMessage(s[0]);
+                builderInner.setTitle("Your Selection is");
+                builderInner.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog,int which) {
+                        Log.e(TAG, "selected "+ s[0]);
+                        returnValue[0] = s[0];
+//                        setChangedAgentorDO(s[0], where_from);
+                        dialog.dismiss();
+                    }
+                });
+                builderInner.setNegativeButton("Cancle", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog,int which) {
+//                        if (where_from == FROM_DO)
+//                            d_do = "";
+//                        else if (where_from == FROM_AGENT)
+//                            agent_name = "";
+                        s[0]="";
+                        returnValue[0] = s[0];
+//                        setChangedAgentorDO(s[0], FROM_NONE);
+                        Log.e(TAG, "selected "+s[0]);
+                        dialog.dismiss();
+                    }
+                });
+                builderInner.show();
+                builderInner.setCancelable(false);
+            }
+        });
+        builderSingle.show();
+        builderSingle.setCancelable(false);
+
+        return returnValue[0];
+    }
+
     public void showProgressDialog(boolean show_title, String title, String message) {
         progressDialog = new ProgressDialog(this);
         if (show_title) {
@@ -351,6 +437,16 @@ public class ActivityBase extends AppCompatActivity {
         }
         progressDialog.setMessage(message);
         progressDialog.show();
+
+    }
+
+    public BidiMap<String, String> createBidiMap(ArrayList<String> key, ArrayList<String> value){
+        BidiMap<String, String> bidiMap = new DualHashBidiMap();
+
+        for (int i =0; i<key.size(); i++){
+            bidiMap.put(key.get(i), value.get(i));
+        }
+        return bidiMap;
 
     }
 

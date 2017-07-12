@@ -73,6 +73,44 @@ public class ActivityConsignment extends ActivityBase {
     }
 
     private void updateCN() {
+        ArrayList<String> keys;
+        ArrayList<String> values;
+        if (canHeChangeTheStatus()){
+            keys = new ArrayList<>();
+            values = new ArrayList<>();
+            List<ResponseList> responseListData = db.getAllStatus();
+            for (ResponseList responseListDatum : responseListData){
+                keys.add(responseListDatum.getStatus());
+                values.add(responseListDatum.getReadable_status());
+                Log.e("db config", responseListDatum.getStatus()+" "+responseListDatum.getReadable_status());
+            }
+            String mChangedStatus = showListInPopUp(ActivityConsignment.this, createBidiMap(keys, values));
+            Log.e("Changed status", ""+mChangedStatus);
+        }
+
+        if (canHeChangeTheAgent()){
+            keys = new ArrayList<>();
+            values = new ArrayList<>();
+            List<AgentListDatum> agentListData = db.getAllAgents();
+            for (AgentListDatum agentListDatum : agentListData){
+                keys.add(agentListDatum.getAgent_id());
+                values.add(agentListDatum.getAgent_name());
+                Log.e("db agent", agentListDatum.getAgent_id()+" "+agentListDatum.getAgent_name());
+            }
+//            showListInPopUp(ActivityConsignment.this, createBidiMap(keys, values));
+        }
+
+        if (canHeChangeTheDO()){
+            keys = new ArrayList<>();
+            values = new ArrayList<>();
+            List<DOListDatum> doListData = db.getAllDOs();
+            for (DOListDatum doListDatum : doListData){
+                keys.add(doListDatum.getId());
+                values.add(doListDatum.getValue());
+                Log.e("db do", doListDatum.getId()+" "+doListDatum.getValue());
+            }
+//            showListInPopUp(ActivityConsignment.this, createBidiMap(keys, values));
+        }
 
     }
 
