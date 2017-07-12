@@ -32,6 +32,11 @@ public class ResponseList {
     @Expose
     private List<UpdatesListDatum> updates = new ArrayList<UpdatesListDatum>();
 
+    public ResponseList(String status, String readable_status) {
+        this.status = status;
+        this.readable_status = readable_status;
+    }
+
     public String getStatus() {
         return status;
     }

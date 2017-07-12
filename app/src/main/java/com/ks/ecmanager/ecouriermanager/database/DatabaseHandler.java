@@ -15,6 +15,7 @@ import android.util.Log;
 import com.ks.ecmanager.ecouriermanager.pojo.AgentListDatum;
 import com.ks.ecmanager.ecouriermanager.pojo.DOListDatum;
 import com.ks.ecmanager.ecouriermanager.pojo.ProfileListDatum;
+import com.ks.ecmanager.ecouriermanager.pojo.ResponseList;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -65,6 +66,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     // Table Config Columns names
     private static final String CONFIG_ID = "id";
+    private static final String STATUS= "status";
+    private static final String READABLE_STATUS= "readable_status";
 
     public static DatabaseHandler getInstance(Context ctx) {
         /**
@@ -89,6 +92,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
        createAgentTable(db);
        createDoTable(db);
        createProfileTable(db);
+       createConfigTable(db);
     }
 
     public static boolean doesDatabaseExist(Context context) {
@@ -131,6 +135,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE);
     }
 
+    private void createConfigTable(SQLiteDatabase db) {
+        String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_CONFIG + "("
+                + CONFIG_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + STATUS + " TEXT NOT NULL,"
+                + READABLE_STATUS + " TEXT NOT NULL"
+                + ")";
+        db.execSQL(CREATE_TABLE);
+    }
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
@@ -142,6 +155,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_AGENTS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_DOS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_PROFILE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONFIG);
 
         // Create tables again
         onCreate(db);
@@ -165,21 +179,27 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     // Getting single agent
-    public AgentListDatum getAgent(int id) {
+    public AgentListDatum getAgent(String id) {
+        Log.e("DB Agent", id);
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query(TABLE_AGENTS, new String[] { AGENT_ID, AGENT_API_ID, AGENT_NAME, AGENT_DO_NAME, AGENT_DO_ID },
-                AGENT_API_ID + "=?",
-                new String[] { String.valueOf(id) }, null, null, null, null);
+//        Cursor cursor = db.query(TABLE_AGENTS, new String[] { AGENT_ID, AGENT_API_ID, AGENT_NAME, AGENT_DO_NAME, AGENT_DO_ID },
+//                AGENT_API_ID + "=?",
+//                new String[] { id }, null, null, null, null);
+        Cursor cursor = db.rawQuery("select * from "+ TABLE_AGENTS +" where "+ AGENT_API_ID + " = " +id, null);
         if (cursor != null)
             cursor.moveToFirst();
 
-        AgentListDatum agentListDatum = new AgentListDatum(cursor.getString(1),
-                cursor.getString(2),
-                cursor.getString(3),
-                cursor.getString(4));
-        // return contact
-        return agentListDatum;
+        if (cursor != null && cursor.moveToFirst()){
+            AgentListDatum agentListDatum = new AgentListDatum(cursor.getString(1),
+                    cursor.getString(2),
+                    cursor.getString(3),
+                    cursor.getString(4));
+            cursor.close();
+            return agentListDatum;
+        }
+        else
+            return null;
     }
 
     // Getting All Agents
@@ -266,19 +286,28 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     // Getting single Do
-    public DOListDatum getDo(int id) {
+    public DOListDatum getDo(String id) {
+        Log.e("DB DO", id);
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query(TABLE_DOS, new String[] { DO_ID,
-                        DO_API_ID, DO_NAME }, DO_API_ID + "=?",
-                new String[] { String.valueOf(id) }, null, null, null, null);
+//        Cursor cursor = db.query(TABLE_DOS, new String[] { DO_ID,
+//                        DO_API_ID, DO_NAME }, DO_API_ID + "=?",
+//                new String[] { String.valueOf(id) }, null, null, null, null);
+        Cursor cursor = db.rawQuery("select * from "+ TABLE_DOS +" where "+ DO_API_ID + " = " +id, null);
         if (cursor != null)
             cursor.moveToFirst();
 
-        DOListDatum doListDatum = new DOListDatum(cursor.getString(1),
-                cursor.getString(2));
-        // return contact
-        return doListDatum;
+        if (cursor != null && cursor.moveToFirst()){
+            DOListDatum doListDatum = new DOListDatum(cursor.getString(1),
+                    cursor.getString(2));
+            cursor.close();
+            // return contact
+            return doListDatum;
+        }
+        else
+            return null;
+
+
     }
 
     // Getting All Dos
@@ -464,5 +493,71 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void  deleteProfiles(){
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("delete from "+ TABLE_PROFILE);
+    }
+
+//    TABLE_CONFIG CRUD operations
+
+    // Adding new profile
+    public void addConfig(String status, String readable_status) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(STATUS, status); // status
+        values.put(READABLE_STATUS, readable_status); // readable status
+
+        // Inserting Row
+        db.insert(TABLE_CONFIG, null, values);
+        db.close(); // Closing database connection
+    }
+
+    // Getting single readable status
+    public String getReadableStatus(String status) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String sql = "select readable_status from config where status = \"S2\";";
+        Cursor cursor = db.rawQuery("select "+READABLE_STATUS + " from "+ TABLE_CONFIG + " where " + STATUS + " = \"" + status + "\"",
+                null);
+
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        if (cursor != null && cursor.moveToFirst()){
+            String s = cursor.getString(0);
+            cursor.close();
+            return s;
+        }
+        else return "";
+    }
+
+    // Getting All config status Data
+    public List<ResponseList> getAllStatus() {
+        List<ResponseList> responseListData = new ArrayList<ResponseList>();
+        // Select All Query
+        String selectQuery = "SELECT "+STATUS+", "+READABLE_STATUS+" FROM " + TABLE_CONFIG;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        @SuppressLint("Recycle") Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor != null){
+            cursor.moveToFirst();
+            if (cursor.moveToFirst()) {
+                do {
+                    ResponseList datum = new ResponseList(cursor.getString(0), cursor.getString(1));
+                    responseListData.add(datum);
+                } while (cursor.moveToNext());
+                cursor.close();
+                return responseListData;
+            }
+            else return  null;
+        }
+        else return null;
+    }
+
+
+    // Deleting all config table data
+    public void  deleteConfigs(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("delete from "+ TABLE_CONFIG);
     }
 }

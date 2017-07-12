@@ -10,151 +10,292 @@
     android:orientation="vertical"
     xmlns:card_view="http://schemas.android.com/apk/res-auto">
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/tvEcrNumber"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="@dimen/card_margin"
+        android:background="@color/blue"
+        android:textColor="@color/black"
+        android:text="@string/testing"
+        android:textSize="@dimen/subtitle_text"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/black"/>
+
+    <TextView
+        android:id="@+id/tvStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="left"
+        android:padding="@dimen/card_margin"
+        android:background="@color/blue"
+        android:textColor="@color/black"
+        android:text="@string/testing"/>
+
+    <TextView
+        android:id="@+id/tvAgent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="left"
+        android:padding="@dimen/card_margin"
+        android:background="@color/blue"
+        android:textColor="@color/black"
+        android:text="@string/testing"/>
+
+    <TextView
+        android:id="@+id/tvDo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="left"
+        android:padding="@dimen/card_margin"
+        android:background="@color/blue"
+        android:textColor="@color/black"
+        android:text="@string/testing"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/black"/>
+
+    <TextView
+        android:id="@+id/tvReceiver"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="left"
+        android:padding="@dimen/card_margin"
+        android:background="@color/merun"
+        android:textColor="@color/black"
+        android:text="@string/testing"
+        android:textSize="@dimen/subtitle_text"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/black"/>
+
+    <TextView
+        android:id="@+id/tvReceiverMobile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="left"
+        android:padding="@dimen/card_margin"
+        android:background="@color/merun"
+        android:textColor="@color/black"
+        android:text="@string/testing"
+        android:textSize="@dimen/subtitle_text"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/black"/>
+
+    <TextView
+        android:id="@+id/tvReceiverAddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="left"
+        android:padding="@dimen/card_margin"
+        android:background="@color/merun"
+        android:textColor="@color/black"
+        android:text="@string/testing"
+        android:textSize="@dimen/subtitle_text"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/black"/>
+
+    <TextView
+        android:id="@+id/tvReceiverPrice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="left"
+        android:padding="@dimen/card_margin"
+        android:background="@color/merun"
+        android:textColor="@color/black"
+        android:text="@string/testing"
+        android:textSize="@dimen/subtitle_text"/>
+
+    <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_weight="1.5"
+    android:orientation="horizontal"
+    android:gravity="bottom">
+
+        <Button
+            android:id="@+id/btnDetails"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:layout_weight="1.0"
+            android:padding="@dimen/activity_horizontal_margin"
+            android:background="@color/colorPrimary"
+            android:text="DETAILS"
+            android:textColor="@color/white"
+        />
+        <!--android:text="DETAILS"-->
+        <Button
+        android:id="@+id/btnUpdate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/activity_horizontal_margin"
         android:layout_weight="1.0"
-
-        android:orientation="horizontal">
-
-        <android.support.v7.widget.CardView
-            android:id="@+id/card_view1"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:layout_margin="@dimen/activity_horizontal_margin"
-            android:layout_weight="1.0"
-            android:padding="@dimen/activity_horizontal_margin"
-            card_view:cardCornerRadius="10dp"
-            card_view:cardElevation="5dp">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@android:color/white"
-                android:gravity="center"
-                android:text="CUSTOMER : NAME" />
-
-        </android.support.v7.widget.CardView>
-
-        <android.support.v7.widget.CardView
-            android:id="@+id/card_view2"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:layout_margin="@dimen/activity_horizontal_margin"
-            android:layout_weight="1.0"
-            android:padding="@dimen/activity_horizontal_margin"
-            card_view:cardCornerRadius="8dp"
-            card_view:cardElevation="5dp">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@android:color/white"
-                android:gravity="center"
-                android:text="MOBILE : NUMBER" />
-
-        </android.support.v7.widget.CardView>
-
+        android:padding="@dimen/activity_horizontal_margin"
+        android:text="UPDATE"
+        android:background="@color/colorPrimary"
+        android:textColor="@color/white"/>
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1.0"
-        android:orientation="horizontal" >
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_weight="1.0"-->
 
-        <android.support.v7.widget.CardView
-            android:id="@+id/card_view3"
-            android:layout_gravity="center"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            card_view:cardCornerRadius="8dp"
-            card_view:cardElevation="5dp"
-            android:layout_margin="@dimen/activity_horizontal_margin"
-            android:padding="@dimen/activity_horizontal_margin"
-            android:layout_weight="1.0">
+        <!--android:orientation="horizontal">-->
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@android:color/white"
-                android:gravity="center"
-                android:text="ADDRESS : ADDRESS" />
+        <!--<android.support.v7.widget.CardView-->
+            <!--android:id="@+id/card_view1"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:layout_margin="@dimen/activity_horizontal_margin"-->
+            <!--android:layout_weight="1.0"-->
+            <!--android:padding="@dimen/activity_horizontal_margin"-->
+            <!--card_view:cardCornerRadius="10dp"-->
+            <!--card_view:cardElevation="5dp">-->
 
-        </android.support.v7.widget.CardView>
+            <!--<TextView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:background="@android:color/white"-->
+                <!--android:gravity="center"-->
+                <!--android:text="CUSTOMER : NAME" />-->
 
-        <android.support.v7.widget.CardView
-            android:id="@+id/card_view4"
-            android:layout_gravity="center"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            card_view:cardCornerRadius="8dp"
-            card_view:cardElevation="5dp"
-            android:layout_margin="@dimen/activity_horizontal_margin"
-            android:padding="@dimen/activity_horizontal_margin"
-            android:layout_weight="1.0">
+        <!--</android.support.v7.widget.CardView>-->
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@android:color/white"
-                android:gravity="center"
-                android:text="PRICE : PRODUCT PRICE" />
+        <!--<android.support.v7.widget.CardView-->
+            <!--android:id="@+id/card_view2"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:layout_margin="@dimen/activity_horizontal_margin"-->
+            <!--android:layout_weight="1.0"-->
+            <!--android:padding="@dimen/activity_horizontal_margin"-->
+            <!--card_view:cardCornerRadius="8dp"-->
+            <!--card_view:cardElevation="5dp">-->
 
-        </android.support.v7.widget.CardView>
+            <!--<TextView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:background="@android:color/white"-->
+                <!--android:gravity="center"-->
+                <!--android:text="MOBILE : NUMBER" />-->
 
-    </LinearLayout>
+        <!--</android.support.v7.widget.CardView>-->
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1.5"
-        android:orientation="horizontal">
+    <!--</LinearLayout>-->
 
-        <android.support.v7.widget.CardView
-            android:id="@+id/card_view5"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:layout_margin="@dimen/activity_horizontal_margin"
-            android:layout_weight="1.0"
-            android:padding="@dimen/activity_horizontal_margin"
-            card_view:cardCornerRadius="8dp"
-            card_view:cardElevation="5dp">
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_weight="1.0"-->
+        <!--android:orientation="horizontal" >-->
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/colorPrimary"
-                android:textColor="@color/white"
-                android:gravity="center"
-                android:text="DETAILS" />
+        <!--<android.support.v7.widget.CardView-->
+            <!--android:id="@+id/card_view3"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--card_view:cardCornerRadius="8dp"-->
+            <!--card_view:cardElevation="5dp"-->
+            <!--android:layout_margin="@dimen/activity_horizontal_margin"-->
+            <!--android:padding="@dimen/activity_horizontal_margin"-->
+            <!--android:layout_weight="1.0">-->
 
-        </android.support.v7.widget.CardView>
+            <!--<TextView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:background="@android:color/white"-->
+                <!--android:gravity="center"-->
+                <!--android:text="ADDRESS : ADDRESS" />-->
 
-        <android.support.v7.widget.CardView
-            android:id="@+id/card_view6"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:layout_margin="@dimen/activity_horizontal_margin"
-            android:layout_weight="1.0"
-            android:padding="@dimen/activity_horizontal_margin"
-            card_view:cardCornerRadius="8dp"
-            card_view:cardElevation="5dp">
+        <!--</android.support.v7.widget.CardView>-->
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="UPDATE"
-                android:background="@color/colorPrimary"
-                android:textColor="@color/white"/>
+        <!--<android.support.v7.widget.CardView-->
+            <!--android:id="@+id/card_view4"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--card_view:cardCornerRadius="8dp"-->
+            <!--card_view:cardElevation="5dp"-->
+            <!--android:layout_margin="@dimen/activity_horizontal_margin"-->
+            <!--android:padding="@dimen/activity_horizontal_margin"-->
+            <!--android:layout_weight="1.0">-->
 
-        </android.support.v7.widget.CardView>
+            <!--<TextView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:background="@android:color/white"-->
+                <!--android:gravity="center"-->
+                <!--android:text="PRICE : PRODUCT PRICE" />-->
 
-    </LinearLayout>
+        <!--</android.support.v7.widget.CardView>-->
+
+    <!--</LinearLayout>-->
+
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_weight="1.5"-->
+        <!--android:orientation="horizontal">-->
+
+        <!--<android.support.v7.widget.CardView-->
+            <!--android:id="@+id/card_view5"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:layout_margin="@dimen/activity_horizontal_margin"-->
+            <!--android:layout_weight="1.0"-->
+            <!--android:padding="@dimen/activity_horizontal_margin"-->
+            <!--card_view:cardCornerRadius="8dp"-->
+            <!--card_view:cardElevation="5dp">-->
+
+            <!--<TextView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:background="@color/colorPrimary"-->
+                <!--android:textColor="@color/white"-->
+                <!--android:gravity="center"-->
+                <!--android:text="DETAILS" />-->
+
+        <!--</android.support.v7.widget.CardView>-->
+
+        <!--<android.support.v7.widget.CardView-->
+            <!--android:id="@+id/card_view6"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:layout_margin="@dimen/activity_horizontal_margin"-->
+            <!--android:layout_weight="1.0"-->
+            <!--android:padding="@dimen/activity_horizontal_margin"-->
+            <!--card_view:cardCornerRadius="8dp"-->
+            <!--card_view:cardElevation="5dp">-->
+
+            <!--<TextView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:gravity="center"-->
+                <!--android:text="UPDATE"-->
+                <!--android:background="@color/colorPrimary"-->
+                <!--android:textColor="@color/white"/>-->
+
+        <!--</android.support.v7.widget.CardView>-->
+
+    <!--</LinearLayout>-->
 
 </LinearLayout>

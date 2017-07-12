@@ -29,6 +29,7 @@ import android.widget.Toast;
 import com.ks.ecmanager.ecouriermanager.R;
 import com.ks.ecmanager.ecouriermanager.activities.base.ActivityBase;
 import com.ks.ecmanager.ecouriermanager.activities.initLayer.ActivityLogin;
+import com.ks.ecmanager.ecouriermanager.activities.secondLayer.ActivityConsignment;
 import com.ks.ecmanager.ecouriermanager.activities.secondLayer.ActivityConsignmentDetails;
 import com.ks.ecmanager.ecouriermanager.database.DatabaseHandler;
 import com.ks.ecmanager.ecouriermanager.pojo.ConsignmentList;
@@ -243,60 +244,69 @@ public class ActivityMain extends ActivityBase {
                 if (status) {
                     mSearchValue.setText("");
                     consignmentListDatumList = consignment_list.getData();
+
+                    ArrayList<ConsignmentListDatum> ItemArray = ((ArrayList<ConsignmentListDatum>) consignmentListDatumList);
+                    Intent intent = new Intent(ActivityMain.this, ActivityConsignment.class);
+                    intent.putExtra(KEY_CN_POS, 0);
+                    intent.putExtra(KEY_CN_DATA, ItemArray);
+                    intent.putExtra(KEY_WHERE_FROM, CN_TYPE_SEARCH);
+                    startActivity(intent);
+
+
 //                    Log.e("SOURCE DO", consignmentListDatumList.get(0).getSource_do());
 //                    Log.e("DESTINATION DO", consignmentListDatumList.get(0).getDestination_do());
 //                    Log.e("MY DO", user.get(SessionUserData.KEY_DO_NAME)+" "+doBidiList.getKey(user.get(SessionUserData.KEY_DO_NAME)));
-                    int i = 0;
-                    if (consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s2))
-                            ||consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s4))
-                            ||consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s5))
-                            ||consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s6))
-                            ||consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s7))
-                            ||consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s8))
-                            ||consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s10))
-                            ||consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s12))
-                            ||consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s13))
-                            ){
-                        if (consignmentListDatumList.get(0).getSource_do()
-                                .equals(doBidiList.getKey(user.get(SessionUserData.KEY_DO_NAME)))){
-                            i = 1;
-
-                        }
-                    }
-                    else if (consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s15))
-                            ||consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s20))
-                            ||consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s21))
-                            ||consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s22))
-                            ||consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s23))
-                            ||consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s24))
-                            ||consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s25))
-                            ){
-                        if (consignmentListDatumList.get(0).getDestination_do()
-                                .equals(doBidiList.getKey(user.get(SessionUserData.KEY_DO_NAME)))){
-                            i = 1;
-                        }
-                    }
-                    else if (consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s14))){
-                        if (consignmentListDatumList.get(0).getSource_do().equals(doBidiList.getKey(user.get(SessionUserData.KEY_DO_NAME)))
-                                || consignmentListDatumList.get(0).getDestination_do().equals(doBidiList.getKey(user.get(SessionUserData.KEY_DO_NAME)))){
-                            i = 1;
-                        }
-                    }
-
-                    if (!isAgentRefreshed)
-                        showErrorToast("Please Refresh Agent!!!", Toast.LENGTH_SHORT, MIDDLE);
-                    else if (!isDoRefreshed)
-                        showErrorToast("Please Refresh DO!!!", Toast.LENGTH_SHORT, MIDDLE);
-                    if (i == 1 && isAgentRefreshed && isDoRefreshed){
-                        ArrayList<ConsignmentListDatum> ItemArray = ((ArrayList<ConsignmentListDatum>) consignmentListDatumList);
-                        Intent intent = new Intent(ActivityMain.this, ActivityConsignmentDetails.class);
-                        intent.putExtra(KEY_CN_POS, 0);
-                        intent.putExtra(KEY_CN_DATA, ItemArray);
-                        intent.putExtra(KEY_WHERE_FROM, CN_TYPE_SEARCH);
-                        startActivity(intent);
-                    }
-                    else if (i != 1)
-                        showErrorToast(getString(R.string.not_allowed), Toast.LENGTH_SHORT, MIDDLE);
+//                    int i = 0;
+//                    if (consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s2))
+//                            ||consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s4))
+//                            ||consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s5))
+//                            ||consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s6))
+//                            ||consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s7))
+//                            ||consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s8))
+//                            ||consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s10))
+//                            ||consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s12))
+//                            ||consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s13))
+//                            ){
+//                        if (consignmentListDatumList.get(0).getSource_do()
+//                                .equals(doBidiList.getKey(user.get(SessionUserData.KEY_DO_NAME)))){
+//                            i = 1;
+//
+//                        }
+//                    }
+//                    else if (consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s15))
+//                            ||consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s20))
+//                            ||consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s21))
+//                            ||consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s22))
+//                            ||consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s23))
+//                            ||consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s24))
+//                            ||consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s25))
+//                            ){
+//                        if (consignmentListDatumList.get(0).getDestination_do()
+//                                .equals(doBidiList.getKey(user.get(SessionUserData.KEY_DO_NAME)))){
+//                            i = 1;
+//                        }
+//                    }
+//                    else if (consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s14))){
+//                        if (consignmentListDatumList.get(0).getSource_do().equals(doBidiList.getKey(user.get(SessionUserData.KEY_DO_NAME)))
+//                                || consignmentListDatumList.get(0).getDestination_do().equals(doBidiList.getKey(user.get(SessionUserData.KEY_DO_NAME)))){
+//                            i = 1;
+//                        }
+//                    }
+//
+//                    if (!isAgentRefreshed)
+//                        showErrorToast("Please Refresh Agent!!!", Toast.LENGTH_SHORT, MIDDLE);
+//                    else if (!isDoRefreshed)
+//                        showErrorToast("Please Refresh DO!!!", Toast.LENGTH_SHORT, MIDDLE);
+//                    if (i == 1 && isAgentRefreshed && isDoRefreshed){
+//                        ArrayList<ConsignmentListDatum> ItemArray = ((ArrayList<ConsignmentListDatum>) consignmentListDatumList);
+//                        Intent intent = new Intent(ActivityMain.this, ActivityConsignmentDetails.class);
+//                        intent.putExtra(KEY_CN_POS, 0);
+//                        intent.putExtra(KEY_CN_DATA, ItemArray);
+//                        intent.putExtra(KEY_WHERE_FROM, CN_TYPE_SEARCH);
+//                        startActivity(intent);
+//                    }
+//                    else if (i != 1)
+//                        showErrorToast(getString(R.string.not_allowed), Toast.LENGTH_SHORT, MIDDLE);
                 }
                 else
                     showErrorToast(getString(R.string.no_data_found), Toast.LENGTH_SHORT, MIDDLE);

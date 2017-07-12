@@ -63,4 +63,5 @@
     <string name="do_refresh">DO REFRESH</string>
     <string name="agent_refresh">AGENT REFRESH</string>
     <string name="testing">UPDATED FROM APP</string>
+    <string name="status">Status: %1$s</string>
 </resources>

@@ -248,23 +248,16 @@ public class ActivityBase extends AppCompatActivity {
     public void getConfigData() {
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(ApiParams.TAG_BASE_URL).build();
         AppConfigInterface myApiCallback = restAdapter.create(AppConfigInterface.class);
-        Log.e(TAG, "getConfigData()");
+//        Log.e(TAG, "getConfigData()");
         myApiCallback.getData(ApiParams.TAG_APP_CONFIG, new Callback<List<ResponseList>>() {
-
-            public void test(ResponseList responseList, Response response) {
-                Log.e(TAG, "success");
-                initDB();
-                Log.e(TAG, responseList.toString());
-                for (UpdatesListDatum updatesListDatum : responseList.getUpdates())
-                Log.e(TAG, updatesListDatum.toString());
-            }
 
             @Override
             public void success(List<ResponseList> responseLists, Response response) {
                 Log.e(TAG, "success");
                 initDB();
                 for (ResponseList responseList : responseLists){
-                    Log.e(TAG, responseList.toString());
+                    db.addConfig(responseList.getStatus(), responseList.getReadable_status());
+                    Log.e("Readble status from api", responseList.getReadable_status()+"");
                     for (UpdatesListDatum updatesListDatum : responseList.getUpdates()){
 //                        Log.e(TAG, updatesListDatum.toString());
                     }
