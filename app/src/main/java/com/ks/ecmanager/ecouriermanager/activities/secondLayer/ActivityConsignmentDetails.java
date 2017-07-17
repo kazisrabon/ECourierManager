@@ -89,7 +89,6 @@ public class ActivityConsignmentDetails extends ActivityBase{
         res = getResources();
         user = sessionUserData.getSessionDetails();
         setHashMap();
-
         initialize();
         receiveDataFromIntent();
 //        setVisibility(INVISIBLE);
@@ -291,27 +290,47 @@ public class ActivityConsignmentDetails extends ActivityBase{
         }
         else
             mDeliveryTime.setText(String.format(res.getString(R.string.delivery_time), res.getString(R.string.none)));
+//
+//        if (stringNotNullCheck(datum.getDestination_do())){
+////            printBidiHash(TAG, doBidiList);
+//            String s = doBidiList.get(datum.getDestination_do());
+//            if (stringNotNullCheck(s))
+//                mDDO.setText(String.format(res.getString(R.string.destination_do), s));
+//            else
+//                mDDO.setText(String.format(res.getString(R.string.destination_do), datum.getDestination_do()));
+//        }
+//
+//        else
+//            mDDO.setText(String.format(res.getString(R.string.destination_do), res.getString(R.string.none)));
 
         if (stringNotNullCheck(datum.getDestination_do())){
-//            printBidiHash(TAG, doBidiList);
-            String s = doBidiList.get(datum.getDestination_do());
-            if (stringNotNullCheck(s))
-                mDDO.setText(String.format(res.getString(R.string.destination_do), s));
-            else
-                mDDO.setText(String.format(res.getString(R.string.destination_do), datum.getDestination_do()));
+            DOListDatum doListDatum= db.getDo(datum.getDestination_do());
+            String s = "";
+            if (doListDatum != null) {
+                s = doListDatum.getValue();
+            }
+            else s= getResources().getString(R.string.no_do_found);
+            mDDO.setText(String.format(getString(R.string.destination_do), s));
         }
-
         else
             mDDO.setText(String.format(res.getString(R.string.destination_do), res.getString(R.string.none)));
 
         if (stringNotNullCheck(datum.getDelivery_agent())){
-            printBidiHash(TAG, agentBidiList);
-            Log.e(TAG, datum.getDelivery_agent());
-            String s = agentBidiList.get(datum.getDelivery_agent());
-            if (stringNotNullCheck(s))
-                mDeliveryAgent.setText(String.format(res.getString(R.string.delivery_agent), s));
-            else
-                mDeliveryAgent.setText(String.format(res.getString(R.string.delivery_agent), datum.getDelivery_agent()));
+            Log.e(""+TAG, datum.getDelivery_agent());
+            AgentListDatum agentListDatum = db.getAgent(datum.getDelivery_agent());
+
+            if (agentListDatum != null){
+                Log.e(TAG, agentListDatum.getAgent_id()
+                        +" "+ agentListDatum.getAgent_name()
+                        +" "+ agentListDatum.getDo_name()
+                        +" "+ agentListDatum.getDo_id());
+            }
+            String s = "";
+            if (agentListDatum != null) {
+                s = agentListDatum.getAgent_name();
+            }
+            else s= getResources().getString(R.string.no_agent_found);
+            mDeliveryAgent.setText(String.format(getString(R.string.delivery_agent), s));
         }
         else
             mDeliveryAgent.setText(String.format(res.getString(R.string.delivery_agent), res.getString(R.string.none)));

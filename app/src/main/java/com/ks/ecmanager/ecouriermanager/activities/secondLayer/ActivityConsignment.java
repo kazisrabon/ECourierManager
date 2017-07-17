@@ -11,16 +11,31 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ks.ecmanager.ecouriermanager.R;
 import com.ks.ecmanager.ecouriermanager.activities.base.ActivityBase;
 import com.ks.ecmanager.ecouriermanager.pojo.AgentListDatum;
 import com.ks.ecmanager.ecouriermanager.pojo.ConsignmentListDatum;
 import com.ks.ecmanager.ecouriermanager.pojo.DOListDatum;
+import com.ks.ecmanager.ecouriermanager.pojo.ParcelList;
 import com.ks.ecmanager.ecouriermanager.pojo.ResponseList;
+import com.ks.ecmanager.ecouriermanager.session.SessionUserData;
+import com.ks.ecmanager.ecouriermanager.webservices.ApiParams;
+import com.ks.ecmanager.ecouriermanager.webservices.interfaces.ParcelStatusUpdateInterface;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+
+import retrofit.Callback;
+import retrofit.RestAdapter;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+
+import static com.ks.ecmanager.ecouriermanager.activities.initLayer.ActivityLogin.sessionUserData;
 
 /**
  * Created by Kazi Srabon on 7/10/2017.
@@ -31,14 +46,30 @@ public class ActivityConsignment extends ActivityBase {
     TextView tvECR, tvStatus, tvAgent, tvDO, tvReceiver, tvReceiverMobile, tvAddress, tvProductPrice;
     Button btnDetails, btnUpdate;
     private Intent intent;
+    private HashMap<String, String> user = new HashMap<String, String>();
+    private HashMap<String, String> map = new HashMap<String, String>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_consignment);
+        setHash();
         initView();
         receiveDataFromIntent();
+    }
+
+    private void setHash() {
+        user = sessionUserData.getSessionDetails();
+        String id = user.get(SessionUserData.KEY_USER_ID);
+        String group = user.get(SessionUserData.KEY_USER_GROUP);
+        String authentication_key = user.get(SessionUserData.KEY_USER_AUTH_KEY);
+
+        //Lets pass the desired parameters
+        map.put(ApiParams.PARAM_ADMIN_ID, "" + id);
+        map.put(ApiParams.PARAM_GROUP, group);
+        map.put(ApiParams.PARAM_AUTHENTICATION_KEY, "" + authentication_key);
+        map.put(ApiParams.PARAM_COMMENT, getString(R.string.testing));
     }
 
     private void initView() {
@@ -72,46 +103,129 @@ public class ActivityConsignment extends ActivityBase {
         startActivity(intent);
     }
 
-    private void updateCN() {
+    public String receiveStatusChangeValue(){
         ArrayList<String> keys;
         ArrayList<String> values;
-        if (canHeChangeTheStatus()){
-            keys = new ArrayList<>();
-            values = new ArrayList<>();
-            List<ResponseList> responseListData = db.getAllStatus();
-            for (ResponseList responseListDatum : responseListData){
-                keys.add(responseListDatum.getStatus());
-                values.add(responseListDatum.getReadable_status());
-                Log.e("db config", responseListDatum.getStatus()+" "+responseListDatum.getReadable_status());
+        keys = new ArrayList<>();
+        values = new ArrayList<>();
+        List<ResponseList> responseListData = db.getAllStatus();
+        for (ResponseList responseListDatum : responseListData){
+            keys.add(responseListDatum.getStatus());
+            values.add(responseListDatum.getReadable_status());
+            Log.e("db config", responseListDatum.getStatus()+" "+responseListDatum.getReadable_status());
+        }
+        String changedStatus = showListInPopUp(ActivityConsignment.this, createBidiMap(keys, values));
+        Log.e("Changed status", ""+changedStatus);
+        return changedStatus;
+    }
+
+    public String receiveAgentChangeValue(){
+        ArrayList<String> keys;
+        ArrayList<String> values;
+        keys = new ArrayList<>();
+        values = new ArrayList<>();
+        List<AgentListDatum> agentListData = db.getAllAgents();
+        for (AgentListDatum agentListDatum : agentListData){
+            keys.add(agentListDatum.getAgent_id());
+            values.add(agentListDatum.getAgent_name());
+            Log.e("db agent", agentListDatum.getAgent_id()+" "+agentListDatum.getAgent_name());
+        }
+        String changedAgent = showListInPopUp(ActivityConsignment.this, createBidiMap(keys, values));
+        Log.e("Changed agent", ""+changedAgent);
+        return changedAgent;
+    }
+
+    public String receiveDOChangeValue(){
+        ArrayList<String> keys;
+        ArrayList<String> values;
+        keys = new ArrayList<>();
+        values = new ArrayList<>();
+        List<DOListDatum> doListData = db.getAllDOs();
+        for (DOListDatum doListDatum : doListData){
+            keys.add(doListDatum.getId());
+            values.add(doListDatum.getValue());
+            Log.e("db do", doListDatum.getId()+" "+doListDatum.getValue());
+        }
+        String changedDO = showListInPopUp(ActivityConsignment.this, createBidiMap(keys, values));
+        Log.e("Changed do", ""+changedDO);
+        return changedDO;
+    }
+
+    private void updateCN() {
+        String mChangedStatus = "";
+        String mChangedAgent = "";
+        String mChangedDO = "";
+        String accessLevel = accessLevel();
+//            status can changeable check
+        if (accessLevel.contains("1")){
+            mChangedStatus = receiveStatusChangeValue();
+            if (stringNotNullCheck(mChangedStatus)){
+                map.put(ApiParams.PARAM_STATUS, "" + mChangedStatus);
+//                is status canceled
+                if (mChangedAgent.equals(getString(R.string.s12))){
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    String currentDateandTime = sdf.format(new Date());
+                    map.put(ApiParams.PARAM_CANCEL_CALL_TIME, currentDateandTime);
+                }
+//                agent can changeable for status check
+                if (accessLevel.contains("2")){
+                    mChangedAgent = receiveAgentChangeValue();
+                    if (stringNotNullCheck(mChangedAgent)){
+                        map.put(ApiParams.PARAM_RETURN_AGENT, "" + mChangedAgent);
+//                        do can changeable for status & agent
+                        if (accessLevel.contains("3")){
+                            mChangedDO = receiveDOChangeValue();
+                            if (stringNotNullCheck(mChangedDO)){
+                                map.put(ApiParams.PARAM_D_DO, "" + mChangedDO);
+//                                parcelStatusUpdate(map);
+                            }
+//                            else
+//                                parcelStatusUpdate(map);
+                        }
+//                        else
+//                            parcelStatusUpdate(map);
+                    }
+                }
+//                do can changeable for status
+                else if (accessLevel.contains("3")){
+                    mChangedDO = receiveDOChangeValue();
+                    if (stringNotNullCheck(mChangedDO)){
+                        map.put(ApiParams.PARAM_D_DO, "" + mChangedDO);
+                    }
+//                    parcelStatusUpdate(map);
+                }
+
+//                else
+//                    parcelStatusUpdate(map);
             }
-            String mChangedStatus = showListInPopUp(ActivityConsignment.this, createBidiMap(keys, values));
-            Log.e("Changed status", ""+mChangedStatus);
         }
 
-        if (canHeChangeTheAgent()){
-            keys = new ArrayList<>();
-            values = new ArrayList<>();
-            List<AgentListDatum> agentListData = db.getAllAgents();
-            for (AgentListDatum agentListDatum : agentListData){
-                keys.add(agentListDatum.getAgent_id());
-                values.add(agentListDatum.getAgent_name());
-                Log.e("db agent", agentListDatum.getAgent_id()+" "+agentListDatum.getAgent_name());
+        else if (accessLevel.contains("2")){
+            if (!accessLevel.contains("1")){
+                mChangedAgent = receiveAgentChangeValue();
+                if (stringNotNullCheck(mChangedAgent)){
+                    map.put(ApiParams.PARAM_RETURN_AGENT, "" + mChangedAgent);
+                    if (accessLevel.contains("3")){
+                        mChangedDO = receiveDOChangeValue();
+                        if (stringNotNullCheck(mChangedDO)){
+                            map.put(ApiParams.PARAM_D_DO, "" + mChangedDO);
+                        }
+                    }
+                }
             }
-//            showListInPopUp(ActivityConsignment.this, createBidiMap(keys, values));
         }
 
-        if (canHeChangeTheDO()){
-            keys = new ArrayList<>();
-            values = new ArrayList<>();
-            List<DOListDatum> doListData = db.getAllDOs();
-            for (DOListDatum doListDatum : doListData){
-                keys.add(doListDatum.getId());
-                values.add(doListDatum.getValue());
-                Log.e("db do", doListDatum.getId()+" "+doListDatum.getValue());
+        else if (accessLevel.equals("3")){
+            mChangedDO = receiveDOChangeValue();
+            if (stringNotNullCheck(mChangedDO)){
+                map.put(ApiParams.PARAM_D_DO, "" + mChangedDO);
             }
-//            showListInPopUp(ActivityConsignment.this, createBidiMap(keys, values));
         }
-
+        else {
+            showErrorToast("Have no access!!!", Toast.LENGTH_SHORT, END);
+        }
+        Log.e(TAG+"", mChangedStatus +" "+ mChangedAgent +" "+ mChangedDO);
+        parcelStatusUpdate(map);
     }
 
     private void receiveDataFromIntent() {
@@ -138,8 +252,10 @@ public class ActivityConsignment extends ActivityBase {
     }
 
     private void setConsignmentDetails(ConsignmentListDatum consignmentListDatum) {
-        if (stringNotNullCheck(consignmentListDatum.getConsignment_no()))
+        if (stringNotNullCheck(consignmentListDatum.getConsignment_no())) {
             tvECR.setText(consignmentListDatum.getConsignment_no());
+            map.put(ApiParams.PARAM_CONSIGNMENT_NO, "" + consignmentListDatum.getConsignment_no());
+        }
 
 //        Log.e("statuscode from service",""+consignmentListDatum.getStatus_code());
 //        Log.e("db config status", db.getReadableStatus(consignmentListDatum.getStatus_code()));
@@ -149,8 +265,10 @@ public class ActivityConsignment extends ActivityBase {
 //                Log.e("db config", responseListDatum.getStatus()+" "+responseListDatum.getReadable_status());
 //            }
 //        }
-        if (stringNotNullCheck(consignmentListDatum.getStatus_code()))
+        if (stringNotNullCheck(consignmentListDatum.getStatus_code())) {
             tvStatus.setText(String.format(getString(R.string.status), db.getReadableStatus(consignmentListDatum.getStatus_code())));
+            map.put(ApiParams.PARAM_STATUS, "" + consignmentListDatum.getStatus_code());
+        }
 
         if (stringNotNullCheck(consignmentListDatum.getDelivery_agent())){
             Log.e(""+TAG, consignmentListDatum.getDelivery_agent());
@@ -162,7 +280,7 @@ public class ActivityConsignment extends ActivityBase {
                         +" "+ agentListDatum.getDo_name()
                         +" "+ agentListDatum.getDo_id());
             }
-            String s = null;
+            String s = "";
             if (agentListDatum != null) {
                 s = agentListDatum.getAgent_name();
             }
@@ -179,7 +297,7 @@ public class ActivityConsignment extends ActivityBase {
                 Log.e(TAG, doListDatum.getId()
                         +" "+ doListDatum.getValue());
             }
-            String s = null;
+            String s = "";
             if (doListDatum != null) {
                 s = doListDatum.getValue();
             }
@@ -202,5 +320,36 @@ public class ActivityConsignment extends ActivityBase {
         if (stringNotNullCheck(consignmentListDatum.getProduct_price()))
             tvProductPrice.setText(String.format(getString(R.string.product_price), consignmentListDatum.getProduct_price()));
 
+    }
+
+    private void parcelStatusUpdate(HashMap<String, String> statusMap){
+        showProgressDialog(false, "", getResources().getString(R.string.loading));
+
+        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(ApiParams.TAG_BASE_URL).build();
+        ParcelStatusUpdateInterface myApiCallback = restAdapter.create(ParcelStatusUpdateInterface.class);
+
+        printHash(TAG, statusMap);
+//      parcel update api
+//        myApiCallback.getData(ApiParams.TAG_PARCEL_STATUS_UPDATE_KEY, statusMap, new Callback<ParcelList>() {
+//            @Override
+//            public void success(ParcelList parcelList, Response response) {
+//                hideProgressDialog();
+//
+//                boolean status = parcelList.getStatus();
+//                Log.e(TAG, status+" ");
+//                if (status) {
+//                    showSuccessToast(getString(R.string.sucess), Toast.LENGTH_SHORT, END);
+////                    reloadCN(map.get(ApiParams.PARAM_CONSIGNMENT_NO));
+//                }
+//                else
+//                    showErrorToast(getString(R.string.no_data_found), Toast.LENGTH_SHORT, MIDDLE);
+//            }
+//
+//            @Override
+//            public void failure(RetrofitError error) {
+//                hideProgressDialog();
+//                showErrorToast("" + error.getMessage() + "!", Toast.LENGTH_SHORT, MIDDLE);
+//            }
+//        });
     }
 }

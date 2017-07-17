@@ -17,12 +17,14 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -31,6 +33,7 @@ import com.ks.ecmanager.ecouriermanager.activities.base.ActivityBase;
 import com.ks.ecmanager.ecouriermanager.activities.initLayer.ActivityLogin;
 import com.ks.ecmanager.ecouriermanager.activities.secondLayer.ActivityConsignment;
 import com.ks.ecmanager.ecouriermanager.activities.secondLayer.ActivityConsignmentDetails;
+import com.ks.ecmanager.ecouriermanager.adapters.MultipleSearchValueAdapter;
 import com.ks.ecmanager.ecouriermanager.database.DatabaseHandler;
 import com.ks.ecmanager.ecouriermanager.pojo.ConsignmentList;
 import com.ks.ecmanager.ecouriermanager.pojo.ConsignmentListDatum;
@@ -67,6 +70,7 @@ public class ActivityMain extends ActivityBase {
     private HashMap<String, String> user = new HashMap<String, String>();
     private HashMap<String, String> map = new HashMap<String, String>();
     private List<ConsignmentListDatum> consignmentListDatumList;
+    private AlertDialog b;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +89,7 @@ public class ActivityMain extends ActivityBase {
             showProgressDialog(false, "", getResources().getString(R.string.loading));
             setDoBidiList(map);
             setAgentBidiList(map);
-            setProfileData(map);
+            setProfileData(map, user.get(SessionUserData.KEY_USER_GROUP));
             getConfigData();
             sessionUserData.setLoggedIn();
             hideProgressDialog();
@@ -244,13 +248,14 @@ public class ActivityMain extends ActivityBase {
                 if (status) {
                     mSearchValue.setText("");
                     consignmentListDatumList = consignment_list.getData();
+                    promptView(consignmentListDatumList);
 
-                    ArrayList<ConsignmentListDatum> ItemArray = ((ArrayList<ConsignmentListDatum>) consignmentListDatumList);
-                    Intent intent = new Intent(ActivityMain.this, ActivityConsignment.class);
-                    intent.putExtra(KEY_CN_POS, 0);
-                    intent.putExtra(KEY_CN_DATA, ItemArray);
-                    intent.putExtra(KEY_WHERE_FROM, CN_TYPE_SEARCH);
-                    startActivity(intent);
+//                    ArrayList<ConsignmentListDatum> ItemArray = ((ArrayList<ConsignmentListDatum>) consignmentListDatumList);
+//                    Intent intent = new Intent(ActivityMain.this, ActivityConsignment.class);
+//                    intent.putExtra(KEY_CN_POS, 0);
+//                    intent.putExtra(KEY_CN_DATA, ItemArray);
+//                    intent.putExtra(KEY_WHERE_FROM, CN_TYPE_SEARCH);
+//                    startActivity(intent);
 
 
 //                    Log.e("SOURCE DO", consignmentListDatumList.get(0).getSource_do());
@@ -319,6 +324,18 @@ public class ActivityMain extends ActivityBase {
                 showErrorToast("" + error.getMessage() + "!", Toast.LENGTH_SHORT, MIDDLE);
             }
         });
+    }
+
+    private void promptView(List<ConsignmentListDatum> consignmentListDatumList) {
+        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        final View dialogView = inflater.inflate(R.layout.dialog_review, null);
+        dialogBuilder.setView(dialogView);
+        b = dialogBuilder.create();
+        b.setCancelable(true);
+        b.show();
+        ListView listView = (ListView) dialogView.findViewById(R.id.list);
+        listView.setAdapter(new MultipleSearchValueAdapter(this, consignmentListDatumList));
     }
 
     private void getRequiredPermission() {

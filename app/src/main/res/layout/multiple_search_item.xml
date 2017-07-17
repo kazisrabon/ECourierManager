@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2017. kazi srabon. Contact : kaziiit@gmail.com
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2">
+        <TextView
+            android:id="@+id/tvEcrNumber"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="@dimen/card_margin"
+            android:text="@string/testing"
+            android:layout_gravity="center"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".5"
+            android:paddingTop="@dimen/card_margin"
+            android:paddingBottom="@dimen/card_margin"
+            android:paddingLeft="@dimen/card_margin"
+            android:paddingStart="@dimen/card_margin"
+            android:text="@string/product_price_tv"
+            android:textStyle="bold"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:id="@+id/tvProductPrice"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".5"
+            android:paddingTop="@dimen/card_margin"
+            android:paddingBottom="@dimen/card_margin"
+            android:paddingRight="@dimen/card_margin"
+            android:paddingEnd="@dimen/card_margin"
+            android:text="@string/testing"
+            android:layout_gravity="center"/>
+    </LinearLayout>
+
+    <view
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/black"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".5"
+            android:paddingTop="@dimen/card_margin"
+            android:paddingBottom="@dimen/card_margin"
+            android:paddingLeft="@dimen/card_margin"
+            android:paddingStart="@dimen/card_margin"
+            android:text="@string/company_tv"
+            android:textStyle="bold"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:id="@+id/tvCompany"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".5"
+            android:paddingTop="@dimen/card_margin"
+            android:paddingBottom="@dimen/card_margin"
+            android:paddingRight="@dimen/card_margin"
+            android:paddingEnd="@dimen/card_margin"
+            android:text="@string/testing"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".5"
+            android:paddingTop="@dimen/card_margin"
+            android:paddingBottom="@dimen/card_margin"
+            android:paddingLeft="@dimen/card_margin"
+            android:paddingStart="@dimen/card_margin"
+            android:text="@string/recipient_name_tv"
+            android:textStyle="bold"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:id="@+id/tvReciverName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".5"
+            android:paddingTop="@dimen/card_margin"
+            android:paddingBottom="@dimen/card_margin"
+            android:paddingRight="@dimen/card_margin"
+            android:paddingEnd="@dimen/card_margin"
+            android:text="@string/testing"
+            android:layout_gravity="center"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".5"
+            android:paddingBottom="@dimen/card_margin"
+            android:paddingLeft="@dimen/card_margin"
+            android:paddingStart="@dimen/card_margin"
+            android:text="@string/recipient_mobile_tv"
+            android:textStyle="bold"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:id="@+id/tvReceiverMobile"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".5"
+            android:paddingBottom="@dimen/card_margin"
+            android:paddingRight="@dimen/card_margin"
+            android:paddingEnd="@dimen/card_margin"
+            android:text="@string/testing"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".5"
+            android:paddingBottom="@dimen/card_margin"
+            android:paddingLeft="@dimen/card_margin"
+            android:paddingStart="@dimen/card_margin"
+            android:text="@string/status"
+            android:textStyle="bold"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:id="@+id/tvStatus"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".5"
+            android:paddingBottom="@dimen/card_margin"
+            android:paddingRight="@dimen/card_margin"
+            android:paddingEnd="@dimen/card_margin"
+            android:text="@string/testing"
+            android:layout_gravity="center"/>
+    </LinearLayout>
+
+</LinearLayout>

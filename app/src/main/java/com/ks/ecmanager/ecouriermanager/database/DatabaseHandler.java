@@ -63,11 +63,16 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String PROFILE_PIC = "profile_pic";
     private static final String JOIN_DATE = "join_date";
     private static final String DO_LOCATION = "do_location";
+    private static final String USER_GROUP = "user_group";
 
     // Table Config Columns names
     private static final String CONFIG_ID = "id";
     private static final String STATUS= "status";
     private static final String READABLE_STATUS= "readable_status";
+
+//    viewers table
+
+//
 
     public static DatabaseHandler getInstance(Context ctx) {
         /**
@@ -110,7 +115,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 + DOB + " TEXT,"
                 + PROFILE_PIC + " BLOB,"
                 + JOIN_DATE + " TEXT,"
-                + DO_LOCATION + " TEXT"
+                + DO_LOCATION + " TEXT,"
+                + USER_GROUP + " TEXT NOT NULL"
                 + ")";
         db.execSQL(CREATE_TABLE);
     }
@@ -377,7 +383,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 //    TABLE_PROFILE CRUD operations
 
     // Adding new profile
-    public void addProfile(ProfileListDatum profileListDatum, String agent_id) {
+    public void addProfile(ProfileListDatum profileListDatum, String agent_id, String user_group) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -389,6 +395,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(PROFILE_PIC, profileListDatum.getProfilePic()); // Profile profile_pic
         values.put(JOIN_DATE, profileListDatum.getJoinDate()); // Profile join_date
         values.put(DO_LOCATION, profileListDatum.getDeliveryZone()); // Profile do_location
+        values.put(USER_GROUP, user_group); // user group
 
         // Inserting Row
         db.insert(TABLE_PROFILE, null, values);
@@ -400,20 +407,22 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_PROFILE,
-                new String[] { BLOOD_GROUP, NID, M_NAME, DOB, PROFILE_PIC, JOIN_DATE, DO_LOCATION },
+                new String[] { BLOOD_GROUP, NID, M_NAME, DOB, PROFILE_PIC, JOIN_DATE, DO_LOCATION, USER_GROUP},
                 PROFILE_API_ID + "=?",
                 new String[] { id },
                 null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
-
-        ProfileListDatum profileListDatum = new ProfileListDatum(cursor.getString(2),
+//String blood_group, String nid, String name, String dob, String profilePic, String joinDate, String deliveryZone, String user_group
+        ProfileListDatum profileListDatum = new ProfileListDatum(cursor.getString(0),
+                cursor.getString(1),
+                cursor.getString(2),
                 cursor.getString(3),
                 cursor.getString(4),
                 cursor.getString(5),
                 cursor.getString(6),
-                cursor.getString(7),
-                cursor.getString(8));
+                cursor.getString(7));
+        cursor.close();
         // return contact
         return profileListDatum;
     }

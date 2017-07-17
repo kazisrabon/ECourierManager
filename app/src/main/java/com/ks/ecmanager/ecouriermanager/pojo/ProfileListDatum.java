@@ -43,9 +43,11 @@ public class ProfileListDatum {
     @Expose
     private String deliveryZone;
 
+    private String user_group;
+
     public ProfileListDatum(){}
     //BLOOD_GROUP, NID, M_NAME, DOB, PROFILE_PIC, JOIN_DATE, DO_LOCATION
-    public ProfileListDatum(String blood_group, String nid, String name, String dob, String profilePic, String joinDate, String deliveryZone) {
+    public ProfileListDatum(String blood_group, String nid, String name, String dob, String profilePic, String joinDate, String deliveryZone, String user_group) {
         this.blood_group = blood_group;
         this.nid = nid;
         this.name = name;
@@ -53,6 +55,7 @@ public class ProfileListDatum {
         this.profilePic = profilePic;
         this.joinDate = joinDate;
         this.deliveryZone = deliveryZone;
+        this.user_group = user_group;
     }
 
     public String getName() {
@@ -118,6 +121,14 @@ public class ProfileListDatum {
 
     public void setBlood_group(String blood_group) {
         this.blood_group = blood_group;
+    }
+
+    public void setUser_group(String user_group){
+        this.user_group = user_group;
+    }
+
+    public String getUser_group(){
+        return user_group;
     }
 
     @Override

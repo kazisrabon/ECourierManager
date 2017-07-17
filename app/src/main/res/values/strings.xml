@@ -12,6 +12,7 @@
     <string name="empty_field">Empty Field!</string>
     <string name="loading">Loading…</string>
     <string name="refreshing">Refreshing…</string>
+    <string name="sucess">Successfully Updated</string>
     <string name="no_data_found">NO DATA FOUND!</string>
     <string name="no_profile_data_found">NO PROFILE DATA FOUND!</string>
     <string name="no_do_found">NO DO FOUND!</string>
@@ -53,6 +54,31 @@
     <string name="collected_amounts">Collected Amount: %1$s</string>
     <string name="destination_do">Destination DO: %1$s</string>
     <string name="delivery_agent">Delivery Agent: %1$s</string>
+    <string name="consignment_id_tv">Consignment ID:</string>
+    <string name="sender_group_tv">Sender Group:</string>
+    <string name="eso_tv">ESO:</string>
+    <string name="agent_name_tv">Agent:</string>
+    <string name="company_tv">Company:</string>
+    <string name="contact_tv">Contact:</string>
+    <string name="product_id_tv">Product ID:</string>
+    <string name="product_price_tv">Product Price:</string>
+    <string name="recipient_name_tv">Recipient Name:</string>
+    <string name="recipient_mobile_tv">Recipient Mobile:</string>
+    <string name="recipient_address_tv">Recipient Address:</string>
+    <string name="recipient_area_tv">Recipient Area:</string>
+    <string name="order_time_tv">Order Time:</string>
+    <string name="parcel_status_tv">Parcel Status:</string>
+    <string name="shipping_price_tv">Shipping Price:</string>
+    <string name="cod_price_tv">COD Price:</string>
+    <string name="payment_method_tv">Payment Method:</string>
+    <string name="pacel_id_tv">Parcel ID:</string>
+    <string name="payment_clear_tv">Payment Clear:</string>
+    <string name="comments_tv">Comment:</string>
+    <string name="delivery_time_tv">Delivery Time:</string>
+    <string name="collected_items_tv">Collected Items:</string>
+    <string name="collected_amounts_tv">Collected Amount:</string>
+    <string name="destination_do_tv">Destination DO:</string>
+    <string name="delivery_agent_tv">Delivery Agent:</string>
     <string name="none">NONE</string>
     <string name="button_status_cancel">CANCLE PRODUCT</string>
     <string name="button_status_OTW">ON THE WAY TO DELIVERY</string>
@@ -63,5 +89,16 @@
     <string name="do_refresh">DO REFRESH</string>
     <string name="agent_refresh">AGENT REFRESH</string>
     <string name="testing">UPDATED FROM APP</string>
-    <string name="status">Status: %1$s</string>
+    <string name="status">Status:</string>
+
+    <string name="access_status">status</string>
+    <string name="access_ddo">ddo</string>
+    <string name="access_sdo">sdo</string>
+    <string name="access_pick_agent">pick_agent</string>
+    <string name="access_delivery_agent">delivery_agent</string>
+    <string name="access_return_agent">return_agent</string>
+    <string name="access_cash_collection">cash_collection</string>
+    <string name="access_calling_time">calling_time</string>
+    <string name="access_return_confrim">return_confrim</string>
+
 </resources>

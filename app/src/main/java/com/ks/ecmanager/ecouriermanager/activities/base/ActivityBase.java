@@ -210,7 +210,7 @@ public class ActivityBase extends AppCompatActivity {
         });
     }
 
-    public void setProfileData(final HashMap<String, String> map) {
+    public void setProfileData(final HashMap<String, String> map, final String user_group) {
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(ApiParams.TAG_BASE_URL).build();
         ProfileListInterface myApiCallback = restAdapter.create(ProfileListInterface.class);
 
@@ -228,7 +228,7 @@ public class ActivityBase extends AppCompatActivity {
                     }
                     Log.e("Profile 1"+TAG, db.getProfileCount()+"");
 //                    Log.e("Profile", profileList.getData().getName()+"");
-                    db.addProfile(profileList.getData(), map.get(ApiParams.PARAM_ADMIN_ID));
+                    db.addProfile(profileList.getData(), map.get(ApiParams.PARAM_ADMIN_ID), user_group);
                     Log.e("Profile 2"+TAG, db.getProfileCount()+"");
                     for (ProfileListDatum profileListDatum : db.getAllProfile()){
                         Log.e("Profile 3"+TAG,
@@ -275,22 +275,11 @@ public class ActivityBase extends AppCompatActivity {
         });
     }
 
-    public boolean canHeChangeTheStatus(){
-        boolean isChangeAble = false;
+    public String accessLevel(){
+        String accessCode= "";
+        accessCode = "123";
 
-        return true;
-    }
-
-    public boolean canHeChangeTheAgent(){
-        boolean isChangeAble = false;
-
-        return isChangeAble;
-    }
-
-    public boolean canHeChangeTheDO(){
-        boolean isChangeAble = false;
-
-        return isChangeAble;
+        return accessCode;
     }
 
     public ActivityBase() {
@@ -366,7 +355,7 @@ public class ActivityBase extends AppCompatActivity {
         }
     }
 
-    public String showListInPopUp(final Context context, BidiMap<String, String> mapData){
+    public String showListInPopUp(final Context context, final BidiMap<String, String> mapData){
         final String[] returnValue = {""};
         AlertDialog.Builder builderSingle = new AlertDialog.Builder(context);
         builderSingle.setIcon(R.mipmap.ic_launcher_new);
@@ -394,6 +383,8 @@ public class ActivityBase extends AppCompatActivity {
 //                    agent_name = arrayAdapter.getItem(which);
 
                 final String[] s = {""};
+                String asd= mapData.getKey(arrayAdapter.getItem(which));
+                Log.e("status code "+TAG, ""+asd);
                 s[0] = arrayAdapter.getItem(which);
                 builderInner.setMessage(s[0]);
                 builderInner.setTitle("Your Selection is");

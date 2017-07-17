@@ -27,4 +27,7 @@
     <color name="material_drawer_dark_hint_text">#42FFFFFF</color>
     <color name="list_divider">#BDBDBD</color>
     <color name="merun">#C25044</color>
+    <color name="status">#666666</color>
+    <color name="list_row_end_color">#ffffff</color>
+    <color name="list_row_start_color">#ffffff</color>
 </resources>
