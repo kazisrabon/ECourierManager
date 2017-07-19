@@ -140,7 +140,7 @@
             android:paddingBottom="@dimen/card_margin"
             android:paddingLeft="@dimen/card_margin"
             android:paddingStart="@dimen/card_margin"
-            android:text="@string/status"
+            android:text="@string/status_tv"
             android:textStyle="bold"
             android:layout_gravity="center"/>
 

@@ -162,7 +162,7 @@ public class ActivityConsignment extends ActivityBase {
             if (stringNotNullCheck(mChangedStatus)){
                 map.put(ApiParams.PARAM_STATUS, "" + mChangedStatus);
 //                is status canceled
-                if (mChangedAgent.equals(getString(R.string.s12))){
+                if (mChangedStatus.equals(getString(R.string.s12))){
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     String currentDateandTime = sdf.format(new Date());
                     map.put(ApiParams.PARAM_CANCEL_CALL_TIME, currentDateandTime);

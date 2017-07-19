@@ -39,6 +39,7 @@ import com.ks.ecmanager.ecouriermanager.pojo.DoList;
 import com.ks.ecmanager.ecouriermanager.pojo.ProfileList;
 import com.ks.ecmanager.ecouriermanager.pojo.ProfileListDatum;
 import com.ks.ecmanager.ecouriermanager.pojo.ResponseList;
+import com.ks.ecmanager.ecouriermanager.pojo.Updates;
 import com.ks.ecmanager.ecouriermanager.pojo.UpdatesListDatum;
 import com.ks.ecmanager.ecouriermanager.webservices.ApiParams;
 import com.ks.ecmanager.ecouriermanager.webservices.interfaces.AgentListInterface;
@@ -257,14 +258,34 @@ public class ActivityBase extends AppCompatActivity {
 
             @Override
             public void success(List<ResponseList> responseLists, Response response) {
-                Log.e(TAG, "success");
                 initDB();
+                if (db.getConfigCount() > 0){
+                    db.deleteConfigs();
+                }
+                if (db.getViewerCount() > 0){
+                    db.deleteViewers();
+                }
+                if (db.getUpdaterCount() > 0){
+                    db.deleteUpdaters();
+                }
                 for (ResponseList responseList : responseLists){
                     db.addConfig(responseList.getStatus(), responseList.getReadable_status());
-                    Log.e("Readble status from api", responseList.getReadable_status()+"");
+                    if (responseList.getViewers().length > 0){
+                        for (String s: responseList.getViewers()) {
+                            db.addViewer(responseList.getStatus(), s);
+                        }
+//                        printBidiHash("DB Viewers", db.getAllViewersforStatus());
+                    }
                     for (UpdatesListDatum updatesListDatum : responseList.getUpdates()){
 //                        Log.e(TAG, updatesListDatum.toString());
+                        db.addUpdater(responseList.getStatus(), updatesListDatum.getStatus(), updatesListDatum.getUpdater(), updatesListDatum.getUpdates());
                     }
+//                    for (Updates updates : db.getAllUpdaters()){
+//                        Log.e("from db ", updates.getCurrent_status()
+//                                +" "+updates.getNext_status()
+//                                +" "+updates.getUpdaters()
+//                                +" "+updates.getUpdates());
+//                    }
                 }
             }
 

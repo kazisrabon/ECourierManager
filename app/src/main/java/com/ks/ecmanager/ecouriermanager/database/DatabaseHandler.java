@@ -16,8 +16,13 @@ import com.ks.ecmanager.ecouriermanager.pojo.AgentListDatum;
 import com.ks.ecmanager.ecouriermanager.pojo.DOListDatum;
 import com.ks.ecmanager.ecouriermanager.pojo.ProfileListDatum;
 import com.ks.ecmanager.ecouriermanager.pojo.ResponseList;
+import com.ks.ecmanager.ecouriermanager.pojo.Updates;
+
+import org.apache.commons.collections4.BidiMap;
+import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 
 import java.io.File;
+import java.text.Bidi;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +45,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String TABLE_DOS = "dos";
     private static final String TABLE_PROFILE = "profile";
     private static final String TABLE_CONFIG = "config";
+    private static final String TABLE_VIEWER = "viewer";
+    private static final String TABLE_UPDATER = "updater";
 
     // Table Agents Columns names
     private static final String AGENT_ID = "id";
@@ -71,8 +78,16 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String READABLE_STATUS= "readable_status";
 
 //    viewers table
+    private static final String VIEWER_ID = "id";
+    private static final String CONFIG_STATUS= "config_status";
+    private static final String VIEWERS= "viewers";
 
-//
+//    updaters table
+    private static final String UPDATER_ID = "id";
+    private static final String CURRENT_STATUS= "current_status";
+    private static final String NEXT_STATUS= "next_status";
+    private static final String UPDATERS= "updaters";
+    private static final String UPDATES= "updates";
 
     public static DatabaseHandler getInstance(Context ctx) {
         /**
@@ -98,6 +113,19 @@ public class DatabaseHandler extends SQLiteOpenHelper {
        createDoTable(db);
        createProfileTable(db);
        createConfigTable(db);
+       createViewerTable(db);
+       createUpdaterTable(db);
+    }
+
+    private void createUpdaterTable(SQLiteDatabase db) {
+        String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_UPDATER + "("
+                + UPDATER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + CURRENT_STATUS + " TEXT,"
+                + NEXT_STATUS + " TEXT,"
+                + UPDATERS + " TEXT,"
+                + UPDATES + " TEXT"
+                + ")";
+        db.execSQL(CREATE_TABLE);
     }
 
     public static boolean doesDatabaseExist(Context context) {
@@ -146,6 +174,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 + CONFIG_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + STATUS + " TEXT NOT NULL,"
                 + READABLE_STATUS + " TEXT NOT NULL"
+                + ")";
+        db.execSQL(CREATE_TABLE);
+    }
+
+    private void createViewerTable(SQLiteDatabase db) {
+        String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_VIEWER + "("
+                + VIEWER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + CONFIG_STATUS + " TEXT NOT NULL,"
+                + VIEWERS + " TEXT"
                 + ")";
         db.execSQL(CREATE_TABLE);
     }
@@ -506,7 +543,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 //    TABLE_CONFIG CRUD operations
 
-    // Adding new profile
+    // Adding new configure
     public void addConfig(String status, String readable_status) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -563,10 +600,147 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         else return null;
     }
 
+    // Getting config Count
+    public int getConfigCount() {
+        int count = 0;
+        String countQuery = "SELECT  * FROM " + TABLE_CONFIG;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(countQuery, null);
+        count = cursor.getCount();
+        cursor.close();
+
+        // return count
+        return count;
+    }
 
     // Deleting all config table data
     public void  deleteConfigs(){
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("delete from "+ TABLE_CONFIG);
     }
+
+//    table viewer
+
+//    adding new viewer
+    public void addViewer(String status, String viewer){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(CONFIG_STATUS, status); // status
+        values.put(VIEWERS, viewer); // viewer
+
+        // Inserting Row
+        db.insert(TABLE_VIEWER, null, values);
+        db.close(); // Closing database connection
+    }
+
+    // Getting All viewer Data
+    public BidiMap<String, String> getAllViewersforStatus() {
+        BidiMap<String, String> viewres = new DualHashBidiMap();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_VIEWER;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        @SuppressLint("Recycle") Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor != null){
+            cursor.moveToFirst();
+            if (cursor.moveToFirst()) {
+                do {
+                    viewres.put(cursor.getString(1), cursor.getString(2));
+                } while (cursor.moveToNext());
+                cursor.close();
+                return viewres;
+            }
+            else return  null;
+        }
+        else return null;
+    }
+
+    // Getting viewer Count
+    public int getViewerCount() {
+        int count = 0;
+        String countQuery = "SELECT  * FROM " + TABLE_VIEWER;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(countQuery, null);
+        count = cursor.getCount();
+        cursor.close();
+
+        // return count
+        return count;
+    }
+
+    // Deleting all viewer table data
+    public void  deleteViewers(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("delete from "+ TABLE_VIEWER);
+    }
+
+//    table updater
+
+//    adding new updater
+    public void addUpdater(String c_status, String n_status, String updaters, String updates){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(CURRENT_STATUS, c_status); // CURRENT status
+        values.put(NEXT_STATUS, n_status); // NEXT STATUS
+        values.put(UPDATERS, updaters); // updaters
+        values.put(UPDATES, updates); // updates
+
+
+        // Inserting Row
+        db.insert(TABLE_UPDATER, null, values);
+        db.close(); // Closing database connection
+    }
+
+    // Getting All viewer Data
+    public List<Updates> getAllUpdaters() {
+        List<Updates> updates = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_UPDATER;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        @SuppressLint("Recycle") Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor != null){
+            cursor.moveToFirst();
+            if (cursor.moveToFirst()) {
+                do {
+                    Updates update = new Updates();
+                    update.setCurrent_status(cursor.getString(1));
+                    update.setNext_status(cursor.getString(2));
+                    update.setUpdaters(cursor.getString(3));
+                    update.setUpdates(cursor.getString(4));
+                    updates.add(update);
+                } while (cursor.moveToNext());
+                cursor.close();
+                return updates;
+            }
+            else return  null;
+        }
+        else return null;
+    }
+
+    // Getting updater Count
+    public int getUpdaterCount() {
+        int count = 0;
+        String countQuery = "SELECT  * FROM " + TABLE_UPDATER;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(countQuery, null);
+        count = cursor.getCount();
+        cursor.close();
+
+        // return count
+        return count;
+    }
+
+    // Deleting all updater table data
+    public void  deleteUpdaters(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("delete from "+ TABLE_UPDATER);
+    }
+
 }

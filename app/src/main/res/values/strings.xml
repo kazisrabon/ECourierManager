@@ -89,7 +89,8 @@
     <string name="do_refresh">DO REFRESH</string>
     <string name="agent_refresh">AGENT REFRESH</string>
     <string name="testing">UPDATED FROM APP</string>
-    <string name="status">Status:</string>
+    <string name="status">Status: %1$s</string>
+    <string name="status_tv">Status:</string>
 
     <string name="access_status">status</string>
     <string name="access_ddo">ddo</string>

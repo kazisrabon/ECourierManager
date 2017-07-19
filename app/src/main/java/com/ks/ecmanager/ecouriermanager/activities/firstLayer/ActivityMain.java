@@ -84,7 +84,7 @@ public class ActivityMain extends ActivityBase {
         setHashMap();
         initialize();
         Log.e(TAG, "isLooggedIn "+ sessionUserData.isLoggedIn());
-        getConfigData();
+//        getConfigData();
         if (!sessionUserData.isLoggedIn()){
             showProgressDialog(false, "", getResources().getString(R.string.loading));
             setDoBidiList(map);
@@ -100,6 +100,7 @@ public class ActivityMain extends ActivityBase {
         }
         else {
         }
+
     }
 
     private void setHashMap() {
@@ -235,7 +236,7 @@ public class ActivityMain extends ActivityBase {
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(ApiParams.TAG_BASE_URL).build();
         ConsignmentListInterface myApiCallback = restAdapter.create(ConsignmentListInterface.class);
 
-        map.put(searchTypeValue, "" + search_value);
+        map.put(searchTypeValue, search_value);
 
 //        printHash(TAG, map);
         myApiCallback.getData(ApiParams.TAG_CONSIGNMENT_SEARCH_KEY, map, new Callback<ConsignmentList>() {
@@ -244,18 +245,20 @@ public class ActivityMain extends ActivityBase {
                 hideProgressDialog();
 
                 boolean status = consignment_list.getStatus();
+
                 Log.e(TAG, status+" ");
                 if (status) {
+                    showSuccessToast(""+status, Toast.LENGTH_SHORT, END);
                     mSearchValue.setText("");
                     consignmentListDatumList = consignment_list.getData();
-                    promptView(consignmentListDatumList);
+//                    promptView(consignmentListDatumList);
 
-//                    ArrayList<ConsignmentListDatum> ItemArray = ((ArrayList<ConsignmentListDatum>) consignmentListDatumList);
-//                    Intent intent = new Intent(ActivityMain.this, ActivityConsignment.class);
-//                    intent.putExtra(KEY_CN_POS, 0);
-//                    intent.putExtra(KEY_CN_DATA, ItemArray);
-//                    intent.putExtra(KEY_WHERE_FROM, CN_TYPE_SEARCH);
-//                    startActivity(intent);
+                    ArrayList<ConsignmentListDatum> ItemArray = ((ArrayList<ConsignmentListDatum>) consignmentListDatumList);
+                    Intent intent = new Intent(ActivityMain.this, ActivityConsignment.class);
+                    intent.putExtra(KEY_CN_POS, 0);
+                    intent.putExtra(KEY_CN_DATA, ItemArray);
+                    intent.putExtra(KEY_WHERE_FROM, CN_TYPE_SEARCH);
+                    startActivity(intent);
 
 
 //                    Log.e("SOURCE DO", consignmentListDatumList.get(0).getSource_do());
@@ -327,9 +330,9 @@ public class ActivityMain extends ActivityBase {
     }
 
     private void promptView(List<ConsignmentListDatum> consignmentListDatumList) {
-        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(ActivityMain.this);
         LayoutInflater inflater = this.getLayoutInflater();
-        final View dialogView = inflater.inflate(R.layout.dialog_review, null);
+        View dialogView = inflater.inflate(R.layout.dialog_review, null);
         dialogBuilder.setView(dialogView);
         b = dialogBuilder.create();
         b.setCancelable(true);

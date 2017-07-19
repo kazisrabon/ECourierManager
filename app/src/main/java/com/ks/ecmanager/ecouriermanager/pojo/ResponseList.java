@@ -53,8 +53,15 @@ public class ResponseList {
         this.readable_status = readable_status;
     }
 
-    public String getViewer() {
-        return viewer;
+    public String[] getViewers() {
+        String[] viewers = new String[0];
+        String separateViewer = "";
+        viewer = viewer.replace("{", "");
+        viewer = viewer.replace("}", "");
+        if (viewer.contains(",")){
+            viewers = viewer.split(",");
+        }
+        return viewers;
     }
 
     public void setViewer(String viewer) {
