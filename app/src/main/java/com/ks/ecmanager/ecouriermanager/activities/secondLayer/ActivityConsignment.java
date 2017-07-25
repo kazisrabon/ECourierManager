@@ -114,7 +114,8 @@ public class ActivityConsignment extends ActivityBase {
             values.add(responseListDatum.getReadable_status());
             Log.e("db config", responseListDatum.getStatus()+" "+responseListDatum.getReadable_status());
         }
-        String changedStatus = showListInPopUp(ActivityConsignment.this, createBidiMap(keys, values));
+        showListInPopUp(ActivityConsignment.this, createBidiMap(keys, values));
+        String changedStatus = ActivityBase.CHANGED_VALUE;
         Log.e("Changed status", ""+changedStatus);
         return changedStatus;
     }
@@ -130,7 +131,8 @@ public class ActivityConsignment extends ActivityBase {
             values.add(agentListDatum.getAgent_name());
             Log.e("db agent", agentListDatum.getAgent_id()+" "+agentListDatum.getAgent_name());
         }
-        String changedAgent = showListInPopUp(ActivityConsignment.this, createBidiMap(keys, values));
+        showListInPopUp(ActivityConsignment.this, createBidiMap(keys, values));
+        String changedAgent = ActivityBase.CHANGED_VALUE;
         Log.e("Changed agent", ""+changedAgent);
         return changedAgent;
     }
@@ -146,7 +148,8 @@ public class ActivityConsignment extends ActivityBase {
             values.add(doListDatum.getValue());
             Log.e("db do", doListDatum.getId()+" "+doListDatum.getValue());
         }
-        String changedDO = showListInPopUp(ActivityConsignment.this, createBidiMap(keys, values));
+        showListInPopUp(ActivityConsignment.this, createBidiMap(keys, values));
+        String changedDO = ActivityBase.CHANGED_VALUE;
         Log.e("Changed do", ""+changedDO);
         return changedDO;
     }
@@ -159,6 +162,7 @@ public class ActivityConsignment extends ActivityBase {
 //            status can changeable check
         if (accessLevel.contains("1")){
             mChangedStatus = receiveStatusChangeValue();
+            Log.e("changed status ", ""+mChangedAgent);
             if (stringNotNullCheck(mChangedStatus)){
                 map.put(ApiParams.PARAM_STATUS, "" + mChangedStatus);
 //                is status canceled

@@ -5,14 +5,14 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/card_margin"
+    android:paddingBottom="@dimen/card_margin">
 
-    <ListView
-        android:id="@+id/list"
+    <TextView
+        android:id="@+id/textView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:divider="@color/list_divider"
-        android:dividerHeight="2dp"
-        android:listSelector="@drawable/list_row_selector" />
-
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="TextView" />
 </LinearLayout>

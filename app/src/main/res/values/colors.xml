@@ -30,4 +30,9 @@
     <color name="status">#666666</color>
     <color name="list_row_end_color">#ffffff</color>
     <color name="list_row_start_color">#ffffff</color>
+
+    <color name="color_inividual">#A7FFEB</color>
+    <color name="color_pick">#84FFFF</color>
+    <color name="color_delivery">#80D8FF</color>
+    <color name="color_return">#82B1FF</color>
 </resources>

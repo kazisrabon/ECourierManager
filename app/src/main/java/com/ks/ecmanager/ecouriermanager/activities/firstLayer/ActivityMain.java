@@ -84,22 +84,22 @@ public class ActivityMain extends ActivityBase {
         setHashMap();
         initialize();
         Log.e(TAG, "isLooggedIn "+ sessionUserData.isLoggedIn());
-//        getConfigData();
-        if (!sessionUserData.isLoggedIn()){
-            showProgressDialog(false, "", getResources().getString(R.string.loading));
-            setDoBidiList(map);
-            setAgentBidiList(map);
-            setProfileData(map, user.get(SessionUserData.KEY_USER_GROUP));
-            getConfigData();
-            sessionUserData.setLoggedIn();
-            hideProgressDialog();
-        }
-        Log.e(TAG, "isLooggedIn "+ sessionUserData.isLoggedIn());
-        if (db == null){
-            db = DatabaseHandler.getInstance(this);
-        }
-        else {
-        }
+//  //      getConfigData();
+//        if (!sessionUserData.isLoggedIn()){
+//            showProgressDialog(false, "", getResources().getString(R.string.loading));
+//            setDoBidiList(map);
+//            setAgentBidiList(map);
+//            setProfileData(map, user.get(SessionUserData.KEY_USER_GROUP));
+//            getConfigData();
+//            sessionUserData.setLoggedIn();
+//            hideProgressDialog();
+//        }
+//        Log.e(TAG, "isLooggedIn "+ sessionUserData.isLoggedIn());
+//        if (db == null){
+//            db = DatabaseHandler.getInstance(this);
+//        }
+//        else {
+//        }
 
     }
 
@@ -212,6 +212,7 @@ public class ActivityMain extends ActivityBase {
 
                 @Override
                 public void success(String value, String format_type) {
+                    Log.e("QR value", ""+value);
                     searchConsignment(value);
                 }
 
@@ -251,14 +252,14 @@ public class ActivityMain extends ActivityBase {
                     showSuccessToast(""+status, Toast.LENGTH_SHORT, END);
                     mSearchValue.setText("");
                     consignmentListDatumList = consignment_list.getData();
-//                    promptView(consignmentListDatumList);
+                    promptView(consignmentListDatumList);
 
-                    ArrayList<ConsignmentListDatum> ItemArray = ((ArrayList<ConsignmentListDatum>) consignmentListDatumList);
-                    Intent intent = new Intent(ActivityMain.this, ActivityConsignment.class);
-                    intent.putExtra(KEY_CN_POS, 0);
-                    intent.putExtra(KEY_CN_DATA, ItemArray);
-                    intent.putExtra(KEY_WHERE_FROM, CN_TYPE_SEARCH);
-                    startActivity(intent);
+//                    ArrayList<ConsignmentListDatum> ItemArray = ((ArrayList<ConsignmentListDatum>) consignmentListDatumList);
+//                    Intent intent = new Intent(ActivityMain.this, ActivityConsignment.class);
+//                    intent.putExtra(KEY_CN_POS, 0);
+//                    intent.putExtra(KEY_CN_DATA, ItemArray);
+//                    intent.putExtra(KEY_WHERE_FROM, CN_TYPE_SEARCH);
+//                    startActivity(intent);
 
 
 //                    Log.e("SOURCE DO", consignmentListDatumList.get(0).getSource_do());
@@ -338,7 +339,7 @@ public class ActivityMain extends ActivityBase {
         b.setCancelable(true);
         b.show();
         ListView listView = (ListView) dialogView.findViewById(R.id.list);
-        listView.setAdapter(new MultipleSearchValueAdapter(this, consignmentListDatumList));
+        listView.setAdapter(new MultipleSearchValueAdapter(ActivityMain.this, consignmentListDatumList));
     }
 
     private void getRequiredPermission() {
@@ -351,6 +352,13 @@ public class ActivityMain extends ActivityBase {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+
+            Intent main2Activity =  new Intent(ActivityMain.this, Main2Activity.class);
+            main2Activity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(main2Activity);
+            return true;
+        }
+        else if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() > 0) {
 
             AlertDialog.Builder alert_box = new AlertDialog.Builder(this);
             alert_box.setTitle(getResources().getString(R.string.exit_title));
@@ -375,7 +383,9 @@ public class ActivityMain extends ActivityBase {
             alert_box.show();
 
             return true;
-        } else {
+        }
+
+        else {
             return super.onKeyDown(keyCode, event);
         }
     }

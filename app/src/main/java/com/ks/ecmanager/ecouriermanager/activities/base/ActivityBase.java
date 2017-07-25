@@ -23,7 +23,6 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -61,8 +60,6 @@ import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-import static com.ks.ecmanager.ecouriermanager.database.DatabaseHandler.getInstance;
-
 /**
  * Created by Kazi Srabon on 5/20/2017.
  */
@@ -71,6 +68,7 @@ public class ActivityBase extends AppCompatActivity {
 
     public static final String ALBUM_NAME = "eCourier";
     public static final String CN_TYPE_SEARCH = "search";
+    public static final String KEY_DELIVERY = "delivery";
     public static final String KEY_CN_POS = "consignment_data_position";
     public static final String KEY_CN_DATA = "consignment_data_array";
     public static final String KEY_WHERE_FROM = "where_from";
@@ -83,6 +81,7 @@ public class ActivityBase extends AppCompatActivity {
             REQUEST_EXTERNAL_STORAGE = 401,
             REQUEST_READ_EXTERNAL_STORAGE = 402,
             calender_type = 110;
+    public static String CHANGED_VALUE = "";
     public static Drawable IMG_DRAWABLE = null;
     public static DatabaseHandler db;
     public static Bitmap mBitmap = null;
@@ -111,16 +110,16 @@ public class ActivityBase extends AppCompatActivity {
                     if (db.getDOsCount() > 0){
                         db.deleteDOs();
                     }
-                    Log.e("DO DB 1"+TAG, db.getDOsCount()+"");
+//                    Log.e("DO DB 1"+TAG, db.getDOsCount()+"");
                     for (int i = 0; i < doList.getDo_list().size(); i++) {
                         doBidiList.put(doList.getDo_list().get(i).getId(), doList.getDo_list().get(i).getValue());
 //                        Log.e("Do data", doList.getDo_list().get(i).getId()+" "+doList.getDo_list().get(i).getValue());
                         db.addDo(doList.getDo_list().get(i));
                     }
                     Log.e("DO DB 2"+TAG, db.getDOsCount()+"");
-                    for (DOListDatum doListDatum : db.getAllDOs()){
-                        Log.e("DO DB 3"+TAG, doListDatum.getId() + " " + doListDatum.getValue());
-                    }
+//                    for (DOListDatum doListDatum : db.getAllDOs()){
+//                        Log.e("DO DB 3"+TAG, doListDatum.getId() + " " + doListDatum.getValue());
+//                    }
                     showSuccessToast("DO Loaded", 0, END);
                 }
                 else{
@@ -184,20 +183,20 @@ public class ActivityBase extends AppCompatActivity {
                     if (db.getAgentsCount() > 0){
                         db.deleteAgents();
                     }
-                    Log.e("Agent DB 1"+TAG, db.getAgentsCount()+"");
+//                    Log.e("Agent DB 1"+TAG, db.getAgentsCount()+"");
                     for (int i = 0; i < agentList.getAgent_list().size(); i++) {
                         agentBidiList.put(agentList.getAgent_list().get(i).getAgent_id(), agentList.getAgent_list().get(i).getAgent_name());
                         db.addAgent(agentList.getAgent_list().get(i));
                     }
                     Log.e("Agent DB 2"+TAG, db.getAgentsCount()+"");
-                    for (AgentListDatum agentListDatum : db.getAllAgents()){
-                        Log.e("Agent DB 3"+TAG,
-                                agentListDatum.getAgent_id()
-                                + " " + agentListDatum.getAgent_name()
-                                + " " + agentListDatum.getDo_id()
-                                + " " + agentListDatum.getDo_name());
-                    }
-                    showSuccessToast("Agent Loaded", 0, END);
+//                    for (AgentListDatum agentListDatum : db.getAllAgents()){
+//                        Log.e("Agent DB 3"+TAG,
+//                                agentListDatum.getAgent_id()
+//                                + " " + agentListDatum.getAgent_name()
+//                                + " " + agentListDatum.getDo_id()
+//                                + " " + agentListDatum.getDo_name());
+//                    }
+                    showBlackToast("Config Loaded", 0, END);
                 }
                 else{
                     showErrorToast(getString(R.string.no_agent_found), Toast.LENGTH_SHORT, MIDDLE);
@@ -227,16 +226,16 @@ public class ActivityBase extends AppCompatActivity {
                     if (db.getProfileCount() > 0){
                         db.deleteProfiles();
                     }
-                    Log.e("Profile 1"+TAG, db.getProfileCount()+"");
+//                    Log.e("Profile 1"+TAG, db.getProfileCount()+"");
 //                    Log.e("Profile", profileList.getData().getName()+"");
                     db.addProfile(profileList.getData(), map.get(ApiParams.PARAM_ADMIN_ID), user_group);
                     Log.e("Profile 2"+TAG, db.getProfileCount()+"");
-                    for (ProfileListDatum profileListDatum : db.getAllProfile()){
-                        Log.e("Profile 3"+TAG,
-                                profileListDatum.getName()
-                                +" "+profileListDatum.getProfilePic()
-                                +" "+profileListDatum.getJoinDate());
-                    }
+//                    for (ProfileListDatum profileListDatum : db.getAllProfile()){
+//                        Log.e("Profile 3"+TAG,
+//                                profileListDatum.getName()
+//                                +" "+profileListDatum.getProfilePic()
+//                                +" "+profileListDatum.getJoinDate());
+//                    }
 //                    showSuccessToast("Profile Loaded", 0, END);
                 } else {
                     showErrorToast(getString(R.string.no_profile_data_found), Toast.LENGTH_SHORT, MIDDLE);
@@ -280,12 +279,13 @@ public class ActivityBase extends AppCompatActivity {
 //                        Log.e(TAG, updatesListDatum.toString());
                         db.addUpdater(responseList.getStatus(), updatesListDatum.getStatus(), updatesListDatum.getUpdater(), updatesListDatum.getUpdates());
                     }
-//                    for (Updates updates : db.getAllUpdaters()){
-//                        Log.e("from db ", updates.getCurrent_status()
-//                                +" "+updates.getNext_status()
-//                                +" "+updates.getUpdaters()
-//                                +" "+updates.getUpdates());
-//                    }
+                    for (Updates updates : db.getAllUpdaters()){
+                        Log.e("from db ", updates.getCurrent_status()
+                                +" "+updates.getNext_status()
+                                +" "+updates.getUpdaters()
+                                +" "+updates.getUpdates());
+                    }
+                    showSuccessToast("Config Loaded", 0, END);
                 }
             }
 
@@ -366,6 +366,38 @@ public class ActivityBase extends AppCompatActivity {
         toast.setView(layout);
         toast.show();
     }
+    public void showBlackToast(String message, int duration, int gravity) {
+        LayoutInflater inflater = activity.getLayoutInflater();
+        View layout = inflater.inflate(R.layout.custom_toast_layout,
+                (ViewGroup) activity.findViewById(R.id.toast_layout_root));
+        layout.setBackgroundColor(Color.BLACK);
+        TextView text = (TextView) layout.findViewById(R.id.text);
+        text.setText(message);
+        text.setTextColor(Color.WHITE);
+
+        Toast toast = new Toast(this);
+        toast.setDuration(duration);
+        if (gravity == MIDDLE)
+            toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+        toast.setView(layout);
+        toast.show();
+    }
+    public void showWhiteToast(String message, int duration, int gravity) {
+        LayoutInflater inflater = activity.getLayoutInflater();
+        View layout = inflater.inflate(R.layout.custom_toast_layout,
+                (ViewGroup) activity.findViewById(R.id.toast_layout_root));
+        layout.setBackgroundColor(Color.WHITE);
+        TextView text = (TextView) layout.findViewById(R.id.text);
+        text.setText(message);
+        text.setTextColor(Color.BLACK);
+
+        Toast toast = new Toast(this);
+        toast.setDuration(duration);
+        if (gravity == MIDDLE)
+            toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+        toast.setView(layout);
+        toast.show();
+    }
 
     public void hideProgressDialog() {
         if (progressDialog != null) {
@@ -376,7 +408,7 @@ public class ActivityBase extends AppCompatActivity {
         }
     }
 
-    public String showListInPopUp(final Context context, final BidiMap<String, String> mapData){
+    public void showListInPopUp(final Context context, final BidiMap<String, String> mapData){
         final String[] returnValue = {""};
         AlertDialog.Builder builderSingle = new AlertDialog.Builder(context);
         builderSingle.setIcon(R.mipmap.ic_launcher_new);
@@ -439,7 +471,7 @@ public class ActivityBase extends AppCompatActivity {
         builderSingle.show();
         builderSingle.setCancelable(false);
 
-        return returnValue[0];
+        CHANGED_VALUE = returnValue[0];
     }
 
     public void showProgressDialog(boolean show_title, String title, String message) {

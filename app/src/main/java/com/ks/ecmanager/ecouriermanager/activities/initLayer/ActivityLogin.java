@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.ks.ecmanager.ecouriermanager.R;
 import com.ks.ecmanager.ecouriermanager.activities.base.ActivityBase;
 import com.ks.ecmanager.ecouriermanager.activities.firstLayer.ActivityMain;
+import com.ks.ecmanager.ecouriermanager.activities.firstLayer.Main2Activity;
 import com.ks.ecmanager.ecouriermanager.database.DatabaseHandler;
 import com.ks.ecmanager.ecouriermanager.pojo.Login;
 import com.ks.ecmanager.ecouriermanager.session.SessionUserData;
@@ -63,7 +64,7 @@ public class ActivityLogin extends ActivityBase {
 //        redirect
         if (sessionUserData.isLoggedIn()){
 //            isLoggedIN = 1;
-            startActivity(new Intent(ActivityLogin.this, ActivityMain.class));
+            startActivity(new Intent(ActivityLogin.this, Main2Activity.class));
         }
         mName = (TextInputEditText) findViewById(R.id.editUserName);
         mPassword = (TextInputEditText) findViewById(R.id.editPassword);
@@ -128,7 +129,7 @@ public class ActivityLogin extends ActivityBase {
                             loginModel.getDo_name(),
                             loginModel.getDo_mobile()
                     );
-                    Intent i = new Intent(ActivityLogin.this, ActivityMain.class);
+                    Intent i = new Intent(ActivityLogin.this, Main2Activity.class);
                     i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(i);
                     finish();

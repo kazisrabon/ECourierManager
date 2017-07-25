@@ -33,7 +33,9 @@
         <activity android:name=".activities.firstLayer.ActivityProfile" />
         <activity android:name=".activities.secondLayer.ActivityConsignment" />
         <activity android:name=".activities.secondLayer.ActivityConsignmentDetails" />
-        <activity android:name=".KotlinActivity"></activity>
+        <activity android:name=".KotlinActivity" />
+        <activity android:name=".activities.firstLayer.Main2Activity" />
+        <activity android:name=".activities.secondLayer.ActivityDelivery"></activity>
     </application>
 
 </manifest>

@@ -139,7 +139,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 + PROFILE_API_ID + " TEXT NOT NULL,"
                 + BLOOD_GROUP + " TEXT,"
                 + NID + " TEXT,"
-                + M_NAME + " TEXT NOT NULL,"
+                + M_NAME + " TEXT,"
                 + DOB + " TEXT,"
                 + PROFILE_PIC + " BLOB,"
                 + JOIN_DATE + " TEXT,"
@@ -229,11 +229,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 //        Cursor cursor = db.query(TABLE_AGENTS, new String[] { AGENT_ID, AGENT_API_ID, AGENT_NAME, AGENT_DO_NAME, AGENT_DO_ID },
 //                AGENT_API_ID + "=?",
 //                new String[] { id }, null, null, null, null);
-        Cursor cursor = db.rawQuery("select * from "+ TABLE_AGENTS +" where "+ AGENT_API_ID + " = " +id, null);
-        if (cursor != null)
-            cursor.moveToFirst();
-
-        if (cursor != null && cursor.moveToFirst()){
+        Cursor cursor = db.rawQuery("select * from " + TABLE_AGENTS + " where " + AGENT_API_ID + " = " + id, null);
+        if (cursor != null && cursor.moveToFirst()) {
             AgentListDatum agentListDatum = new AgentListDatum(cursor.getString(1),
                     cursor.getString(2),
                     cursor.getString(3),
@@ -241,8 +238,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             cursor.close();
             return agentListDatum;
         }
-        else
+        else{
+            cursor.close();
             return null;
+        }
     }
 
     // Getting All Agents
@@ -265,10 +264,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 // Adding contact to list
                 agentList.add(datum);
             } while (cursor.moveToNext());
+            return agentList;
+        }
+        else {
+            cursor.close();
+            return  null;
         }
 
         // return contact list
-        return agentList;
+
     }
 
     // Getting agents Count
@@ -337,9 +341,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 //                        DO_API_ID, DO_NAME }, DO_API_ID + "=?",
 //                new String[] { String.valueOf(id) }, null, null, null, null);
         Cursor cursor = db.rawQuery("select * from "+ TABLE_DOS +" where "+ DO_API_ID + " = " +id, null);
-        if (cursor != null)
-            cursor.moveToFirst();
-
         if (cursor != null && cursor.moveToFirst()){
             DOListDatum doListDatum = new DOListDatum(cursor.getString(1),
                     cursor.getString(2));
@@ -347,10 +348,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             // return contact
             return doListDatum;
         }
-        else
+        else {
+            cursor.close();
             return null;
-
-
+        }
     }
 
     // Getting All Dos
@@ -371,10 +372,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 // Adding contact to list
                 doList.add(datum);
             } while (cursor.moveToNext());
+            return doList;
         }
-
-        // return contact list
-        return doList;
+        else {
+            cursor.close();
+            return null;
+        }
     }
 
     // Getting Dos Count
@@ -488,10 +491,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 // Adding contact to list
                 profileListData.add(datum);
             } while (cursor.moveToNext());
+            // return contact list
+            return profileListData;
         }
-
-        // return contact list
-        return profileListData;
+        else {
+            cursor.close();
+            return null;
+        }
     }
 
     // Getting Profile Count
@@ -564,15 +570,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery("select "+READABLE_STATUS + " from "+ TABLE_CONFIG + " where " + STATUS + " = \"" + status + "\"",
                 null);
 
-        if (cursor != null)
-            cursor.moveToFirst();
-
         if (cursor != null && cursor.moveToFirst()){
             String s = cursor.getString(0);
             cursor.close();
             return s;
         }
-        else return "";
+        else {
+            cursor.close();
+            return "";
+        }
     }
 
     // Getting All config status Data
@@ -581,23 +587,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // Select All Query
         String selectQuery = "SELECT "+STATUS+", "+READABLE_STATUS+" FROM " + TABLE_CONFIG;
 
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = this.getReadableDatabase ();
         @SuppressLint("Recycle") Cursor cursor = db.rawQuery(selectQuery, null);
-
         // looping through all rows and adding to list
-        if (cursor != null){
-            cursor.moveToFirst();
-            if (cursor.moveToFirst()) {
-                do {
-                    ResponseList datum = new ResponseList(cursor.getString(0), cursor.getString(1));
-                    responseListData.add(datum);
-                } while (cursor.moveToNext());
-                cursor.close();
-                return responseListData;
-            }
-            else return  null;
+        if (cursor != null && cursor.moveToFirst()){
+            do {
+                ResponseList datum = new ResponseList(cursor.getString(0), cursor.getString(1));
+                responseListData.add(datum);
+            } while (cursor.moveToNext());
+            cursor.close();
+            return responseListData;
         }
-        else return null;
+        else {
+            cursor.close();
+            return null;
+        }
     }
 
     // Getting config Count
@@ -644,18 +648,17 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         @SuppressLint("Recycle") Cursor cursor = db.rawQuery(selectQuery, null);
 
         // looping through all rows and adding to list
-        if (cursor != null){
-            cursor.moveToFirst();
-            if (cursor.moveToFirst()) {
-                do {
-                    viewres.put(cursor.getString(1), cursor.getString(2));
-                } while (cursor.moveToNext());
-                cursor.close();
-                return viewres;
-            }
-            else return  null;
+        if (cursor != null && cursor.moveToFirst()){
+            do {
+                viewres.put(cursor.getString(1), cursor.getString(2));
+            } while (cursor.moveToNext());
+            cursor.close();
+            return viewres;
         }
-        else return null;
+        else{
+            cursor.close();
+            return null;
+        }
     }
 
     // Getting viewer Count
@@ -705,9 +708,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         @SuppressLint("Recycle") Cursor cursor = db.rawQuery(selectQuery, null);
 
         // looping through all rows and adding to list
-        if (cursor != null){
-            cursor.moveToFirst();
-            if (cursor.moveToFirst()) {
+        if (cursor != null && cursor.moveToFirst()){
                 do {
                     Updates update = new Updates();
                     update.setCurrent_status(cursor.getString(1));
@@ -718,10 +719,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 } while (cursor.moveToNext());
                 cursor.close();
                 return updates;
-            }
-            else return  null;
         }
-        else return null;
+        else {
+            cursor.close();
+            return null;
+        }
     }
 
     // Getting updater Count
