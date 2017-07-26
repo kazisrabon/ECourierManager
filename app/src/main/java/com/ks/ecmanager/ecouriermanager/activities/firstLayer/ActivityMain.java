@@ -204,9 +204,7 @@ public class ActivityMain extends ActivityBase {
     private void scanButtonClick() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             FragmentManager fm = null;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                fm = this.getFragmentManager();
-            }
+            fm = this.getFragmentManager();
             @SuppressLint("ValidFragment")
             FragmentDialogQRScanner fragmentDialogQRScanner = new FragmentDialogQRScanner() {
 
@@ -337,9 +335,9 @@ public class ActivityMain extends ActivityBase {
         dialogBuilder.setView(dialogView);
         b = dialogBuilder.create();
         b.setCancelable(true);
-        b.show();
         ListView listView = (ListView) dialogView.findViewById(R.id.list);
         listView.setAdapter(new MultipleSearchValueAdapter(ActivityMain.this, consignmentListDatumList));
+        b.show();
     }
 
     private void getRequiredPermission() {
