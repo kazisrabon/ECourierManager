@@ -93,6 +93,7 @@
     <string name="status_tv">Status:</string>
 
     <string name="access_status">status</string>
+    <string name="access_ecsz">ecsz</string>
     <string name="access_ddo">ddo</string>
     <string name="access_sdo">sdo</string>
     <string name="access_pick_agent">pick_agent</string>

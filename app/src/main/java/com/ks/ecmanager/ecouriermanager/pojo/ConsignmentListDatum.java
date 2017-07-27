@@ -99,9 +99,9 @@ public class ConsignmentListDatum implements Serializable {
     @Expose
     private String destination_do;
 
-    @SerializedName("pick_agent")
-    @Expose
-    private String pick_agent;
+//    @SerializedName("pick_agent")
+//    @Expose
+//    private String pick_agent;
 
     @SerializedName("delivery_agent")
     @Expose
@@ -295,13 +295,13 @@ public class ConsignmentListDatum implements Serializable {
         this.return_agent = return_agent;
     }
 
-    public String getPick_agent() {
-        return pick_agent;
-    }
-
-    public void setPick_agent(String pick_agent) {
-        this.pick_agent = pick_agent;
-    }
+//    public String getPick_agent() {
+//        return pick_agent;
+//    }
+//
+//    public void setPick_agent(String pick_agent) {
+//        this.pick_agent = pick_agent;
+//    }
 
     public String getDelivery_agent() {
         return delivery_agent;
@@ -314,6 +314,6 @@ public class ConsignmentListDatum implements Serializable {
     @Override
     public String toString()
     {
-        return "ClassPojo [status_code = "+status_code+", alter_mobile = "+alter_mobile+", return_agent = "+return_agent+", product_id = "+product_id+", delivery_agent = "+delivery_agent+", product_price = "+product_price+", pick_agent = "+pick_agent+", recipient_mobile = "+recipient_mobile+", sender_group = "+sender_group+", eso_mobile = "+eso_mobile+", items_delivered = "+items_delivered+", recipient_name = "+recipient_name+", destination_do = "+destination_do+", collected_amount = "+collected_amount+", eso = "+eso+", items = "+items+", order_time = "+order_time+", actual_delivery_time = "+actual_delivery_time+", consignment_no = "+consignment_no+", payment_method = "+payment_method+", recipient_address = "+recipient_address+", source_do = "+source_do+", parcel_status = "+parcel_status+", shipping_price = "+shipping_price+", item_type = "+item_type+"]";
+        return "ClassPojo [status_code = "+status_code+", alter_mobile = "+alter_mobile+", return_agent = "+return_agent+", product_id = "+product_id+", delivery_agent = "+delivery_agent+", product_price = "+product_price+", recipient_mobile = "+recipient_mobile+", sender_group = "+sender_group+", eso_mobile = "+eso_mobile+", items_delivered = "+items_delivered+", recipient_name = "+recipient_name+", destination_do = "+destination_do+", collected_amount = "+collected_amount+", eso = "+eso+", items = "+items+", order_time = "+order_time+", actual_delivery_time = "+actual_delivery_time+", consignment_no = "+consignment_no+", payment_method = "+payment_method+", recipient_address = "+recipient_address+", source_do = "+source_do+", parcel_status = "+parcel_status+", shipping_price = "+shipping_price+", item_type = "+item_type+"]";
     }
 }

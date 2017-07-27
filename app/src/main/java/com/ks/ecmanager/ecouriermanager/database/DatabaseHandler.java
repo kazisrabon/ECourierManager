@@ -12,8 +12,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.ks.ecmanager.ecouriermanager.R;
 import com.ks.ecmanager.ecouriermanager.pojo.AgentListDatum;
 import com.ks.ecmanager.ecouriermanager.pojo.DOListDatum;
+import com.ks.ecmanager.ecouriermanager.pojo.NextStatusandUpdates;
 import com.ks.ecmanager.ecouriermanager.pojo.ProfileListDatum;
 import com.ks.ecmanager.ecouriermanager.pojo.ResponseList;
 import com.ks.ecmanager.ecouriermanager.pojo.Updates;
@@ -24,6 +26,7 @@ import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import java.io.File;
 import java.text.Bidi;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -102,7 +105,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return mInstance;
     }
 
-    public DatabaseHandler(Context context) {
+    private DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
@@ -445,26 +448,31 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     // Getting single profile
     public ProfileListDatum getProfile(String id) {
         SQLiteDatabase db = this.getReadableDatabase();
-
-        Cursor cursor = db.query(TABLE_PROFILE,
-                new String[] { BLOOD_GROUP, NID, M_NAME, DOB, PROFILE_PIC, JOIN_DATE, DO_LOCATION, USER_GROUP},
-                PROFILE_API_ID + "=?",
-                new String[] { id },
-                null, null, null, null);
-        if (cursor != null)
+        String query = "select "+BLOOD_GROUP+", "+ NID+", "+ M_NAME+", "+ DOB+", "+ PROFILE_PIC
+                +", "+ JOIN_DATE+", "+ DO_LOCATION+", "+ USER_GROUP +" from "+ TABLE_PROFILE
+                +" where "+TABLE_PROFILE+"."+PROFILE_API_ID+ " = \"" + id + "\"";
+        Log.e("getprofile query", query);
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor != null) {
             cursor.moveToFirst();
 //String blood_group, String nid, String name, String dob, String profilePic, String joinDate, String deliveryZone, String user_group
-        ProfileListDatum profileListDatum = new ProfileListDatum(cursor.getString(0),
-                cursor.getString(1),
-                cursor.getString(2),
-                cursor.getString(3),
-                cursor.getString(4),
-                cursor.getString(5),
-                cursor.getString(6),
-                cursor.getString(7));
-        cursor.close();
-        // return contact
-        return profileListDatum;
+            ProfileListDatum profileListDatum = new ProfileListDatum(cursor.getString(0),
+                    cursor.getString(1),
+                    cursor.getString(2),
+                    cursor.getString(3),
+                    cursor.getString(4),
+                    cursor.getString(5),
+                    cursor.getString(6),
+                    cursor.getString(7));
+            cursor.close();
+            // return contact
+            return profileListDatum;
+        }
+        else {
+
+            cursor.close();
+            return null;
+        }
     }
 
     // Getting All Profile Data
@@ -638,9 +646,25 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close(); // Closing database connection
     }
 
+//    get individual viewer for status
+
+    public String getViewerforStatus(String status){
+        String viewer = "";
+        String query = "select "+VIEWERS+" from "+TABLE_VIEWER+" where "+TABLE_VIEWER+"."+CONFIG_STATUS+" = \""+status+"\"";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor!= null){
+            cursor.moveToFirst();
+            viewer = cursor.getString(0);
+            cursor.close();
+        }
+        return viewer;
+    }
+
     // Getting All viewer Data
-    public BidiMap<String, String> getAllViewersforStatus() {
-        BidiMap<String, String> viewres = new DualHashBidiMap();
+    public HashMap<String, String> getAllViewersforStatus() {
+        HashMap<String, String> viewres = new HashMap<>();
         // Select All Query
         String selectQuery = "SELECT * FROM " + TABLE_VIEWER;
 
@@ -667,9 +691,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         String countQuery = "SELECT  * FROM " + TABLE_VIEWER;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
-        count = cursor.getCount();
-        cursor.close();
-
+        if (cursor != null) {
+            cursor.moveToFirst();
+            count = cursor.getCount();
+            cursor.close();
+        }
         // return count
         return count;
     }
@@ -696,6 +722,37 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // Inserting Row
         db.insert(TABLE_UPDATER, null, values);
         db.close(); // Closing database connection
+    }
+
+//    get updaters and updates
+    public List<NextStatusandUpdates> getNextStatusandUpdates(String current_status, String group){
+        List<NextStatusandUpdates> nextStatusandUpdatesList = new ArrayList<>();
+        String query="SELECT " + NEXT_STATUS + ", " + UPDATES + ", " + UPDATERS
+                +" FROM " + TABLE_UPDATER
+                +" WHERE " + TABLE_UPDATER+"." + CURRENT_STATUS + " = \"" + current_status + "\""
+                +" AND "+TABLE_UPDATER+"."+UPDATERS+" LIKE \'%" + group + "%\'";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor != null){
+            cursor.moveToFirst();
+            do {
+                String next_status = cursor.getString(0);
+                String updates = cursor.getString(1);
+                int define_do = 0;
+                String updaters = cursor.getString(2);
+                if (updaters.contains("ECSZ")) {
+                    if (updaters.contains("SDO"))
+                        define_do = 1;
+                    else if (updaters.contains("DDO"))
+                        define_do = 2;
+                }
+                nextStatusandUpdatesList.add(new NextStatusandUpdates(next_status, updates, define_do));
+            }while (cursor.moveToNext());
+            cursor.close();
+        }
+
+        return nextStatusandUpdatesList;
     }
 
     // Getting All viewer Data

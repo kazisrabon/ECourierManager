@@ -158,7 +158,7 @@ public class ActivityConsignment extends ActivityBase {
         String mChangedStatus = "";
         String mChangedAgent = "";
         String mChangedDO = "";
-        String accessLevel = accessLevel();
+        String accessLevel = accessLevel("3", "41");
 //            status can changeable check
         if (accessLevel.contains("1")){
             mChangedStatus = receiveStatusChangeValue();

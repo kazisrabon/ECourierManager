@@ -44,7 +44,7 @@ public class MultipleSearchValueAdapter  extends BaseAdapter {
     }
 
     @Override
-    public Object getItem(int position) {
+    public ConsignmentListDatum getItem(int position) {
         return consignmentListDatumList.get(position);
     }
 
@@ -55,18 +55,19 @@ public class MultipleSearchValueAdapter  extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        if (inflater == null)
-            inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if (convertView == null)
-            convertView = inflater.inflate(R.layout.multiple_search_item, null);
-
+        final View result;
+        if (convertView == null) {
+            result = LayoutInflater.from(parent.getContext()).inflate(R.layout.multiple_search_item, parent, false);
+        } else {
+            result = convertView;
+        }
         ConsignmentListDatum listDatum = consignmentListDatumList.get(position);
-        TextView tvEcrNumber = (TextView) convertView.findViewById(R.id.tvEcrNumber);
-        TextView tvProductPrice = (TextView) convertView.findViewById(R.id.tvProductPrice);
-        TextView tvCompany = (TextView) convertView.findViewById(R.id.tvCompany);
-        TextView tvReciverName = (TextView) convertView.findViewById(R.id.tvReciverName);
-        TextView tvReceiverMobile = (TextView) convertView.findViewById(R.id.tvReceiverMobile);
-        TextView tvStatus = (TextView) convertView.findViewById(R.id.tvStatus);
+        TextView tvEcrNumber = (TextView) result.findViewById(R.id.tvEcrNumber);
+        TextView tvProductPrice = (TextView) result.findViewById(R.id.tvProductPrice);
+        TextView tvCompany = (TextView) result.findViewById(R.id.tvCompany);
+        TextView tvReciverName = (TextView) result.findViewById(R.id.tvReciverName);
+        TextView tvReceiverMobile = (TextView) result.findViewById(R.id.tvReceiverMobile);
+        TextView tvStatus = (TextView) result.findViewById(R.id.tvStatus);
 
         tvEcrNumber.setText(listDatum.getConsignment_no());
         tvProductPrice.setText(listDatum.getProduct_price());
@@ -74,7 +75,7 @@ public class MultipleSearchValueAdapter  extends BaseAdapter {
         tvReciverName.setText(listDatum.getRecipient_name());
         tvReceiverMobile.setText(listDatum.getRecipient_mobile());
         tvStatus.setText(listDatum.getParcel_status());
-        convertView.setOnClickListener(new View.OnClickListener() {
+        result.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -88,6 +89,6 @@ public class MultipleSearchValueAdapter  extends BaseAdapter {
 
             }
         });
-        return convertView;
+        return result;
     }
 }

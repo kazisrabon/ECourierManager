@@ -5,6 +5,7 @@
 package com.ks.ecmanager.ecouriermanager.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,7 +54,7 @@ public class ListItemAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         final View result;
         if (convertView == null) {
             result = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
@@ -61,16 +62,16 @@ public class ListItemAdapter extends BaseAdapter {
             result = convertView;
         }
         listDatum = listData.get(position);
-        ((TextView) result.findViewById(R.id.textView)).setText(listDatum.getValue());
-        if (convertView != null) {
-            convertView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(context, listDatum.getId()+" "+listDatum.getValue(), Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-//        String listDatum = bidiMap.get(position);
+        TextView value;
+        value = ((TextView) result.findViewById(R.id.textView));
+        value.setText(listDatum.getValue());
+        result.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(context, getItem(position).getValue()+" selected", Toast.LENGTH_LONG).show();
+            }
+        });
+        //        String listDatum = bidiMap.get(position);
 //        TextView tvEcrNumber = (TextView) convertView.findViewById(R.id.tvEcrNumber);
 
         return result;

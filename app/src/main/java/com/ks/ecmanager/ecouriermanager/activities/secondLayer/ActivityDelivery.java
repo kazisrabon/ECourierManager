@@ -40,36 +40,36 @@ public class ActivityDelivery extends ActivityBase {
         listView = (ListView) findViewById(R.id.listView);
         context = ActivityDelivery.this;
         getIntentValue();
-//        okBtn = (TextView) findViewById(R.id.footer_1);
-//        okBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                String where_from = getIntent().getStringExtra(KEY_DELIVERY);
-//                String s = accessLevel();
-//                if (s.contains("2") && !where_from.contains("2")){
-//                    Intent refresh = new Intent(ActivityDelivery.this, ActivityDelivery.class);
-//                    refresh.putExtra(KEY_DELIVERY, "2");
-//                    startActivity(refresh);
-//                    ActivityDelivery.this.finish();
-//                }
-//                else if (s.contains("3") && !where_from.contains("3")){
-//                    Intent refresh = new Intent(ActivityDelivery.this, ActivityDelivery.class);
-//                    refresh.putExtra(KEY_DELIVERY, "3");
-//                    startActivity(refresh);
-//                    ActivityDelivery.this.finish();
-//                }
-//                else {
-////                    startActivity(new Intent(ActivityDelivery.this, ActivityMultipleScan.class));
-//                }
-//            }
-//        });
-//        cancleBtn = (TextView) findViewById(R.id.footer_2);
-//        cancleBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                showToast("Cancled...", Toast.LENGTH_SHORT, MIDDLE);
-//            }
-//        });
+        okBtn = (TextView) findViewById(R.id.footer_1);
+        okBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String where_from = getIntent().getStringExtra(KEY_DELIVERY);
+                String s = accessLevel("3", "41");
+                if (s.contains("2") && !where_from.contains("2")){
+                    Intent refresh = new Intent(ActivityDelivery.this, ActivityDelivery.class);
+                    refresh.putExtra(KEY_DELIVERY, "2");
+                    startActivity(refresh);
+                    ActivityDelivery.this.finish();
+                }
+                else if (s.contains("3") && !where_from.contains("3")){
+                    Intent refresh = new Intent(ActivityDelivery.this, ActivityDelivery.class);
+                    refresh.putExtra(KEY_DELIVERY, "3");
+                    startActivity(refresh);
+                    ActivityDelivery.this.finish();
+                }
+                else {
+//                    startActivity(new Intent(ActivityDelivery.this, ActivityMultipleScan.class));
+                }
+            }
+        });
+        cancleBtn = (TextView) findViewById(R.id.footer_2);
+        cancleBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showToast("Cancled...", Toast.LENGTH_SHORT, MIDDLE);
+            }
+        });
     }
 
     private void getIntentValue(){

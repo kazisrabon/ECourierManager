@@ -35,11 +35,13 @@ import com.ks.ecmanager.ecouriermanager.pojo.AgentList;
 import com.ks.ecmanager.ecouriermanager.pojo.AgentListDatum;
 import com.ks.ecmanager.ecouriermanager.pojo.DOListDatum;
 import com.ks.ecmanager.ecouriermanager.pojo.DoList;
+import com.ks.ecmanager.ecouriermanager.pojo.NextStatusandUpdates;
 import com.ks.ecmanager.ecouriermanager.pojo.ProfileList;
 import com.ks.ecmanager.ecouriermanager.pojo.ProfileListDatum;
 import com.ks.ecmanager.ecouriermanager.pojo.ResponseList;
 import com.ks.ecmanager.ecouriermanager.pojo.Updates;
 import com.ks.ecmanager.ecouriermanager.pojo.UpdatesListDatum;
+import com.ks.ecmanager.ecouriermanager.session.SessionUserData;
 import com.ks.ecmanager.ecouriermanager.webservices.ApiParams;
 import com.ks.ecmanager.ecouriermanager.webservices.interfaces.AgentListInterface;
 import com.ks.ecmanager.ecouriermanager.webservices.interfaces.AppConfigInterface;
@@ -188,7 +190,7 @@ public class ActivityBase extends AppCompatActivity {
                         agentBidiList.put(agentList.getAgent_list().get(i).getAgent_id(), agentList.getAgent_list().get(i).getAgent_name());
                         db.addAgent(agentList.getAgent_list().get(i));
                     }
-                    Log.e("Agent DB 2"+TAG, db.getAgentsCount()+"");
+//                    Log.e("Agent DB 2"+TAG, db.getAgentsCount()+"");
 //                    for (AgentListDatum agentListDatum : db.getAllAgents()){
 //                        Log.e("Agent DB 3"+TAG,
 //                                agentListDatum.getAgent_id()
@@ -267,26 +269,24 @@ public class ActivityBase extends AppCompatActivity {
                 if (db.getUpdaterCount() > 0){
                     db.deleteUpdaters();
                 }
+                HashMap<String, String> viewersMap = new HashMap<>();
                 for (ResponseList responseList : responseLists){
                     db.addConfig(responseList.getStatus(), responseList.getReadable_status());
-                    if (responseList.getViewers().length > 0){
-                        for (String s: responseList.getViewers()) {
-                            db.addViewer(responseList.getStatus(), s);
-                        }
-//                        printBidiHash("DB Viewers", db.getAllViewersforStatus());
-                    }
+                    viewersMap.put(responseList.getStatus(), responseList.getViewer());
+                    db.addViewer(responseList.getStatus(), responseList.getViewer());
                     for (UpdatesListDatum updatesListDatum : responseList.getUpdates()){
 //                        Log.e(TAG, updatesListDatum.toString());
                         db.addUpdater(responseList.getStatus(), updatesListDatum.getStatus(), updatesListDatum.getUpdater(), updatesListDatum.getUpdates());
                     }
-                    for (Updates updates : db.getAllUpdaters()){
-                        Log.e("from db ", updates.getCurrent_status()
-                                +" "+updates.getNext_status()
-                                +" "+updates.getUpdaters()
-                                +" "+updates.getUpdates());
-                    }
-                    showSuccessToast("Config Loaded", 0, END);
+//                    for (Updates updates : db.getAllUpdaters()){
+//                        Log.e("from db ", updates.getCurrent_status()
+//                                +" "+updates.getNext_status()
+//                                +" "+updates.getUpdaters()
+//                                +" "+updates.getUpdates());
+//                    }
+//                    showSuccessToast("Config Loaded", 0, END);
                 }
+                showSuccessToast(viewersMap.size()+"", 0, END);
             }
 
             @Override
@@ -296,10 +296,87 @@ public class ActivityBase extends AppCompatActivity {
         });
     }
 
-    public String accessLevel(){
+    public String accessLevel(String sdo_id, String ddo_id){
         String accessCode= "";
         accessCode = "123";
+        String status="S21";
+        HashMap<String, String> user = SessionUserData.getSFInstance(this).getSessionDetails();
+        String id = user.get(SessionUserData.KEY_USER_ID);
+        String group = user.get(SessionUserData.KEY_USER_GROUP).toLowerCase();
+        String authentication_key = user.get(SessionUserData.KEY_USER_AUTH_KEY);
+        if (db.getAllProfile() != null) {
+            Log.e(TAG, "profile not null");
+            List<ProfileListDatum> profileList = db.getAllProfile();
+            for (ProfileListDatum profileListDatum : profileList){
+                Log.e("profile from db base", profileListDatum.getName()+"");
+            }
+        }
+        else
+            Log.e(TAG, "profile null");
 
+        if (db.getAllViewersforStatus() != null) {
+            Log.e(TAG, "viewer not null");
+            HashMap<String, String> viewres = db.getAllViewersforStatus();
+            Log.e(TAG, "viewer size:"+db.getViewerCount());
+//            printHash("viewer from db base", viewres);
+        }
+        else
+            Log.e(TAG, "viewer null");
+
+        if (db.getAllUpdaters() != null) {
+            Log.e(TAG, "updater not null");
+//            for (Updates updates : db.getAllUpdaters()){
+//                Log.e("updater from db base", updates.getCurrent_status()
+//                        +" "+updates.getNext_status()
+//                        +" "+updates.getUpdaters()
+//                        +" "+updates.getUpdates());
+//            }
+        }
+        else
+            Log.e(TAG, "updater null");
+
+//        get the eligible viewers
+        String dbViewers = db.getViewerforStatus(status).toLowerCase();
+        if (!dbViewers.equals("")) {
+            Log.e("viewer for status", "" + dbViewers);
+//            -1 => no access 0 => has only view access 1 => can change status 2 => can change agent 3 => can change do
+            if (dbViewers.contains(group)){
+                if (group.equals(getString(R.string.access_ecsz)))
+                    accessCode = specialRuleforECZ(dbViewers, sdo_id, ddo_id, id);
+                else
+                    accessCode = "0";
+            }
+            else
+                accessCode = "-1";
+        }
+        Log.e("Access code", accessCode);
+
+
+//        set what a manager can do for ecr
+//        String dbUpdater = db.getAllUpdaters();
+//        set what a manager can do for specific status
+        List<NextStatusandUpdates> nextStatusandUpdates = db.getNextStatusandUpdates(status, group);
+        for (NextStatusandUpdates updates : nextStatusandUpdates){
+            Log.e("NextStatusandUpdates", updates.getNext_status()+" "+updates.getUpdaters()+" "+updates.getDefine_do());
+        }
+
+//        return accessCode;
+        return authentication_key;
+//        return profileListDatum.getName();
+    }
+
+    private String specialRuleforECZ(String dbViewers, String sdo_id, String ddo_id, String id) {
+        String accessCode = "-1";
+        if (dbViewers.contains(getString(R.string.access_sdo))){
+            if (sdo_id.equals(id))
+                accessCode = "0";
+        }
+        else if (dbViewers.contains(getString(R.string.access_ddo))){
+            if (ddo_id.equals(id))
+                accessCode = "0";
+        }
+        else
+            accessCode = "0";
         return accessCode;
     }
 
@@ -505,7 +582,7 @@ public class ActivityBase extends AppCompatActivity {
     public void printBidiHash(String where_from, BidiMap<String, String> bidiMap){
         for (String name : bidiMap.keySet()){
             String key =name;
-            String value = bidiMap.get(name).toString();
+            String value = bidiMap.get(name);
             Log.e(where_from +" "+TAG ,key + " " + value);
         }
     }

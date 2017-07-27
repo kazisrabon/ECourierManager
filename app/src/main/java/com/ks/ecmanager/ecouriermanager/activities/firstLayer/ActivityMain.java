@@ -7,7 +7,9 @@ package com.ks.ecmanager.ecouriermanager.activities.firstLayer;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.FragmentManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -24,7 +26,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -32,18 +33,15 @@ import com.ks.ecmanager.ecouriermanager.R;
 import com.ks.ecmanager.ecouriermanager.activities.base.ActivityBase;
 import com.ks.ecmanager.ecouriermanager.activities.initLayer.ActivityLogin;
 import com.ks.ecmanager.ecouriermanager.activities.secondLayer.ActivityConsignment;
-import com.ks.ecmanager.ecouriermanager.activities.secondLayer.ActivityConsignmentDetails;
-import com.ks.ecmanager.ecouriermanager.adapters.MultipleSearchValueAdapter;
-import com.ks.ecmanager.ecouriermanager.database.DatabaseHandler;
 import com.ks.ecmanager.ecouriermanager.pojo.ConsignmentList;
 import com.ks.ecmanager.ecouriermanager.pojo.ConsignmentListDatum;
-import com.ks.ecmanager.ecouriermanager.pojo.DOListDatum;
 import com.ks.ecmanager.ecouriermanager.session.SessionUserData;
 import com.ks.ecmanager.ecouriermanager.utils.FormValidator;
 import com.ks.ecmanager.ecouriermanager.utils.FragmentDialogQRScanner;
 import com.ks.ecmanager.ecouriermanager.webservices.ApiParams;
 import com.ks.ecmanager.ecouriermanager.webservices.interfaces.ConsignmentListInterface;
 
+import java.net.ContentHandler;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -53,8 +51,6 @@ import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
-
-import static com.ks.ecmanager.ecouriermanager.activities.initLayer.ActivityLogin.sessionUserData;
 
 public class ActivityMain extends ActivityBase {
 
@@ -71,15 +67,17 @@ public class ActivityMain extends ActivityBase {
     private HashMap<String, String> map = new HashMap<String, String>();
     private List<ConsignmentListDatum> consignmentListDatumList;
     private AlertDialog b;
+    private Context context;
+    private SessionUserData sessionUserData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        context = ActivityMain.this;
 //        if (!sessionUserData.getSessionDetails().isEmpty())
 //            printHash(sessionUserData.getSessionDetails());
-
+        sessionUserData = SessionUserData.getSFInstance(context);
         user = sessionUserData.getSessionDetails();
         setHashMap();
         initialize();
@@ -134,6 +132,7 @@ public class ActivityMain extends ActivityBase {
     }
 
     private void initialize() {
+        consignmentListDatumList = new ArrayList<>();
         finalSearchValues[0] = ApiParams.TAG_CONSIGNMENT_NO;
         finalSearchValues[1] = ApiParams.TAG_RECEIVER_NO;
         finalSearchValues[2] = ApiParams.TAG_PRODUCT_ID;
@@ -250,70 +249,20 @@ public class ActivityMain extends ActivityBase {
                     showSuccessToast(""+status, Toast.LENGTH_SHORT, END);
                     mSearchValue.setText("");
                     consignmentListDatumList = consignment_list.getData();
-                    promptView(consignmentListDatumList);
+//                    promptView(consignmentListDatumList);
 
-//                    ArrayList<ConsignmentListDatum> ItemArray = ((ArrayList<ConsignmentListDatum>) consignmentListDatumList);
-//                    Intent intent = new Intent(ActivityMain.this, ActivityConsignment.class);
-//                    intent.putExtra(KEY_CN_POS, 0);
-//                    intent.putExtra(KEY_CN_DATA, ItemArray);
-//                    intent.putExtra(KEY_WHERE_FROM, CN_TYPE_SEARCH);
-//                    startActivity(intent);
+//                    if (!consignmentListDatumList.isEmpty()) {
+//                        Log.e(TAG, "consignmentListDatumList is not empty");
+//                        promptView(consignmentListDatumList);
+//                    }
+//                    else Log.e(TAG, "consignmentListDatumList is empty");
 
-
-//                    Log.e("SOURCE DO", consignmentListDatumList.get(0).getSource_do());
-//                    Log.e("DESTINATION DO", consignmentListDatumList.get(0).getDestination_do());
-//                    Log.e("MY DO", user.get(SessionUserData.KEY_DO_NAME)+" "+doBidiList.getKey(user.get(SessionUserData.KEY_DO_NAME)));
-//                    int i = 0;
-//                    if (consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s2))
-//                            ||consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s4))
-//                            ||consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s5))
-//                            ||consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s6))
-//                            ||consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s7))
-//                            ||consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s8))
-//                            ||consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s10))
-//                            ||consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s12))
-//                            ||consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s13))
-//                            ){
-//                        if (consignmentListDatumList.get(0).getSource_do()
-//                                .equals(doBidiList.getKey(user.get(SessionUserData.KEY_DO_NAME)))){
-//                            i = 1;
-//
-//                        }
-//                    }
-//                    else if (consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s15))
-//                            ||consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s20))
-//                            ||consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s21))
-//                            ||consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s22))
-//                            ||consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s23))
-//                            ||consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s24))
-//                            ||consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s25))
-//                            ){
-//                        if (consignmentListDatumList.get(0).getDestination_do()
-//                                .equals(doBidiList.getKey(user.get(SessionUserData.KEY_DO_NAME)))){
-//                            i = 1;
-//                        }
-//                    }
-//                    else if (consignmentListDatumList.get(0).getStatus_code().equals(getString(R.string.s14))){
-//                        if (consignmentListDatumList.get(0).getSource_do().equals(doBidiList.getKey(user.get(SessionUserData.KEY_DO_NAME)))
-//                                || consignmentListDatumList.get(0).getDestination_do().equals(doBidiList.getKey(user.get(SessionUserData.KEY_DO_NAME)))){
-//                            i = 1;
-//                        }
-//                    }
-//
-//                    if (!isAgentRefreshed)
-//                        showErrorToast("Please Refresh Agent!!!", Toast.LENGTH_SHORT, MIDDLE);
-//                    else if (!isDoRefreshed)
-//                        showErrorToast("Please Refresh DO!!!", Toast.LENGTH_SHORT, MIDDLE);
-//                    if (i == 1 && isAgentRefreshed && isDoRefreshed){
-//                        ArrayList<ConsignmentListDatum> ItemArray = ((ArrayList<ConsignmentListDatum>) consignmentListDatumList);
-//                        Intent intent = new Intent(ActivityMain.this, ActivityConsignmentDetails.class);
-//                        intent.putExtra(KEY_CN_POS, 0);
-//                        intent.putExtra(KEY_CN_DATA, ItemArray);
-//                        intent.putExtra(KEY_WHERE_FROM, CN_TYPE_SEARCH);
-//                        startActivity(intent);
-//                    }
-//                    else if (i != 1)
-//                        showErrorToast(getString(R.string.not_allowed), Toast.LENGTH_SHORT, MIDDLE);
+                    ArrayList<ConsignmentListDatum> ItemArray = ((ArrayList<ConsignmentListDatum>) consignmentListDatumList);
+                    Intent intent = new Intent(ActivityMain.this, ActivityConsignment.class);
+                    intent.putExtra(KEY_CN_POS, 0);
+                    intent.putExtra(KEY_CN_DATA, ItemArray);
+                    intent.putExtra(KEY_WHERE_FROM, CN_TYPE_SEARCH);
+                    startActivity(intent);
                 }
                 else
                     showErrorToast(getString(R.string.no_data_found), Toast.LENGTH_SHORT, MIDDLE);
@@ -329,15 +278,55 @@ public class ActivityMain extends ActivityBase {
     }
 
     private void promptView(List<ConsignmentListDatum> consignmentListDatumList) {
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(ActivityMain.this);
-        LayoutInflater inflater = this.getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.dialog_review, null);
-        dialogBuilder.setView(dialogView);
-        b = dialogBuilder.create();
-        b.setCancelable(true);
-        ListView listView = (ListView) dialogView.findViewById(R.id.list);
-        listView.setAdapter(new MultipleSearchValueAdapter(ActivityMain.this, consignmentListDatumList));
-        b.show();
+//        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(ActivityMain.this);
+//        LayoutInflater inflater = this.getLayoutInflater();
+////        View dialogView = inflater.inflate(R.layout.simple_list, null);
+//        View dialogView = inflater.inflate(R.layout.multiple_search_item, null);
+//        dialogBuilder.setView(dialogView);
+//        b = dialogBuilder.create();
+//        b.setCancelable(true);
+////        ListView listView = (ListView) dialogView.findViewById(R.id.list);
+////        listView.setAdapter(new MultipleSearchValueAdapter(ActivityMain.this, consignmentListDatumList));
+//        b.show();
+
+        AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new AlertDialog.Builder(context, android.R.style.Theme_Material_Dialog_Alert);
+        } else {
+            builder = new AlertDialog.Builder(context);
+        }
+        builder.setTitle("Delete entry")
+                .setMessage("Are you sure you want to delete this entry?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // continue with delete
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+    }
+
+    private void promptView() {
+//        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(ActivityMain.this);
+//        LayoutInflater inflater = this.getLayoutInflater();
+////        View dialogView = inflater.inflate(R.layout.simple_list, null);
+//        View dialogView = inflater.inflate(R.layout.multiple_search_item, null);
+//        dialogBuilder.setView(dialogView);
+//        b = dialogBuilder.create();
+//        b.setCancelable(true);
+////        ListView listView = (ListView) dialogView.findViewById(R.id.list);
+////        listView.setAdapter(new MultipleSearchValueAdapter(ActivityMain.this, consignmentListDatumList));
+//        b.show();
+
+        final Dialog dialog = new Dialog(context);
+        dialog.setContentView(R.layout.simple_list);
+        dialog.setTitle("T");
+        dialog.show();
     }
 
     private void getRequiredPermission() {

@@ -198,4 +198,10 @@ public class ActivityLogin extends ActivityBase {
             return super.onKeyDown(keyCode, event);
         }
     }
+
+    @Override
+    protected void onPause() {
+        finish();
+        super.onPause();
+    }
 }

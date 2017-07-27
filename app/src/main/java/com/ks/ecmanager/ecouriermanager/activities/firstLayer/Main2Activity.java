@@ -5,6 +5,7 @@
 package com.ks.ecmanager.ecouriermanager.activities.firstLayer;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -25,17 +26,19 @@ import com.ks.ecmanager.ecouriermanager.webservices.ApiParams;
 
 import java.util.HashMap;
 
-import static com.ks.ecmanager.ecouriermanager.activities.initLayer.ActivityLogin.sessionUserData;
-
 public class Main2Activity extends ActivityBase {
     private final String TAG = "Main2Activity";
     private HashMap<String, String> user = new HashMap<String, String>();
     private HashMap<String, String> map = new HashMap<String, String>();
+    private Context context;
+    private SessionUserData sessionUserData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
+        context = Main2Activity.this;
+        sessionUserData = SessionUserData.getSFInstance(context);
         user = sessionUserData.getSessionDetails();
         setHashMap();
         initialize();
@@ -55,6 +58,7 @@ public class Main2Activity extends ActivityBase {
             db = DatabaseHandler.getInstance(this);
         }
         else {
+//            Log.e (""+TAG,""+accessLevel());
         }
     }
 
@@ -73,6 +77,7 @@ public class Main2Activity extends ActivityBase {
             public void onClick(View v) {
 //                startActivity(new Intent(Main2Activity.this, ActivityMain.class));
                 showToast("In progress...", Toast.LENGTH_SHORT, MIDDLE);
+                Log.e (""+TAG,""+accessLevel("3", "3"));
             }
         });
 
