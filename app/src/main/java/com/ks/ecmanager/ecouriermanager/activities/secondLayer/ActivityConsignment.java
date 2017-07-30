@@ -48,6 +48,7 @@ public class ActivityConsignment extends ActivityBase {
     private Intent intent;
     private HashMap<String, String> user = new HashMap<String, String>();
     private HashMap<String, String> map = new HashMap<String, String>();
+    private String accessLevel = "";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -104,17 +105,7 @@ public class ActivityConsignment extends ActivityBase {
     }
 
     public String receiveStatusChangeValue(){
-        ArrayList<String> keys;
-        ArrayList<String> values;
-        keys = new ArrayList<>();
-        values = new ArrayList<>();
-        List<ResponseList> responseListData = db.getAllStatus();
-        for (ResponseList responseListDatum : responseListData){
-            keys.add(responseListDatum.getStatus());
-            values.add(responseListDatum.getReadable_status());
-            Log.e("db config", responseListDatum.getStatus()+" "+responseListDatum.getReadable_status());
-        }
-        showListInPopUp(ActivityConsignment.this, createBidiMap(keys, values));
+        showListInPopUp(ActivityConsignment.this, getNextStatusMap());
         String changedStatus = ActivityBase.CHANGED_VALUE;
         Log.e("Changed status", ""+changedStatus);
         return changedStatus;
@@ -131,7 +122,7 @@ public class ActivityConsignment extends ActivityBase {
             values.add(agentListDatum.getAgent_name());
             Log.e("db agent", agentListDatum.getAgent_id()+" "+agentListDatum.getAgent_name());
         }
-        showListInPopUp(ActivityConsignment.this, createBidiMap(keys, values));
+//        showListInPopUp(ActivityConsignment.this, createBidiMap(keys, values));
         String changedAgent = ActivityBase.CHANGED_VALUE;
         Log.e("Changed agent", ""+changedAgent);
         return changedAgent;
@@ -148,7 +139,7 @@ public class ActivityConsignment extends ActivityBase {
             values.add(doListDatum.getValue());
             Log.e("db do", doListDatum.getId()+" "+doListDatum.getValue());
         }
-        showListInPopUp(ActivityConsignment.this, createBidiMap(keys, values));
+//        showListInPopUp(ActivityConsignment.this, createBidiMap(keys, values));
         String changedDO = ActivityBase.CHANGED_VALUE;
         Log.e("Changed do", ""+changedDO);
         return changedDO;
@@ -158,7 +149,6 @@ public class ActivityConsignment extends ActivityBase {
         String mChangedStatus = "";
         String mChangedAgent = "";
         String mChangedDO = "";
-        String accessLevel = accessLevel("3", "41");
 //            status can changeable check
         if (accessLevel.contains("1")){
             mChangedStatus = receiveStatusChangeValue();
@@ -245,7 +235,7 @@ public class ActivityConsignment extends ActivityBase {
                     int position = getIntent().getIntExtra(KEY_CN_POS, 0);
                     ArrayList<ConsignmentListDatum> myList = (ArrayList<ConsignmentListDatum>) getIntent().getSerializableExtra(KEY_CN_DATA);
                     setConsignmentDetails(myList.get(position));
-
+                    accessLevel = accessLevel(myList.get(position).getStatus_code(), myList.get(position).getSource_do(), myList.get(position).getDestination_do());
                     intent = new Intent(ActivityConsignment.this, ActivityConsignmentDetails.class);
                     intent.putExtra(KEY_CN_POS, 0);
                     intent.putExtra(KEY_CN_DATA, myList);

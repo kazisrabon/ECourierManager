@@ -9,7 +9,7 @@ package com.ks.ecmanager.ecouriermanager.pojo;
  */
 
 public class NextStatusandUpdates {
-//    define_do => 0 = nothing_special 1 = sdo 2 = ddo
+//    who can change define_do => 0 = nothing_special, 1 = sdo, 2 = ddo
     private String next_status;
     private String updaters;
     private int define_do;

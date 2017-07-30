@@ -8,6 +8,7 @@ import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -15,6 +16,7 @@ import android.util.Log;
 import com.ks.ecmanager.ecouriermanager.R;
 import com.ks.ecmanager.ecouriermanager.pojo.AgentListDatum;
 import com.ks.ecmanager.ecouriermanager.pojo.DOListDatum;
+import com.ks.ecmanager.ecouriermanager.pojo.ListDatum;
 import com.ks.ecmanager.ecouriermanager.pojo.NextStatusandUpdates;
 import com.ks.ecmanager.ecouriermanager.pojo.ProfileListDatum;
 import com.ks.ecmanager.ecouriermanager.pojo.ResponseList;
@@ -352,7 +354,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             return doListDatum;
         }
         else {
-            cursor.close();
             return null;
         }
     }
@@ -469,8 +470,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             return profileListDatum;
         }
         else {
-
-            cursor.close();
             return null;
         }
     }
@@ -584,7 +583,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             return s;
         }
         else {
-            cursor.close();
             return "";
         }
     }
@@ -607,7 +605,29 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             return responseListData;
         }
         else {
+            return null;
+        }
+    }
+
+    // Getting All config status for specific group. it's for vulk assign
+    public List<ListDatum> getAllSpecificStatusforGroup(String group) {
+        List<ListDatum> responseListData = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_UPDATER + " WHERE " + TABLE_UPDATER+ "." + UPDATERS+" LIKE \'%" + group + "%\'";
+
+        SQLiteDatabase db = this.getReadableDatabase ();
+        @SuppressLint("Recycle") Cursor cursor = db.rawQuery(selectQuery, null);
+        // looping through all rows and adding to list
+        if (cursor != null && cursor.moveToFirst()){
+            do {
+                ListDatum datum = new ListDatum(cursor.getString(cursor.getColumnIndex(CURRENT_STATUS)),
+                       getReadableStatus(cursor.getString(cursor.getColumnIndex(CURRENT_STATUS))) );
+                responseListData.add(datum);
+            } while (cursor.moveToNext());
             cursor.close();
+            return responseListData;
+        }
+        else {
             return null;
         }
     }
@@ -650,13 +670,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public String getViewerforStatus(String status){
         String viewer = "";
-        String query = "select "+VIEWERS+" from "+TABLE_VIEWER+" where "+TABLE_VIEWER+"."+CONFIG_STATUS+" = \""+status+"\"";
+        getAllViewersforStatus();
+        String query = "select * from "+TABLE_VIEWER+" where "+TABLE_VIEWER+"."+CONFIG_STATUS+" = \""+status+"\"";
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(query, null);
         if (cursor!= null){
             cursor.moveToFirst();
-            viewer = cursor.getString(0);
+            Log.e("cursor", DatabaseUtils.dumpCursorToString(cursor));
+            viewer = cursor.getString(cursor.getColumnIndex(VIEWERS));
             cursor.close();
         }
         return viewer;
@@ -674,13 +696,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // looping through all rows and adding to list
         if (cursor != null && cursor.moveToFirst()){
             do {
-                viewres.put(cursor.getString(1), cursor.getString(2));
+                viewres.put(cursor.getString((cursor.getColumnIndex(CONFIG_STATUS))),
+                        cursor.getString(cursor.getColumnIndex(VIEWERS)));
             } while (cursor.moveToNext());
             cursor.close();
             return viewres;
         }
         else{
-            cursor.close();
             return null;
         }
     }
@@ -727,8 +749,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 //    get updaters and updates
     public List<NextStatusandUpdates> getNextStatusandUpdates(String current_status, String group){
         List<NextStatusandUpdates> nextStatusandUpdatesList = new ArrayList<>();
-        String query="SELECT " + NEXT_STATUS + ", " + UPDATES + ", " + UPDATERS
-                +" FROM " + TABLE_UPDATER
+        String query="SELECT * FROM " + TABLE_UPDATER
                 +" WHERE " + TABLE_UPDATER+"." + CURRENT_STATUS + " = \"" + current_status + "\""
                 +" AND "+TABLE_UPDATER+"."+UPDATERS+" LIKE \'%" + group + "%\'";
 
@@ -737,10 +758,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         if (cursor != null){
             cursor.moveToFirst();
             do {
-                String next_status = cursor.getString(0);
-                String updates = cursor.getString(1);
+                String next_status = cursor.getString(cursor.getColumnIndex(NEXT_STATUS));
+                String updates = cursor.getString(cursor.getColumnIndex(UPDATES));
                 int define_do = 0;
-                String updaters = cursor.getString(2);
+                String updaters = cursor.getString(cursor.getColumnIndex(UPDATERS));
                 if (updaters.contains("ECSZ")) {
                     if (updaters.contains("SDO"))
                         define_do = 1;
@@ -778,7 +799,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 return updates;
         }
         else {
-            cursor.close();
             return null;
         }
     }

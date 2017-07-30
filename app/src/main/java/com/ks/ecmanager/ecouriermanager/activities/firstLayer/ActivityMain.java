@@ -256,13 +256,16 @@ public class ActivityMain extends ActivityBase {
 //                        promptView(consignmentListDatumList);
 //                    }
 //                    else Log.e(TAG, "consignmentListDatumList is empty");
-
-                    ArrayList<ConsignmentListDatum> ItemArray = ((ArrayList<ConsignmentListDatum>) consignmentListDatumList);
-                    Intent intent = new Intent(ActivityMain.this, ActivityConsignment.class);
-                    intent.putExtra(KEY_CN_POS, 0);
-                    intent.putExtra(KEY_CN_DATA, ItemArray);
-                    intent.putExtra(KEY_WHERE_FROM, CN_TYPE_SEARCH);
-                    startActivity(intent);
+                    if (canECRView(consignmentListDatumList.get(0).getStatus_code(),
+                            consignmentListDatumList.get(0).getSource_do(),
+                            consignmentListDatumList.get(0).getDestination_do())) {
+                        ArrayList<ConsignmentListDatum> ItemArray = ((ArrayList<ConsignmentListDatum>) consignmentListDatumList);
+                        Intent intent = new Intent(ActivityMain.this, ActivityConsignment.class);
+                        intent.putExtra(KEY_CN_POS, 0);
+                        intent.putExtra(KEY_CN_DATA, ItemArray);
+                        intent.putExtra(KEY_WHERE_FROM, CN_TYPE_SEARCH);
+                        startActivity(intent);
+                    }
                 }
                 else
                     showErrorToast(getString(R.string.no_data_found), Toast.LENGTH_SHORT, MIDDLE);

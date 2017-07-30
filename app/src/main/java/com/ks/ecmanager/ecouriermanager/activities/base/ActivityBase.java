@@ -35,6 +35,7 @@ import com.ks.ecmanager.ecouriermanager.pojo.AgentList;
 import com.ks.ecmanager.ecouriermanager.pojo.AgentListDatum;
 import com.ks.ecmanager.ecouriermanager.pojo.DOListDatum;
 import com.ks.ecmanager.ecouriermanager.pojo.DoList;
+import com.ks.ecmanager.ecouriermanager.pojo.ListDatum;
 import com.ks.ecmanager.ecouriermanager.pojo.NextStatusandUpdates;
 import com.ks.ecmanager.ecouriermanager.pojo.ProfileList;
 import com.ks.ecmanager.ecouriermanager.pojo.ProfileListDatum;
@@ -94,6 +95,7 @@ public class ActivityBase extends AppCompatActivity {
     private ProgressDialog progressDialog;
     public static BidiMap<String, String> agentBidiList;
     public static BidiMap<String, String> doBidiList;
+    private HashMap<String, String> nextStatusMap;
 
     public void setDoBidiList(HashMap<String, String> map) {
         doBidiList = new DualHashBidiMap();
@@ -296,6 +298,81 @@ public class ActivityBase extends AppCompatActivity {
         });
     }
 
+    public boolean canECRView(String status, String sdo_id, String ddo_id){
+        boolean canView = false;
+        HashMap<String, String> user = SessionUserData.getSFInstance(this).getSessionDetails();
+        String id = user.get(SessionUserData.KEY_USER_ID);
+        String group = user.get(SessionUserData.KEY_USER_GROUP).toLowerCase();
+        String dbViewers = db.getViewerforStatus(status).toLowerCase();
+        if (!dbViewers.equals("")) {
+            Log.e("viewer for status", "" + dbViewers);
+//            -1 => no access 0 => has only view access 1 => can change status 2 => can change agent 3 => can change do
+            if (dbViewers.contains(group)){
+                if (group.equals(getString(R.string.access_ecsz)))
+                    canView = specialRuleforECZ(dbViewers, sdo_id, ddo_id, id);
+            }
+        }
+        Log.e("Access code", canView+"");
+
+        return canView;
+    }
+
+    public String accessLevel(String status, String sdo_id, String ddo_id){
+        String accessCode= "1";
+        HashMap<String, String> user = SessionUserData.getSFInstance(this).getSessionDetails();
+        String id = user.get(SessionUserData.KEY_USER_ID);
+        String group = user.get(SessionUserData.KEY_USER_GROUP).toLowerCase();
+        List<NextStatusandUpdates> nextStatusandUpdates = db.getNextStatusandUpdates(status, group);
+        nextStatusMap = new HashMap<>();
+        for (NextStatusandUpdates updates : nextStatusandUpdates){
+            Log.e("NextStatusandUpdates", updates.getNext_status()+" "+updates.getUpdaters()+" "+updates.getDefine_do());
+//    who can change define_do => 0 = nothing_special, 1 = sdo, 2 = ddo
+            if (updates.getDefine_do() == 1){
+                if (sdo_id.equals(id))
+                    accessCode = changeAccessCodeforStatus(updates, accessCode);
+                else
+                    accessCode = "0";
+            }
+            else if (updates.getDefine_do() == 2){
+                if (ddo_id.equals(id))
+                    accessCode = changeAccessCodeforStatus(updates, accessCode);
+                else
+                    accessCode = "0";
+            }
+            else
+                accessCode = changeAccessCodeforStatus(updates, accessCode);
+        }
+
+        return accessCode;
+    }
+
+    private String changeAccessCodeforStatus(NextStatusandUpdates updates, String accessCode) {
+        if (updates.getNext_status().isEmpty()){
+            if (accessCode.contains("1"))
+                accessCode = accessCode.replace("1","");
+        }
+        else {
+            String next_status = updates.getNext_status();
+            next_status = next_status.replace("{", "");
+            next_status = next_status.replace("}", "");
+
+            nextStatusMap.put(next_status, db.getReadableStatus(next_status));
+        }
+        return accessCode;
+    }
+
+    private void checkChangeAgents() {
+    }
+
+    public void checkGroupforStatus(){
+        HashMap<String, String> user = SessionUserData.getSFInstance(this).getSessionDetails();
+        String id = user.get(SessionUserData.KEY_USER_ID);
+        String group = user.get(SessionUserData.KEY_USER_GROUP);
+
+        List<ListDatum> listData = db.getAllSpecificStatusforGroup(group);
+
+    }
+
     public String accessLevel(String sdo_id, String ddo_id){
         String accessCode= "";
         accessCode = "123";
@@ -335,29 +412,20 @@ public class ActivityBase extends AppCompatActivity {
         else
             Log.e(TAG, "updater null");
 
-//        get the eligible viewers
-        String dbViewers = db.getViewerforStatus(status).toLowerCase();
-        if (!dbViewers.equals("")) {
-            Log.e("viewer for status", "" + dbViewers);
-//            -1 => no access 0 => has only view access 1 => can change status 2 => can change agent 3 => can change do
-            if (dbViewers.contains(group)){
-                if (group.equals(getString(R.string.access_ecsz)))
-                    accessCode = specialRuleforECZ(dbViewers, sdo_id, ddo_id, id);
-                else
-                    accessCode = "0";
-            }
-            else
-                accessCode = "-1";
-        }
-        Log.e("Access code", accessCode);
-
-
 //        set what a manager can do for ecr
 //        String dbUpdater = db.getAllUpdaters();
+
 //        set what a manager can do for specific status
         List<NextStatusandUpdates> nextStatusandUpdates = db.getNextStatusandUpdates(status, group);
+        nextStatusMap = new HashMap<>();
         for (NextStatusandUpdates updates : nextStatusandUpdates){
             Log.e("NextStatusandUpdates", updates.getNext_status()+" "+updates.getUpdaters()+" "+updates.getDefine_do());
+            String next_status = updates.getNext_status();
+            next_status = next_status.replace("{","");
+            next_status = next_status.replace("}","");
+
+            nextStatusMap.put(next_status, db.getReadableStatus(next_status));
+
         }
 
 //        return accessCode;
@@ -365,18 +433,22 @@ public class ActivityBase extends AppCompatActivity {
 //        return profileListDatum.getName();
     }
 
-    private String specialRuleforECZ(String dbViewers, String sdo_id, String ddo_id, String id) {
-        String accessCode = "-1";
+    public HashMap<String, String> getNextStatusMap() {
+        return nextStatusMap;
+    }
+
+    private boolean specialRuleforECZ(String dbViewers, String sdo_id, String ddo_id, String id) {
+        boolean accessCode = false;
         if (dbViewers.contains(getString(R.string.access_sdo))){
             if (sdo_id.equals(id))
-                accessCode = "0";
+                accessCode = true;
         }
         else if (dbViewers.contains(getString(R.string.access_ddo))){
             if (ddo_id.equals(id))
-                accessCode = "0";
+                accessCode = true;
         }
         else
-            accessCode = "0";
+            accessCode = true;
         return accessCode;
     }
 
@@ -485,7 +557,7 @@ public class ActivityBase extends AppCompatActivity {
         }
     }
 
-    public void showListInPopUp(final Context context, final BidiMap<String, String> mapData){
+    public void showListInPopUp(final Context context, final HashMap<String, String> mapData){
         final String[] returnValue = {""};
         AlertDialog.Builder builderSingle = new AlertDialog.Builder(context);
         builderSingle.setIcon(R.mipmap.ic_launcher_new);
@@ -513,8 +585,14 @@ public class ActivityBase extends AppCompatActivity {
 //                    agent_name = arrayAdapter.getItem(which);
 
                 final String[] s = {""};
-                String asd= mapData.getKey(arrayAdapter.getItem(which));
-                Log.e("status code "+TAG, ""+asd);
+                for (String name: mapData.keySet()){
+                    String key =name;
+                    String value = mapData.get(name);
+                    if (value.equals(arrayAdapter.getItem(which)))
+                        Log.e("status code "+TAG, ""+key);
+                }
+//                String asd= mapData.getKey(arrayAdapter.getItem(which));
+//                Log.e("status code "+TAG, ""+asd);
                 s[0] = arrayAdapter.getItem(which);
                 builderInner.setMessage(s[0]);
                 builderInner.setTitle("Your Selection is");
@@ -523,8 +601,10 @@ public class ActivityBase extends AppCompatActivity {
                     public void onClick(DialogInterface dialog,int which) {
                         Log.e(TAG, "selected "+ s[0]);
                         returnValue[0] = s[0];
+
 //                        setChangedAgentorDO(s[0], where_from);
                         dialog.dismiss();
+                        checkChangeAgents();
                     }
                 });
                 builderInner.setNegativeButton("Cancle", new DialogInterface.OnClickListener() {

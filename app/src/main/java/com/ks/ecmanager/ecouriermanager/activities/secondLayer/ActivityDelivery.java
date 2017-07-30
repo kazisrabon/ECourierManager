@@ -22,8 +22,10 @@ import com.ks.ecmanager.ecouriermanager.pojo.AgentListDatum;
 import com.ks.ecmanager.ecouriermanager.pojo.DOListDatum;
 import com.ks.ecmanager.ecouriermanager.pojo.ListDatum;
 import com.ks.ecmanager.ecouriermanager.pojo.ResponseList;
+import com.ks.ecmanager.ecouriermanager.session.SessionUserData;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ActivityDelivery extends ActivityBase {
@@ -32,11 +34,18 @@ public class ActivityDelivery extends ActivityBase {
     private Context context;
     private ListItemAdapter listItemAdapter;
     private List<ListDatum> listData;
+    private String id = "", group = "", authentication_key = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_delivery);
+
+        HashMap<String, String> user = SessionUserData.getSFInstance(this).getSessionDetails();
+        id = user.get(SessionUserData.KEY_USER_ID);
+        group = user.get(SessionUserData.KEY_USER_GROUP).toLowerCase();
+        authentication_key = user.get(SessionUserData.KEY_USER_AUTH_KEY);
+
         listView = (ListView) findViewById(R.id.listView);
         context = ActivityDelivery.this;
         getIntentValue();
@@ -111,14 +120,7 @@ public class ActivityDelivery extends ActivityBase {
     }
 
     private void loadStatus() {
-        listData = new ArrayList<>();
-        ListDatum listDatum;
-        Log.e("DB config data", ""+db.getConfigCount());
-        List<ResponseList> responseListData = db.getAllStatus();
-        for (ResponseList responseListDatum : responseListData){
-            listDatum = new ListDatum(responseListDatum.getStatus(), responseListDatum.getReadable_status());
-            listData.add(listDatum);
-        }
+        listData = db.getAllSpecificStatusforGroup(group);
         listItemAdapter = new ListItemAdapter(ActivityDelivery.this, listData);
         listView.setAdapter(listItemAdapter);
     }
