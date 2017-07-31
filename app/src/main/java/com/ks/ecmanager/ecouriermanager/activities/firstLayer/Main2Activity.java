@@ -77,7 +77,6 @@ public class Main2Activity extends ActivityBase {
             public void onClick(View v) {
 //                startActivity(new Intent(Main2Activity.this, ActivityMain.class));
                 showToast("In progress...", Toast.LENGTH_SHORT, MIDDLE);
-                Log.e (""+TAG,""+accessLevel("3", "3"));
             }
         });
 

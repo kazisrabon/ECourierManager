@@ -20,6 +20,7 @@ import com.ks.ecmanager.ecouriermanager.pojo.ListDatum;
 import com.ks.ecmanager.ecouriermanager.pojo.NextStatusandUpdates;
 import com.ks.ecmanager.ecouriermanager.pojo.ProfileListDatum;
 import com.ks.ecmanager.ecouriermanager.pojo.ResponseList;
+import com.ks.ecmanager.ecouriermanager.pojo.UpdateTableListDatum;
 import com.ks.ecmanager.ecouriermanager.pojo.Updates;
 
 import org.apache.commons.collections4.BidiMap;
@@ -384,6 +385,29 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
     }
 
+    public HashMap<String, String> getDOs() {
+        HashMap<String, String> doList= new HashMap<>();
+        // Select All Query
+        String selectQuery = "SELECT  * FROM " + TABLE_DOS;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        @SuppressLint("Recycle") Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                doList.put(
+                        cursor.getString(cursor.getColumnIndex(DO_API_ID)),
+                        cursor.getString(cursor.getColumnIndex(DO_NAME))
+                );
+            } while (cursor.moveToNext());
+            cursor.close();
+            return doList;
+        }
+        return null;
+    }
+
     // Getting Dos Count
     public int getDOsCount() {
         int count = 0;
@@ -613,7 +637,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public List<ListDatum> getAllSpecificStatusforGroup(String group) {
         List<ListDatum> responseListData = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_UPDATER + " WHERE " + TABLE_UPDATER+ "." + UPDATERS+" LIKE \'%" + group + "%\'";
+        String selectQuery = "SELECT DISTINCT current_status FROM " + TABLE_UPDATER + " WHERE " + TABLE_UPDATER+ "." + UPDATERS+" LIKE \'%" + group + "%\'";
 
         SQLiteDatabase db = this.getReadableDatabase ();
         @SuppressLint("Recycle") Cursor cursor = db.rawQuery(selectQuery, null);
@@ -822,4 +846,27 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL("delete from "+ TABLE_UPDATER);
     }
 
+    public List<UpdateTableListDatum> getNextUpdates(String next_status_code, String group, String search_value) {
+        List<UpdateTableListDatum> updateTableListData = new ArrayList<>();
+        String query = "SELECT * FROM "+ TABLE_UPDATER
+                +" WHERE " + TABLE_UPDATER + "." + NEXT_STATUS +" LIKE \'%" + next_status_code + "%\'"
+        + " AND " + TABLE_UPDATER + "." + UPDATERS +" LIKE \'%" + group + "%\'"
+        + " AND " + TABLE_UPDATER + "." + UPDATES + " LIKE \'%" +search_value + "%\'";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor != null && cursor.moveToFirst()){
+            do{
+                updateTableListData.add(new UpdateTableListDatum(
+                        cursor.getString(cursor.getColumnIndex(CURRENT_STATUS)).replaceAll("[{}]",""),
+                        cursor.getString(cursor.getColumnIndex(NEXT_STATUS)).replaceAll("[{}]",""),
+                        cursor.getString(cursor.getColumnIndex(UPDATES)).replaceAll("[{}]",""),
+                        cursor.getString(cursor.getColumnIndex(UPDATERS)).replaceAll("[{}]","")));
+            }while (cursor.moveToNext());
+            cursor.close();
+            return updateTableListData;
+        }
+
+        return null;
+    }
 }

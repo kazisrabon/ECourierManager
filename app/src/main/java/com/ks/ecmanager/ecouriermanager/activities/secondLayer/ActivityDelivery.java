@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static com.ks.ecmanager.ecouriermanager.adapters.ListItemAdapter.list_clicked_value;
+
 public class ActivityDelivery extends ActivityBase {
     private TextView okBtn, cancleBtn;
     private ListView listView;
@@ -35,6 +37,7 @@ public class ActivityDelivery extends ActivityBase {
     private ListItemAdapter listItemAdapter;
     private List<ListDatum> listData;
     private String id = "", group = "", authentication_key = "";
+    private boolean canChangeAgent = false, canChangeDO = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,21 +57,53 @@ public class ActivityDelivery extends ActivityBase {
             @Override
             public void onClick(View v) {
                 String where_from = getIntent().getStringExtra(KEY_DELIVERY);
-                String s = accessLevel("3", "41");
-                if (s.contains("2") && !where_from.contains("2")){
-                    Intent refresh = new Intent(ActivityDelivery.this, ActivityDelivery.class);
-                    refresh.putExtra(KEY_DELIVERY, "2");
-                    startActivity(refresh);
-                    ActivityDelivery.this.finish();
+                if (where_from.equals("1")) {
+                    if (list_clicked_value.equals("")) {
+                        showErrorToast("Please click...", Toast.LENGTH_SHORT, MIDDLE);
+                    } else {
+                        setCheckChangeAgents(list_clicked_value);
+                        setCheckChangeDOs(list_clicked_value);
+                        canChangeAgent = getCheckChangeAgents();
+                        canChangeDO = getCheckChangeDOs();
+
+                        if (canChangeAgent){
+                            Intent refresh = new Intent(ActivityDelivery.this, ActivityDelivery.class);
+                            refresh.putExtra(KEY_DELIVERY, "2");
+                            startActivity(refresh);
+                            ActivityDelivery.this.finish();
+                        }
+                        else {
+                            if (canChangeDO){
+                                Intent refresh = new Intent(ActivityDelivery.this, ActivityDelivery.class);
+                                refresh.putExtra(KEY_DELIVERY, "3");
+                                startActivity(refresh);
+                                ActivityDelivery.this.finish();
+                            }
+                            else {
+                                showBlackToast("ActivityMultipleScan", Toast.LENGTH_SHORT, END);
+//                                startActivity(new Intent(ActivityDelivery.this, ActivityMultipleScan.class));
+                            }
+                        }
+                    }
                 }
-                else if (s.contains("3") && !where_from.contains("3")){
-                    Intent refresh = new Intent(ActivityDelivery.this, ActivityDelivery.class);
-                    refresh.putExtra(KEY_DELIVERY, "3");
-                    startActivity(refresh);
-                    ActivityDelivery.this.finish();
+                else if (where_from.equals("2")){
+                    if (canChangeDO){
+                        Intent refresh = new Intent(ActivityDelivery.this, ActivityDelivery.class);
+                        refresh.putExtra(KEY_DELIVERY, "3");
+                        startActivity(refresh);
+                        ActivityDelivery.this.finish();
+                    }
+                    else {
+                        showBlackToast("ActivityMultipleScan", Toast.LENGTH_SHORT, END);
+//                        startActivity(new Intent(ActivityDelivery.this, ActivityMultipleScan.class));
+                    }
+                }
+                else if (where_from.equals("3")){
+                    showBlackToast("ActivityMultipleScan", Toast.LENGTH_SHORT, END);
+//                    startActivity(new Intent(ActivityDelivery.this, ActivityMultipleScan.class));
                 }
                 else {
-//                    startActivity(new Intent(ActivityDelivery.this, ActivityMultipleScan.class));
+                    showErrorToast("Something is wrong!!!", Toast.LENGTH_SHORT, END);
                 }
             }
         });

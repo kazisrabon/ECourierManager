@@ -105,7 +105,7 @@ public class ActivityConsignment extends ActivityBase {
     }
 
     public String receiveStatusChangeValue(){
-        showListInPopUp(ActivityConsignment.this, getNextStatusMap());
+        showListInPopUp(ActivityConsignment.this, getNextStatusMap(), "status");
         String changedStatus = ActivityBase.CHANGED_VALUE;
         Log.e("Changed status", ""+changedStatus);
         return changedStatus;

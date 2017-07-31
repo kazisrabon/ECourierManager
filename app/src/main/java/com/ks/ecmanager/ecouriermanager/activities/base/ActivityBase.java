@@ -40,6 +40,7 @@ import com.ks.ecmanager.ecouriermanager.pojo.NextStatusandUpdates;
 import com.ks.ecmanager.ecouriermanager.pojo.ProfileList;
 import com.ks.ecmanager.ecouriermanager.pojo.ProfileListDatum;
 import com.ks.ecmanager.ecouriermanager.pojo.ResponseList;
+import com.ks.ecmanager.ecouriermanager.pojo.UpdateTableListDatum;
 import com.ks.ecmanager.ecouriermanager.pojo.Updates;
 import com.ks.ecmanager.ecouriermanager.pojo.UpdatesListDatum;
 import com.ks.ecmanager.ecouriermanager.session.SessionUserData;
@@ -71,6 +72,7 @@ public class ActivityBase extends AppCompatActivity {
 
     public static final String ALBUM_NAME = "eCourier";
     public static final String CN_TYPE_SEARCH = "search";
+//    key_delivery 1 => status 2=> agent 3=> do
     public static final String KEY_DELIVERY = "delivery";
     public static final String KEY_CN_POS = "consignment_data_position";
     public static final String KEY_CN_DATA = "consignment_data_array";
@@ -96,6 +98,8 @@ public class ActivityBase extends AppCompatActivity {
     public static BidiMap<String, String> agentBidiList;
     public static BidiMap<String, String> doBidiList;
     private HashMap<String, String> nextStatusMap;
+    private boolean canAgentChange, canDOChange;
+    private String nextStaus, nextAgent, nextDO;
 
     public void setDoBidiList(HashMap<String, String> map) {
         doBidiList = new DualHashBidiMap();
@@ -361,7 +365,37 @@ public class ActivityBase extends AppCompatActivity {
         return accessCode;
     }
 
-    private void checkChangeAgents() {
+    public void setCheckChangeAgents(String next_status_code) {
+        canAgentChange = false;
+        HashMap<String, String> user = SessionUserData.getSFInstance(this).getSessionDetails();
+        String id = user.get(SessionUserData.KEY_USER_ID);
+        String group = user.get(SessionUserData.KEY_USER_GROUP);
+
+        List<UpdateTableListDatum> updateTableListData = db.getNextUpdates(next_status_code, group, "agent");
+        if (updateTableListData != null){
+            canAgentChange = true;
+        }
+    }
+
+    public boolean getCheckChangeAgents(){
+        return canAgentChange;
+    }
+
+    public void setCheckChangeDOs(String next_status_code) {
+        canDOChange = false;
+
+        HashMap<String, String> user = SessionUserData.getSFInstance(this).getSessionDetails();
+        String id = user.get(SessionUserData.KEY_USER_ID);
+        String group = user.get(SessionUserData.KEY_USER_GROUP);
+
+        List<UpdateTableListDatum> updateTableListData = db.getNextUpdates(next_status_code, group, "do");
+        if (updateTableListData != null){
+            canDOChange = true;
+        }
+    }
+
+    public boolean getCheckChangeDOs(){
+        return canDOChange;
     }
 
     public void checkGroupforStatus(){
@@ -557,7 +591,7 @@ public class ActivityBase extends AppCompatActivity {
         }
     }
 
-    public void showListInPopUp(final Context context, final HashMap<String, String> mapData){
+    public void showListInPopUp(final Context context, final HashMap<String, String> mapData, final String where_from){
         final String[] returnValue = {""};
         AlertDialog.Builder builderSingle = new AlertDialog.Builder(context);
         builderSingle.setIcon(R.mipmap.ic_launcher_new);
@@ -585,8 +619,9 @@ public class ActivityBase extends AppCompatActivity {
 //                    agent_name = arrayAdapter.getItem(which);
 
                 final String[] s = {""};
+                String key = "";
                 for (String name: mapData.keySet()){
-                    String key =name;
+                    key =name;
                     String value = mapData.get(name);
                     if (value.equals(arrayAdapter.getItem(which)))
                         Log.e("status code "+TAG, ""+key);
@@ -596,15 +631,39 @@ public class ActivityBase extends AppCompatActivity {
                 s[0] = arrayAdapter.getItem(which);
                 builderInner.setMessage(s[0]);
                 builderInner.setTitle("Your Selection is");
+                final String finalKey = key;
                 builderInner.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog,int which) {
                         Log.e(TAG, "selected "+ s[0]);
                         returnValue[0] = s[0];
-
+                        if (where_from.equals("status")) {
+                            setCheckChangeAgents(finalKey);
+                            setCheckChangeDOs(finalKey);
+                        }
 //                        setChangedAgentorDO(s[0], where_from);
                         dialog.dismiss();
-                        checkChangeAgents();
+                        if (where_from.equals("status")){
+                            nextStaus = finalKey;
+                            if (getCheckChangeAgents())
+                                showListInPopUp(context, getElligibleAgent(), "agent");
+                            else if (getCheckChangeDOs())
+                                showListInPopUp(context, db.getDOs(), "do");
+//                            else
+//                                set method to update
+                        }
+                        else if (where_from.equals("agent")){
+                            nextAgent = finalKey;
+                            if (getCheckChangeDOs())
+                                showListInPopUp(context, db.getDOs(), "do");
+//                            else
+//                                set method to update
+                        }
+                        else {
+                            nextDO = finalKey;
+                        }
+
+//                        checkChangeAgents(finalKey);
                     }
                 });
                 builderInner.setNegativeButton("Cancle", new DialogInterface.OnClickListener() {
@@ -629,6 +688,11 @@ public class ActivityBase extends AppCompatActivity {
         builderSingle.setCancelable(false);
 
         CHANGED_VALUE = returnValue[0];
+    }
+
+    private HashMap<String, String> getElligibleAgent() {
+//        HashMap<>
+        return null;
     }
 
     public void showProgressDialog(boolean show_title, String title, String message) {

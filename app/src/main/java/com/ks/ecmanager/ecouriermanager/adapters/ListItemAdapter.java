@@ -27,6 +27,7 @@ import java.util.Map;
  */
 
 public class ListItemAdapter extends BaseAdapter {
+    public static String list_clicked_value = "";
     private Context context;
     private List<ListDatum> listData;
 //    private String where_from;
@@ -68,6 +69,7 @@ public class ListItemAdapter extends BaseAdapter {
         result.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                list_clicked_value = getItem(position).getId();
                 Toast.makeText(context, getItem(position).getValue()+" selected", Toast.LENGTH_LONG).show();
             }
         });
