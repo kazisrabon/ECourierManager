@@ -32,16 +32,12 @@ import android.widget.Toast;
 import com.ks.ecmanager.ecouriermanager.R;
 import com.ks.ecmanager.ecouriermanager.database.DatabaseHandler;
 import com.ks.ecmanager.ecouriermanager.pojo.AgentList;
-import com.ks.ecmanager.ecouriermanager.pojo.AgentListDatum;
-import com.ks.ecmanager.ecouriermanager.pojo.DOListDatum;
 import com.ks.ecmanager.ecouriermanager.pojo.DoList;
 import com.ks.ecmanager.ecouriermanager.pojo.ListDatum;
 import com.ks.ecmanager.ecouriermanager.pojo.NextStatusandUpdates;
 import com.ks.ecmanager.ecouriermanager.pojo.ProfileList;
 import com.ks.ecmanager.ecouriermanager.pojo.ProfileListDatum;
 import com.ks.ecmanager.ecouriermanager.pojo.ResponseList;
-import com.ks.ecmanager.ecouriermanager.pojo.UpdateTableListDatum;
-import com.ks.ecmanager.ecouriermanager.pojo.Updates;
 import com.ks.ecmanager.ecouriermanager.pojo.UpdatesListDatum;
 import com.ks.ecmanager.ecouriermanager.session.SessionUserData;
 import com.ks.ecmanager.ecouriermanager.webservices.ApiParams;
@@ -99,7 +95,7 @@ public class ActivityBase extends AppCompatActivity {
     public static BidiMap<String, String> doBidiList;
     private HashMap<String, String> nextStatusMap;
     private boolean canAgentChange, canDOChange;
-    private String nextStaus, nextAgent, nextDO;
+    private String nextStatus = "", nextAgent = "", nextDO = "", current_status = "";
 
     public void setDoBidiList(HashMap<String, String> map) {
         doBidiList = new DualHashBidiMap();
@@ -323,6 +319,7 @@ public class ActivityBase extends AppCompatActivity {
 
     public String accessLevel(String status, String sdo_id, String ddo_id){
         String accessCode= "1";
+        current_status = status;
         HashMap<String, String> user = SessionUserData.getSFInstance(this).getSessionDetails();
         String id = user.get(SessionUserData.KEY_USER_ID);
         String group = user.get(SessionUserData.KEY_USER_GROUP).toLowerCase();
@@ -368,13 +365,9 @@ public class ActivityBase extends AppCompatActivity {
     public void setCheckChangeAgents(String next_status_code) {
         canAgentChange = false;
         HashMap<String, String> user = SessionUserData.getSFInstance(this).getSessionDetails();
-        String id = user.get(SessionUserData.KEY_USER_ID);
         String group = user.get(SessionUserData.KEY_USER_GROUP);
 
-        List<UpdateTableListDatum> updateTableListData = db.getNextUpdates(next_status_code, group, "agent");
-        if (updateTableListData != null){
-            canAgentChange = true;
-        }
+        canAgentChange = db.getNextUpdates(current_status, next_status_code, group, "agent");
     }
 
     public boolean getCheckChangeAgents(){
@@ -388,14 +381,18 @@ public class ActivityBase extends AppCompatActivity {
         String id = user.get(SessionUserData.KEY_USER_ID);
         String group = user.get(SessionUserData.KEY_USER_GROUP);
 
-        List<UpdateTableListDatum> updateTableListData = db.getNextUpdates(next_status_code, group, "do");
-        if (updateTableListData != null){
-            canDOChange = true;
-        }
+        canDOChange = db.getNextUpdates(current_status, next_status_code, group, "do");
     }
 
     public boolean getCheckChangeDOs(){
         return canDOChange;
+    }
+
+    public boolean getCheckChangeDOforAgent(){
+        HashMap<String, String> user = SessionUserData.getSFInstance(this).getSessionDetails();
+        String group = user.get(SessionUserData.KEY_USER_GROUP);
+        Log.e("popup value", nextStatus +" "+ nextAgent +" "+ nextDO);
+        return db.getNextUpdates(nextStatus, group, "do", "agent");
     }
 
     public void checkGroupforStatus(){
@@ -491,6 +488,22 @@ public class ActivityBase extends AppCompatActivity {
         this.activity = ActivityBase.this;
         this.context = ActivityBase.this;
 
+    }
+
+    public String getNextStatus() {
+        return nextStatus;
+    }
+
+    public String getNextAgent() {
+        return nextAgent;
+    }
+
+    public String getNextDO() {
+        return nextDO;
+    }
+
+    public String getCurrent_status() {
+        return current_status;
     }
 
     public void initDB() {
@@ -592,107 +605,121 @@ public class ActivityBase extends AppCompatActivity {
     }
 
     public void showListInPopUp(final Context context, final HashMap<String, String> mapData, final String where_from){
-        final String[] returnValue = {""};
-        AlertDialog.Builder builderSingle = new AlertDialog.Builder(context);
-        builderSingle.setIcon(R.mipmap.ic_launcher_new);
-        builderSingle.setTitle("Select One:-");
+        if (context!=null && mapData!=null && stringNotNullCheck(where_from)) {
+            final String[] returnValue = {""};
+            AlertDialog.Builder builderSingle = new AlertDialog.Builder(context);
+            builderSingle.setIcon(R.mipmap.ic_launcher_new);
+            builderSingle.setTitle("Select One:-");
 
-        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context,
-                android.R.layout.select_dialog_singlechoice);
-        for (String key: mapData.keySet()) {
-            arrayAdapter.add(mapData.get(key));
-        }
-        builderSingle.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
+            final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context,
+                    android.R.layout.select_dialog_singlechoice);
+            for (String key : mapData.keySet()) {
+                arrayAdapter.add(mapData.get(key));
             }
-        });
+            builderSingle.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
 
-        builderSingle.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                AlertDialog.Builder builderInner = new AlertDialog.Builder(context);
+            builderSingle.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    AlertDialog.Builder builderInner = new AlertDialog.Builder(context);
 //                if (where_from == FROM_DO)
 //                    d_do = arrayAdapter.getItem(which);
 //                else if (where_from == FROM_AGENT)
 //                    agent_name = arrayAdapter.getItem(which);
 
-                final String[] s = {""};
-                String key = "";
-                for (String name: mapData.keySet()){
-                    key =name;
-                    String value = mapData.get(name);
-                    if (value.equals(arrayAdapter.getItem(which)))
-                        Log.e("status code "+TAG, ""+key);
-                }
+                    final String[] s = {""};
+                    String key = "";
+                    for (String name : mapData.keySet()) {
+                        key = name;
+                        String value = mapData.get(name);
+                        if (value.equals(arrayAdapter.getItem(which)))
+                            Log.e("status code " + TAG, "" + key);
+                    }
 //                String asd= mapData.getKey(arrayAdapter.getItem(which));
 //                Log.e("status code "+TAG, ""+asd);
-                s[0] = arrayAdapter.getItem(which);
-                builderInner.setMessage(s[0]);
-                builderInner.setTitle("Your Selection is");
-                final String finalKey = key;
-                builderInner.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog,int which) {
-                        Log.e(TAG, "selected "+ s[0]);
-                        returnValue[0] = s[0];
-                        if (where_from.equals("status")) {
-                            setCheckChangeAgents(finalKey);
-                            setCheckChangeDOs(finalKey);
-                        }
+                    s[0] = arrayAdapter.getItem(which);
+                    builderInner.setMessage(s[0]);
+                    builderInner.setTitle("Your Selection is");
+                    final String finalKey = key;
+                    builderInner.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Log.e(TAG, "selected " + s[0]);
+                            returnValue[0] = s[0];
+                            if (where_from.equals("status")) {
+                                setCheckChangeAgents(finalKey);
+                                setCheckChangeDOs(finalKey);
+                            }
 //                        setChangedAgentorDO(s[0], where_from);
-                        dialog.dismiss();
-                        if (where_from.equals("status")){
-                            nextStaus = finalKey;
-                            if (getCheckChangeAgents())
-                                showListInPopUp(context, getElligibleAgent(), "agent");
-                            else if (getCheckChangeDOs())
-                                showListInPopUp(context, db.getDOs(), "do");
+                            dialog.dismiss();
+                            if (where_from.equals("status")) {
+                                nextStatus = finalKey;
+                                if (getCheckChangeAgents()) {
+                                    if (getElligibleAgent()!= null)
+                                        showListInPopUp(context, getElligibleAgent(), "agent");
+                                    else
+                                        showErrorToast("Agent List Error!!!", Toast.LENGTH_SHORT, MIDDLE);
+                                }
+                                else if (getCheckChangeDOs()) {
+                                    if (db.getDOs()!=null)
+                                        showListInPopUp(context, db.getDOs(), "do");
+                                    else
+                                        showErrorToast("DO List Error!!!", Toast.LENGTH_SHORT, MIDDLE);
+                                }
 //                            else
 //                                set method to update
-                        }
-                        else if (where_from.equals("agent")){
-                            nextAgent = finalKey;
-                            if (getCheckChangeDOs())
-                                showListInPopUp(context, db.getDOs(), "do");
+                            } else if (where_from.equals("agent")) {
+                                nextAgent = finalKey;
+                                if (getCheckChangeDOforAgent())
+                                    if (db.getDOs()!=null)
+                                        showListInPopUp(context, db.getDOs(), "do");
+                                    else
+                                        showErrorToast("DO List Error!!!", Toast.LENGTH_SHORT, MIDDLE);
 //                            else
 //                                set method to update
-                        }
-                        else {
-                            nextDO = finalKey;
-                        }
+                            } else {
+                                nextDO = finalKey;
+                            }
 
 //                        checkChangeAgents(finalKey);
-                    }
-                });
-                builderInner.setNegativeButton("Cancle", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog,int which) {
+                        }
+                    });
+                    builderInner.setNegativeButton("Cancle", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
 //                        if (where_from == FROM_DO)
 //                            d_do = "";
 //                        else if (where_from == FROM_AGENT)
 //                            agent_name = "";
-                        s[0]="";
-                        returnValue[0] = s[0];
+                            s[0] = "";
+                            returnValue[0] = s[0];
 //                        setChangedAgentorDO(s[0], FROM_NONE);
-                        Log.e(TAG, "selected "+s[0]);
-                        dialog.dismiss();
-                    }
-                });
-                builderInner.show();
-                builderInner.setCancelable(false);
-            }
-        });
-        builderSingle.show();
-        builderSingle.setCancelable(false);
+                            Log.e(TAG, "selected " + s[0]);
+                            dialog.dismiss();
+                        }
+                    });
+                    builderInner.show();
+                    builderInner.setCancelable(false);
+                }
+            });
+            builderSingle.show();
+            builderSingle.setCancelable(false);
 
-        CHANGED_VALUE = returnValue[0];
+            CHANGED_VALUE = returnValue[0];
+        }
+        else
+            showErrorToast("Invalid data to show popup!!!", Toast.LENGTH_SHORT, MIDDLE);
     }
 
     private HashMap<String, String> getElligibleAgent() {
-//        HashMap<>
-        return null;
+        HashMap<String, String> user = SessionUserData.getSFInstance(this).getSessionDetails();
+        String id = user.get(SessionUserData.KEY_USER_ID);
+        return db.getElligibleAgent(id);
     }
 
     public void showProgressDialog(boolean show_title, String title, String message) {

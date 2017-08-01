@@ -18,22 +18,14 @@ import com.ks.ecmanager.ecouriermanager.activities.base.ActivityBase;
 import com.ks.ecmanager.ecouriermanager.pojo.AgentListDatum;
 import com.ks.ecmanager.ecouriermanager.pojo.ConsignmentListDatum;
 import com.ks.ecmanager.ecouriermanager.pojo.DOListDatum;
-import com.ks.ecmanager.ecouriermanager.pojo.ParcelList;
-import com.ks.ecmanager.ecouriermanager.pojo.ResponseList;
 import com.ks.ecmanager.ecouriermanager.session.SessionUserData;
 import com.ks.ecmanager.ecouriermanager.webservices.ApiParams;
 import com.ks.ecmanager.ecouriermanager.webservices.interfaces.ParcelStatusUpdateInterface;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 
-import retrofit.Callback;
 import retrofit.RestAdapter;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 import static com.ks.ecmanager.ecouriermanager.activities.initLayer.ActivityLogin.sessionUserData;
 
@@ -104,122 +96,19 @@ public class ActivityConsignment extends ActivityBase {
         startActivity(intent);
     }
 
-    public String receiveStatusChangeValue(){
-        showListInPopUp(ActivityConsignment.this, getNextStatusMap(), "status");
-        String changedStatus = ActivityBase.CHANGED_VALUE;
-        Log.e("Changed status", ""+changedStatus);
-        return changedStatus;
-    }
-
-    public String receiveAgentChangeValue(){
-        ArrayList<String> keys;
-        ArrayList<String> values;
-        keys = new ArrayList<>();
-        values = new ArrayList<>();
-        List<AgentListDatum> agentListData = db.getAllAgents();
-        for (AgentListDatum agentListDatum : agentListData){
-            keys.add(agentListDatum.getAgent_id());
-            values.add(agentListDatum.getAgent_name());
-            Log.e("db agent", agentListDatum.getAgent_id()+" "+agentListDatum.getAgent_name());
-        }
-//        showListInPopUp(ActivityConsignment.this, createBidiMap(keys, values));
-        String changedAgent = ActivityBase.CHANGED_VALUE;
-        Log.e("Changed agent", ""+changedAgent);
-        return changedAgent;
-    }
-
-    public String receiveDOChangeValue(){
-        ArrayList<String> keys;
-        ArrayList<String> values;
-        keys = new ArrayList<>();
-        values = new ArrayList<>();
-        List<DOListDatum> doListData = db.getAllDOs();
-        for (DOListDatum doListDatum : doListData){
-            keys.add(doListDatum.getId());
-            values.add(doListDatum.getValue());
-            Log.e("db do", doListDatum.getId()+" "+doListDatum.getValue());
-        }
-//        showListInPopUp(ActivityConsignment.this, createBidiMap(keys, values));
-        String changedDO = ActivityBase.CHANGED_VALUE;
-        Log.e("Changed do", ""+changedDO);
-        return changedDO;
-    }
-
-    private void updateCN() {
-        String mChangedStatus = "";
-        String mChangedAgent = "";
-        String mChangedDO = "";
-//            status can changeable check
-        if (accessLevel.contains("1")){
-            mChangedStatus = receiveStatusChangeValue();
-            Log.e("changed status ", ""+mChangedAgent);
-            if (stringNotNullCheck(mChangedStatus)){
-                map.put(ApiParams.PARAM_STATUS, "" + mChangedStatus);
-//                is status canceled
-                if (mChangedStatus.equals(getString(R.string.s12))){
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    String currentDateandTime = sdf.format(new Date());
-                    map.put(ApiParams.PARAM_CANCEL_CALL_TIME, currentDateandTime);
-                }
-//                agent can changeable for status check
-                if (accessLevel.contains("2")){
-                    mChangedAgent = receiveAgentChangeValue();
-                    if (stringNotNullCheck(mChangedAgent)){
-                        map.put(ApiParams.PARAM_RETURN_AGENT, "" + mChangedAgent);
-//                        do can changeable for status & agent
-                        if (accessLevel.contains("3")){
-                            mChangedDO = receiveDOChangeValue();
-                            if (stringNotNullCheck(mChangedDO)){
-                                map.put(ApiParams.PARAM_D_DO, "" + mChangedDO);
-//                                parcelStatusUpdate(map);
-                            }
-//                            else
-//                                parcelStatusUpdate(map);
-                        }
-//                        else
-//                            parcelStatusUpdate(map);
-                    }
-                }
-//                do can changeable for status
-                else if (accessLevel.contains("3")){
-                    mChangedDO = receiveDOChangeValue();
-                    if (stringNotNullCheck(mChangedDO)){
-                        map.put(ApiParams.PARAM_D_DO, "" + mChangedDO);
-                    }
-//                    parcelStatusUpdate(map);
-                }
-
-//                else
-//                    parcelStatusUpdate(map);
-            }
-        }
-
-        else if (accessLevel.contains("2")){
-            if (!accessLevel.contains("1")){
-                mChangedAgent = receiveAgentChangeValue();
-                if (stringNotNullCheck(mChangedAgent)){
-                    map.put(ApiParams.PARAM_RETURN_AGENT, "" + mChangedAgent);
-                    if (accessLevel.contains("3")){
-                        mChangedDO = receiveDOChangeValue();
-                        if (stringNotNullCheck(mChangedDO)){
-                            map.put(ApiParams.PARAM_D_DO, "" + mChangedDO);
-                        }
-                    }
-                }
-            }
-        }
-
-        else if (accessLevel.equals("3")){
-            mChangedDO = receiveDOChangeValue();
-            if (stringNotNullCheck(mChangedDO)){
-                map.put(ApiParams.PARAM_D_DO, "" + mChangedDO);
-            }
-        }
-        else {
-            showErrorToast("Have no access!!!", Toast.LENGTH_SHORT, END);
-        }
-        Log.e(TAG+"", mChangedStatus +" "+ mChangedAgent +" "+ mChangedDO);
-        parcelStatusUpdate(map);
+    private void updateCN(){
+        if (accessLevel.contains("1"))
+            showListInPopUp(ActivityConsignment.this, getNextStatusMap(), "status");
+        else
+            showErrorToast("ERROR!!!", Toast.LENGTH_SHORT, MIDDLE);
+        String current_status = getCurrent_status();
+        String next_status = getNextStatus();
+        String agent_id = getNextAgent();
+        String do_id = getNextDO();
+        Log.e("map data", current_status
+                +" "+next_status
+                +" "+agent_id
+                +" "+do_id);
     }
 
     private void receiveDataFromIntent() {

@@ -846,27 +846,90 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL("delete from "+ TABLE_UPDATER);
     }
 
-    public List<UpdateTableListDatum> getNextUpdates(String next_status_code, String group, String search_value) {
+    public boolean getNextUpdates(String current_status, String next_status_code, String group, String search_value) {
         List<UpdateTableListDatum> updateTableListData = new ArrayList<>();
         String query = "SELECT * FROM "+ TABLE_UPDATER
-                +" WHERE " + TABLE_UPDATER + "." + NEXT_STATUS +" LIKE \'%" + next_status_code + "%\'"
-        + " AND " + TABLE_UPDATER + "." + UPDATERS +" LIKE \'%" + group + "%\'"
-        + " AND " + TABLE_UPDATER + "." + UPDATES + " LIKE \'%" +search_value + "%\'";
+                +" WHERE " + TABLE_UPDATER + "." + CURRENT_STATUS +" LIKE \'%" + current_status + "%\'"
+                + " AND " + TABLE_UPDATER + "." + NEXT_STATUS +" LIKE \'%" + next_status_code + "%\'"
+                + " AND " + TABLE_UPDATER + "." + UPDATERS +" LIKE \'%" + group + "%\'"
+                + " AND " + TABLE_UPDATER + "." + UPDATES + " LIKE \'%" +search_value + "%\'";
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(query, null);
         if (cursor != null && cursor.moveToFirst()){
-            do{
+            do {
                 updateTableListData.add(new UpdateTableListDatum(
-                        cursor.getString(cursor.getColumnIndex(CURRENT_STATUS)).replaceAll("[{}]",""),
-                        cursor.getString(cursor.getColumnIndex(NEXT_STATUS)).replaceAll("[{}]",""),
-                        cursor.getString(cursor.getColumnIndex(UPDATES)).replaceAll("[{}]",""),
-                        cursor.getString(cursor.getColumnIndex(UPDATERS)).replaceAll("[{}]","")));
+                        cursor.getString(cursor.getColumnIndex(CURRENT_STATUS)).replaceAll("[{}]", ""),
+                        cursor.getString(cursor.getColumnIndex(NEXT_STATUS)).replaceAll("[{}]", ""),
+                        cursor.getString(cursor.getColumnIndex(UPDATES)).replaceAll("[{}]", ""),
+                        cursor.getString(cursor.getColumnIndex(UPDATERS)).replaceAll("[{}]", "")
+                        )
+                );
+            }while (cursor.moveToNext());
+            if (cursor.getCount()>0){
+                cursor.close();
+                return true;
+            }
+            else {
+                cursor.close();
+                return false;
+            }
+        }
+        else
+            return false;
+    }
+
+    public HashMap<String, String> getElligibleAgent(String id) {
+        HashMap<String, String> map = new HashMap<>();
+        String sql = "SELECT * FROM " + TABLE_AGENTS
+                + " WHERE " + TABLE_AGENTS +"."+ AGENT_DO_ID + " = \"" + id +"\"";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(sql,  null);
+        if (cursor != null && cursor.moveToFirst()){
+            do{
+                map.put(
+                        cursor.getString(cursor.getColumnIndex(AGENT_API_ID)),
+                        cursor.getString(cursor.getColumnIndex(AGENT_NAME))
+                );
             }while (cursor.moveToNext());
             cursor.close();
-            return updateTableListData;
+            return map;
         }
+        else
+            return null;
+    }
 
-        return null;
+    public boolean getNextUpdates(String current_status, String next_status_code, String group, String aDo, String agent) {
+        List<UpdateTableListDatum> updateTableListData = new ArrayList<>();
+        String query = "SELECT * FROM "+ TABLE_UPDATER
+                +" WHERE " + TABLE_UPDATER + "." + CURRENT_STATUS +" LIKE \'%" + current_status + "%\'"
+                + " AND " + TABLE_UPDATER + "." + NEXT_STATUS +" LIKE \'%" + next_status_code + "%\'"
+                + " AND " + TABLE_UPDATER + "." + UPDATERS +" LIKE \'%" + group + "%\'"
+                + " AND " + TABLE_UPDATER + "." + UPDATES + " LIKE \'%" +aDo + "%\'"
+                + " AND " + TABLE_UPDATER + "." + UPDATES + " LIKE \'%" +agent + "%\'";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor != null && cursor.moveToFirst()){
+            do {
+                updateTableListData.add(new UpdateTableListDatum(
+                                cursor.getString(cursor.getColumnIndex(CURRENT_STATUS)).replaceAll("[{}]", ""),
+                                cursor.getString(cursor.getColumnIndex(NEXT_STATUS)).replaceAll("[{}]", ""),
+                                cursor.getString(cursor.getColumnIndex(UPDATES)).replaceAll("[{}]", ""),
+                                cursor.getString(cursor.getColumnIndex(UPDATERS)).replaceAll("[{}]", "")
+                        )
+                );
+            }while (cursor.moveToNext());
+            if (cursor.getCount()>0){
+                cursor.close();
+                return true;
+            }
+            else {
+                cursor.close();
+                return false;
+            }
+        }
+        else
+            return false;
     }
 }

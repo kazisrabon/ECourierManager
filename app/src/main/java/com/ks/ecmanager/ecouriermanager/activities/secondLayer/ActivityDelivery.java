@@ -37,7 +37,6 @@ public class ActivityDelivery extends ActivityBase {
     private ListItemAdapter listItemAdapter;
     private List<ListDatum> listData;
     private String id = "", group = "", authentication_key = "";
-    private boolean canChangeAgent = false, canChangeDO = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,54 +56,20 @@ public class ActivityDelivery extends ActivityBase {
             @Override
             public void onClick(View v) {
                 String where_from = getIntent().getStringExtra(KEY_DELIVERY);
-                if (where_from.equals("1")) {
-                    if (list_clicked_value.equals("")) {
-                        showErrorToast("Please click...", Toast.LENGTH_SHORT, MIDDLE);
-                    } else {
-                        setCheckChangeAgents(list_clicked_value);
-                        setCheckChangeDOs(list_clicked_value);
-                        canChangeAgent = getCheckChangeAgents();
-                        canChangeDO = getCheckChangeDOs();
-
-                        if (canChangeAgent){
-                            Intent refresh = new Intent(ActivityDelivery.this, ActivityDelivery.class);
-                            refresh.putExtra(KEY_DELIVERY, "2");
-                            startActivity(refresh);
-                            ActivityDelivery.this.finish();
-                        }
-                        else {
-                            if (canChangeDO){
-                                Intent refresh = new Intent(ActivityDelivery.this, ActivityDelivery.class);
-                                refresh.putExtra(KEY_DELIVERY, "3");
-                                startActivity(refresh);
-                                ActivityDelivery.this.finish();
-                            }
-                            else {
-                                showBlackToast("ActivityMultipleScan", Toast.LENGTH_SHORT, END);
-//                                startActivity(new Intent(ActivityDelivery.this, ActivityMultipleScan.class));
-                            }
-                        }
-                    }
-                }
-                else if (where_from.equals("2")){
-                    if (canChangeDO){
-                        Intent refresh = new Intent(ActivityDelivery.this, ActivityDelivery.class);
-                        refresh.putExtra(KEY_DELIVERY, "3");
-                        startActivity(refresh);
-                        ActivityDelivery.this.finish();
-                    }
-                    else {
+                if (stringNotNullCheck(list_clicked_value)) {
+                    if (where_from.contains("1"))
+                        refreshActivityforStatus();
+                    else if (where_from.contains("2"))
+                        refreshActivityforAgent();
+                    else if (where_from.contains("3")) {
                         showBlackToast("ActivityMultipleScan", Toast.LENGTH_SHORT, END);
-//                        startActivity(new Intent(ActivityDelivery.this, ActivityMultipleScan.class));
-                    }
-                }
-                else if (where_from.equals("3")){
-                    showBlackToast("ActivityMultipleScan", Toast.LENGTH_SHORT, END);
 //                    startActivity(new Intent(ActivityDelivery.this, ActivityMultipleScan.class));
+                    }
+                    else
+                        showErrorToast("Something is wrong!!!", Toast.LENGTH_SHORT, END);
                 }
-                else {
-                    showErrorToast("Something is wrong!!!", Toast.LENGTH_SHORT, END);
-                }
+                else
+                    showErrorToast("Please click...", Toast.LENGTH_SHORT, MIDDLE);
             }
         });
         cancleBtn = (TextView) findViewById(R.id.footer_2);
@@ -116,21 +81,52 @@ public class ActivityDelivery extends ActivityBase {
         });
     }
 
+    private void refreshActivityforAgent() {
+        if (getCheckChangeDOs()) {
+            Intent refresh = new Intent(ActivityDelivery.this, ActivityDelivery.class);
+            refresh.putExtra(KEY_DELIVERY, "3");
+            startActivity(refresh);
+            ActivityDelivery.this.finish();
+        } else {
+            showBlackToast("ActivityMultipleScan", Toast.LENGTH_SHORT, END);
+//                        startActivity(new Intent(ActivityDelivery.this, ActivityMultipleScan.class));
+        }
+    }
+
+    private void refreshActivityforStatus() {
+        setCheckChangeAgents(list_clicked_value);
+        setCheckChangeDOs(list_clicked_value);
+        if (getCheckChangeAgents()) {
+            Intent refresh = new Intent(ActivityDelivery.this, ActivityDelivery.class);
+            refresh.putExtra(KEY_DELIVERY, "2");
+            startActivity(refresh);
+            ActivityDelivery.this.finish();
+        } else if (getCheckChangeDOs()) {
+            Intent refresh = new Intent(ActivityDelivery.this, ActivityDelivery.class);
+            refresh.putExtra(KEY_DELIVERY, "3");
+            startActivity(refresh);
+            ActivityDelivery.this.finish();
+        } else {
+            showBlackToast("ActivityMultipleScan", Toast.LENGTH_SHORT, END);
+//                                startActivity(new Intent(ActivityDelivery.this, ActivityMultipleScan.class));
+        }
+    }
+
     private void getIntentValue(){
         if (getIntent().getExtras() != null){
             String where_from = getIntent().getStringExtra(KEY_DELIVERY);
             if (where_from.contains("1"))
-                loadStatus();
+                loadStatus("1");
             else if (where_from.contains("2"))
-                loadAgent();
+                loadAgent("2");
             else if (where_from.contains("3"))
-                loadDO();
+                loadDO("3");
             else
                 showErrorToast(""+getString(R.string.empty_field), Toast.LENGTH_SHORT, END);
         }
     }
 
-    private void loadDO() {
+    private void loadDO(String from_where) {
         listData = new ArrayList<>();
         ListDatum listDatum;
         List<DOListDatum> doListData = db.getAllDOs();
@@ -138,11 +134,11 @@ public class ActivityDelivery extends ActivityBase {
             listDatum = new ListDatum(doListDatum.getId(), doListDatum.getValue());
             listData.add(listDatum);
         }
-        listItemAdapter = new ListItemAdapter(ActivityDelivery.this, listData);
+        listItemAdapter = new ListItemAdapter(ActivityDelivery.this, listData, from_where);
         listView.setAdapter(listItemAdapter);
     }
 
-    private void loadAgent() {
+    private void loadAgent(String from_where) {
         listData = new ArrayList<>();
         ListDatum listDatum;
         List<AgentListDatum> agentListData = db.getAllAgents();
@@ -150,13 +146,13 @@ public class ActivityDelivery extends ActivityBase {
             listDatum = new ListDatum(agentListDatum.getAgent_id(), agentListDatum.getAgent_name());
             listData.add(listDatum);
         }
-        listItemAdapter = new ListItemAdapter(ActivityDelivery.this, listData);
+        listItemAdapter = new ListItemAdapter(ActivityDelivery.this, listData, from_where);
         listView.setAdapter(listItemAdapter);
     }
 
-    private void loadStatus() {
+    private void loadStatus(String from_where) {
         listData = db.getAllSpecificStatusforGroup(group);
-        listItemAdapter = new ListItemAdapter(ActivityDelivery.this, listData);
+        listItemAdapter = new ListItemAdapter(ActivityDelivery.this, listData, from_where);
         listView.setAdapter(listItemAdapter);
     }
 }
