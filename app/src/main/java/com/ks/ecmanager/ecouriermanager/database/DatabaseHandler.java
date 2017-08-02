@@ -848,11 +848,26 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public boolean getNextUpdates(String current_status, String next_status_code, String group, String search_value) {
         List<UpdateTableListDatum> updateTableListData = new ArrayList<>();
-        String query = "SELECT * FROM "+ TABLE_UPDATER
-                +" WHERE " + TABLE_UPDATER + "." + CURRENT_STATUS +" LIKE \'%" + current_status + "%\'"
-                + " AND " + TABLE_UPDATER + "." + NEXT_STATUS +" LIKE \'%" + next_status_code + "%\'"
-                + " AND " + TABLE_UPDATER + "." + UPDATERS +" LIKE \'%" + group + "%\'"
-                + " AND " + TABLE_UPDATER + "." + UPDATES + " LIKE \'%" +search_value + "%\'";
+//        for (Updates listData: getAllUpdaters()){
+//            Log.e("update table data", listData.getCurrent_status()
+//                    + " "+ listData.getNext_status()
+//                    + " "+ listData.getUpdates()
+//                    + " "+ listData.getUpdaters()
+//            );
+//        }
+        String query = "";
+        if (current_status.equals(""))
+            query = "SELECT * FROM "+ TABLE_UPDATER
+                    +" WHERE " + TABLE_UPDATER + "." + NEXT_STATUS +" LIKE \'%" + next_status_code + "%\'"
+                    + " AND " + TABLE_UPDATER + "." + UPDATERS +" LIKE \'%" + group + "%\'"
+                    + " AND " + TABLE_UPDATER + "." + UPDATES + " LIKE \'%" +search_value + "%\'";
+
+        else
+            query = "SELECT * FROM "+ TABLE_UPDATER
+                    +" WHERE " + TABLE_UPDATER + "." + CURRENT_STATUS +" LIKE \'%" + current_status + "%\'"
+                    + " AND " + TABLE_UPDATER + "." + NEXT_STATUS +" LIKE \'%" + next_status_code + "%\'"
+                    + " AND " + TABLE_UPDATER + "." + UPDATERS +" LIKE \'%" + group + "%\'"
+                    + " AND " + TABLE_UPDATER + "." + UPDATES + " LIKE \'%" +search_value + "%\'";
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(query, null);
@@ -901,12 +916,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public boolean getNextUpdates(String current_status, String next_status_code, String group, String aDo, String agent) {
         List<UpdateTableListDatum> updateTableListData = new ArrayList<>();
-        String query = "SELECT * FROM "+ TABLE_UPDATER
-                +" WHERE " + TABLE_UPDATER + "." + CURRENT_STATUS +" LIKE \'%" + current_status + "%\'"
-                + " AND " + TABLE_UPDATER + "." + NEXT_STATUS +" LIKE \'%" + next_status_code + "%\'"
-                + " AND " + TABLE_UPDATER + "." + UPDATERS +" LIKE \'%" + group + "%\'"
-                + " AND " + TABLE_UPDATER + "." + UPDATES + " LIKE \'%" +aDo + "%\'"
-                + " AND " + TABLE_UPDATER + "." + UPDATES + " LIKE \'%" +agent + "%\'";
+        String query = "";
+        if (current_status.equals(""))
+            query = "SELECT * FROM "+ TABLE_UPDATER
+                    +" WHERE " + TABLE_UPDATER + "." + NEXT_STATUS +" LIKE \'%" + next_status_code + "%\'"
+                    + " AND " + TABLE_UPDATER + "." + UPDATERS +" LIKE \'%" + group + "%\'"
+                    + " AND " + TABLE_UPDATER + "." + UPDATES + " LIKE \'%" +aDo + "%\'"
+                    + " AND " + TABLE_UPDATER + "." + UPDATES + " LIKE \'%" +agent + "%\'";
+
+        else
+            query = "SELECT * FROM "+ TABLE_UPDATER
+                    +" WHERE " + TABLE_UPDATER + "." + CURRENT_STATUS +" LIKE \'%" + current_status + "%\'"
+                    + " AND " + TABLE_UPDATER + "." + NEXT_STATUS +" LIKE \'%" + next_status_code + "%\'"
+                    + " AND " + TABLE_UPDATER + "." + UPDATERS +" LIKE \'%" + group + "%\'"
+                    + " AND " + TABLE_UPDATER + "." + UPDATES + " LIKE \'%" +aDo + "%\'"
+                    + " AND " + TABLE_UPDATER + "." + UPDATES + " LIKE \'%" +agent + "%\'";
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(query, null);

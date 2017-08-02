@@ -18,7 +18,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ks.ecmanager.ecouriermanager.R;
+import com.ks.ecmanager.ecouriermanager.activities.base.ActivityBase;
 import com.ks.ecmanager.ecouriermanager.activities.secondLayer.ActivityDelivery;
+import com.ks.ecmanager.ecouriermanager.activities.thirdLayer.ActivityMultipleScan;
 import com.ks.ecmanager.ecouriermanager.pojo.ListDatum;
 
 import org.apache.commons.collections4.BidiMap;
@@ -27,7 +29,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.ks.ecmanager.ecouriermanager.activities.base.ActivityBase.END;
 import static com.ks.ecmanager.ecouriermanager.activities.base.ActivityBase.KEY_DELIVERY;
+import static com.ks.ecmanager.ecouriermanager.activities.base.ActivityBase.MIDDLE;
+import static com.ks.ecmanager.ecouriermanager.activities.initLayer.ActivityLogin.sessionUserData;
 
 /**
  * Created by Kazi Srabon on 7/24/2017.
@@ -41,11 +46,13 @@ public class ListItemAdapter extends BaseAdapter {
     private LayoutInflater inflater;
     private ListDatum listDatum;
     private String where_from = "";
+    private ActivityBase activityBase;
 
     public ListItemAdapter(Context context, List<ListDatum> listData, String where_from) {
         this.context = context;
         this.listData = listData;
         this.where_from = where_from;
+        activityBase = new ActivityBase();
     }
 
     @Override
@@ -79,18 +86,66 @@ public class ListItemAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 list_clicked_value = getItem(position).getId();
-                Toast.makeText(context, getItem(position).getValue()+" selected", Toast.LENGTH_LONG).show();
+//                Toast.makeText(context, getItem(position).getValue()+" selected", Toast.LENGTH_LONG).show();
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
                 alertDialog.setTitle("Confirmation");
                 alertDialog.setMessage("Your Selection is "+getItem(position).getValue());
                 alertDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Intent refresh = new Intent(context, ActivityDelivery.class);
-                        refresh.putExtra(KEY_DELIVERY, "9"+where_from);
-//                        context.startActivity(refresh);
-//                        ((Activity)context).finish();
-                        dialog.dismiss();
+                        if (activityBase.stringNotNullCheck(list_clicked_value)) {
+                            if (where_from.contains("1")) {
+                                sessionUserData.setKeyNextStatus(list_clicked_value);
+                                activityBase.setCurrentStatus(list_clicked_value);
+                                activityBase.setCheckChangeAgents(list_clicked_value);
+                                activityBase.setCheckChangeDOs(list_clicked_value);
+                                if (activityBase.getCheckChangeAgents()) {
+                                    Intent refresh = new Intent(context, ActivityDelivery.class);
+                                    refresh.putExtra(KEY_DELIVERY, "2");
+                                    context.startActivity(refresh);
+                                    ((Activity)context).finish();
+                                    dialog.dismiss();
+                                } else if (activityBase.getCheckChangeDOs()) {
+                                    Intent refresh = new Intent(context, ActivityDelivery.class);
+                                    refresh.putExtra(KEY_DELIVERY, "3");
+                                    context.startActivity(refresh);
+                                    ((Activity)context).finish();
+                                    dialog.dismiss();
+                                } else {
+                                    dialog.dismiss();
+                                    context.startActivity(new Intent(context, ActivityMultipleScan.class));
+                                    ((Activity)context).finish();
+                                }
+                            }
+                            else if (where_from.contains("2")) {
+                                sessionUserData.setKeyAgentId(list_clicked_value);
+                                if (activityBase.getCheckChangeDOforAgent(list_clicked_value)) {
+                                    Intent refresh = new Intent(context, ActivityDelivery.class);
+                                    refresh.putExtra(KEY_DELIVERY, "3");
+                                    context.startActivity(refresh);
+                                    ((Activity)context).finish();
+                                    dialog.dismiss();
+                                } else {
+                                    dialog.dismiss();
+                                    context.startActivity(new Intent(context, ActivityMultipleScan.class));
+                                    ((Activity)context).finish();
+                                }
+                            }
+                            else if (where_from.contains("3")) {
+                                sessionUserData.setKeyDoId(list_clicked_value);
+                                dialog.dismiss();
+                                context.startActivity(new Intent(context, ActivityMultipleScan.class));
+                                ((Activity)context).finish();
+                            }
+                            else {
+                                dialog.dismiss();
+                                Toast.makeText(context, "Something is wrong!!!", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                        else {
+                            dialog.dismiss();
+                            Toast.makeText(context, "Please Click Again...", Toast.LENGTH_LONG).show();
+                        }
                     }
                 });
                 alertDialog.setNegativeButton("Cancle", new DialogInterface.OnClickListener() {

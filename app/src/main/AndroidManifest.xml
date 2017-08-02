@@ -35,7 +35,8 @@
         <activity android:name=".activities.secondLayer.ActivityConsignmentDetails" />
         <activity android:name=".KotlinActivity" />
         <activity android:name=".activities.firstLayer.Main2Activity" />
-        <activity android:name=".activities.secondLayer.ActivityDelivery"></activity>
+        <activity android:name=".activities.secondLayer.ActivityDelivery" />
+        <activity android:name=".activities.thirdLayer.ActivityMultipleScan"></activity>
     </application>
 
 </manifest>

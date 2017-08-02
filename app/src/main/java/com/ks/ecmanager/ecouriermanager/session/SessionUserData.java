@@ -23,10 +23,15 @@ public class SessionUserData {
     public static final String KEY_USER_AUTH_KEY = "user_key";
     public static final String KEY_DO_NAME = "do_name";
     public static final String KEY_DO_MOBILE = "do_mobile";
+    public static final String KEY_STATUS = "status";
+    public static final String KEY_NEXT_STATUS = "next_status";
+    public static final String KEY_AGENT_ID = "agent_id";
+    public static final String KEY_DO_ID = "do_id";
 
 
     // Sharedpref file name
     private static final String PREF_NAME = "userdata";
+    private static final String PREF_UPDATE = "update";
     // All Shared Preferences Keys
     private static final String IS_AVAILABLE = "IsAvailable";
     // Shared Preferences
@@ -49,6 +54,7 @@ public class SessionUserData {
     private SessionUserData(Context context) {
         this._context = context;
         pref = _context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
+        pref = context.getSharedPreferences(PREF_UPDATE, PRIVATE_MODE);
         editor = pref.edit();
     }
 
@@ -91,7 +97,42 @@ public class SessionUserData {
         return user;
     }
 
-//    set Logged in
+    public HashMap<String, String> getStatusDetails() {
+        HashMap<String, String> user = new HashMap<String, String>();
+
+        user.put(KEY_STATUS, pref.getString(KEY_STATUS, ""));
+        user.put(KEY_NEXT_STATUS, pref.getString(KEY_NEXT_STATUS, ""));
+        user.put(KEY_AGENT_ID, pref.getString(KEY_AGENT_ID, ""));
+        user.put(KEY_DO_ID, pref.getString(KEY_DO_ID, ""));
+        // return user
+        return user;
+    }
+
+    public void setKeyStatus(String value) {
+        editor.putString(KEY_USER_TYPE, value);
+        // commit changes
+        editor.commit();
+    }
+
+    public void setKeyNextStatus(String value) {
+        editor.putString(KEY_NEXT_STATUS, value);
+        // commit changes
+        editor.commit();
+    }
+
+    public void setKeyAgentId(String value) {
+        editor.putString(KEY_USER_TYPE, value);
+        // commit changes
+        editor.commit();
+    }
+
+    public void setKeyDoId(String value) {
+        editor.putString(KEY_USER_TYPE, value);
+        // commit changes
+        editor.commit();
+    }
+
+    //    set Logged in
     public void setLoggedIn(){
         // Storing logged In value as TRUE
         editor.putBoolean(IS_AVAILABLE, true);

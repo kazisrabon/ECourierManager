@@ -88,6 +88,7 @@ public class ActivityBase extends AppCompatActivity {
     public static Bitmap mBitmap = null;
     public static boolean isAgentRefreshed = false, isDoRefreshed = false;
     private final String TAG = "Base";
+    private static ActivityBase activityBase;
     private Activity activity;
     private Context context;
     private ProgressDialog progressDialog;
@@ -362,12 +363,17 @@ public class ActivityBase extends AppCompatActivity {
         return accessCode;
     }
 
+    public void setCurrentStatus(String nextStatus){
+
+    }
+
     public void setCheckChangeAgents(String next_status_code) {
         canAgentChange = false;
         HashMap<String, String> user = SessionUserData.getSFInstance(this).getSessionDetails();
         String group = user.get(SessionUserData.KEY_USER_GROUP);
 
         canAgentChange = db.getNextUpdates(current_status, next_status_code, group, "agent");
+        Log.e("testing", ""+canAgentChange);
     }
 
     public boolean getCheckChangeAgents(){
@@ -382,6 +388,7 @@ public class ActivityBase extends AppCompatActivity {
         String group = user.get(SessionUserData.KEY_USER_GROUP);
 
         canDOChange = db.getNextUpdates(current_status, next_status_code, group, "do");
+        Log.e("testing", ""+canDOChange);
     }
 
     public boolean getCheckChangeDOs(){
@@ -392,7 +399,16 @@ public class ActivityBase extends AppCompatActivity {
         HashMap<String, String> user = SessionUserData.getSFInstance(this).getSessionDetails();
         String group = user.get(SessionUserData.KEY_USER_GROUP);
         Log.e("popup value", nextStatus +" "+ nextAgent +" "+ nextDO);
-        return db.getNextUpdates(nextStatus, group, "do", "agent");
+        return db.getNextUpdates(current_status, nextStatus, group, "do", "agent");
+    }
+
+    public boolean getCheckChangeDOforAgent(String agent){
+        HashMap<String, String> user = SessionUserData.getSFInstance(this).getSessionDetails();
+        HashMap<String, String> update = SessionUserData.getSFInstance(this).getStatusDetails();
+        String group = user.get(SessionUserData.KEY_USER_GROUP);
+        nextStatus = update.get(SessionUserData.KEY_NEXT_STATUS);
+        Log.e("popup value", nextStatus +" "+ nextAgent +" "+ nextDO);
+        return db.getNextUpdates(current_status, nextStatus, group, "do", "agent");
     }
 
     public void checkGroupforStatus(){
@@ -487,7 +503,16 @@ public class ActivityBase extends AppCompatActivity {
         initDB();
         this.activity = ActivityBase.this;
         this.context = ActivityBase.this;
+        if (activityBase!=null){
+            activityBase = new ActivityBase();
+        }
+    }
 
+    public static ActivityBase getActivityBase(){
+        if (activityBase!=null)
+            return activityBase;
+        else
+            return null;
     }
 
     public String getNextStatus() {

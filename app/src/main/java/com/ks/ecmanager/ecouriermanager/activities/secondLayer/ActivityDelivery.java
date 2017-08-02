@@ -81,7 +81,7 @@ public class ActivityDelivery extends ActivityBase {
         });
     }
 
-    private void refreshActivityforAgent() {
+    public void refreshActivityforAgent() {
         if (getCheckChangeDOs()) {
             Intent refresh = new Intent(ActivityDelivery.this, ActivityDelivery.class);
             refresh.putExtra(KEY_DELIVERY, "3");
@@ -93,7 +93,7 @@ public class ActivityDelivery extends ActivityBase {
         }
     }
 
-    private void refreshActivityforStatus() {
+    public void refreshActivityforStatus() {
         setCheckChangeAgents(list_clicked_value);
         setCheckChangeDOs(list_clicked_value);
         if (getCheckChangeAgents()) {

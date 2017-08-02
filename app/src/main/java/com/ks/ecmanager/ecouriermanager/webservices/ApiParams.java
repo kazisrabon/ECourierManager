@@ -106,4 +106,7 @@ public class ApiParams {
 
 //    app config
     public static final String TAG_APP_CONFIG = "appConfig.php";
+
+//    bulk
+    public static final String TAG_BULK = "andMultipleParcelStatusUpdate.php";
 }
