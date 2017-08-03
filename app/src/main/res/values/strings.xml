@@ -102,5 +102,7 @@
     <string name="access_cash_collection">cash_collection</string>
     <string name="access_calling_time">calling_time</string>
     <string name="access_return_confrim">return_confrim</string>
+    <string name="finish">FINISH</string>
+    <string name="update">UPDATE</string>
 
 </resources>

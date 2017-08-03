@@ -68,6 +68,7 @@ public class ActivityBase extends AppCompatActivity {
 
     public static final String ALBUM_NAME = "eCourier";
     public static final String CN_TYPE_SEARCH = "search";
+    public static final String CN_TYPE_MULTIPLE = "multiple";
 //    key_delivery 1 => status 2=> agent 3=> do
     public static final String KEY_DELIVERY = "delivery";
     public static final String KEY_CN_POS = "consignment_data_position";
@@ -411,75 +412,6 @@ public class ActivityBase extends AppCompatActivity {
         return db.getNextUpdates(current_status, nextStatus, group, "do", "agent");
     }
 
-    public void checkGroupforStatus(){
-        HashMap<String, String> user = SessionUserData.getSFInstance(this).getSessionDetails();
-        String id = user.get(SessionUserData.KEY_USER_ID);
-        String group = user.get(SessionUserData.KEY_USER_GROUP);
-
-        List<ListDatum> listData = db.getAllSpecificStatusforGroup(group);
-
-    }
-
-    public String accessLevel(String sdo_id, String ddo_id){
-        String accessCode= "";
-        accessCode = "123";
-        String status="S21";
-        HashMap<String, String> user = SessionUserData.getSFInstance(this).getSessionDetails();
-        String id = user.get(SessionUserData.KEY_USER_ID);
-        String group = user.get(SessionUserData.KEY_USER_GROUP).toLowerCase();
-        String authentication_key = user.get(SessionUserData.KEY_USER_AUTH_KEY);
-        if (db.getAllProfile() != null) {
-            Log.e(TAG, "profile not null");
-            List<ProfileListDatum> profileList = db.getAllProfile();
-            for (ProfileListDatum profileListDatum : profileList){
-                Log.e("profile from db base", profileListDatum.getName()+"");
-            }
-        }
-        else
-            Log.e(TAG, "profile null");
-
-        if (db.getAllViewersforStatus() != null) {
-            Log.e(TAG, "viewer not null");
-            HashMap<String, String> viewres = db.getAllViewersforStatus();
-            Log.e(TAG, "viewer size:"+db.getViewerCount());
-//            printHash("viewer from db base", viewres);
-        }
-        else
-            Log.e(TAG, "viewer null");
-
-        if (db.getAllUpdaters() != null) {
-            Log.e(TAG, "updater not null");
-//            for (Updates updates : db.getAllUpdaters()){
-//                Log.e("updater from db base", updates.getCurrent_status()
-//                        +" "+updates.getNext_status()
-//                        +" "+updates.getUpdaters()
-//                        +" "+updates.getUpdates());
-//            }
-        }
-        else
-            Log.e(TAG, "updater null");
-
-//        set what a manager can do for ecr
-//        String dbUpdater = db.getAllUpdaters();
-
-//        set what a manager can do for specific status
-        List<NextStatusandUpdates> nextStatusandUpdates = db.getNextStatusandUpdates(status, group);
-        nextStatusMap = new HashMap<>();
-        for (NextStatusandUpdates updates : nextStatusandUpdates){
-            Log.e("NextStatusandUpdates", updates.getNext_status()+" "+updates.getUpdaters()+" "+updates.getDefine_do());
-            String next_status = updates.getNext_status();
-            next_status = next_status.replace("{","");
-            next_status = next_status.replace("}","");
-
-            nextStatusMap.put(next_status, db.getReadableStatus(next_status));
-
-        }
-
-//        return accessCode;
-        return authentication_key;
-//        return profileListDatum.getName();
-    }
-
     public HashMap<String, String> getNextStatusMap() {
         return nextStatusMap;
     }
@@ -508,13 +440,6 @@ public class ActivityBase extends AppCompatActivity {
         }
     }
 
-    public static ActivityBase getActivityBase(){
-        if (activityBase!=null)
-            return activityBase;
-        else
-            return null;
-    }
-
     public String getNextStatus() {
         return nextStatus;
     }
@@ -530,6 +455,9 @@ public class ActivityBase extends AppCompatActivity {
     public String getCurrent_status() {
         return current_status;
     }
+     public String getCurrent_status(String nextStatus, String agentID, String doID, String group){
+        return db.getCurrent_status(nextStatus, agentID, doID, group);
+     }
 
     public void initDB() {
         if (db == null){

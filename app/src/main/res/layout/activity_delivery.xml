@@ -33,7 +33,7 @@
                 android:textColor="@android:color/holo_blue_dark"
                 android:background="@android:color/darker_gray"/>
 
-            <TextView
+            <Button
                 android:text="@android:string/cancel"
                 android:id="@+id/footer_2"
                 android:gravity="center"

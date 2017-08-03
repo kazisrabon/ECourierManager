@@ -4,6 +4,7 @@
 
 package com.ks.ecmanager.ecouriermanager.session;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -51,6 +52,7 @@ public class SessionUserData {
         return mInstance;
     }
 
+    @SuppressLint("CommitPrefEdits")
     private SessionUserData(Context context) {
         this._context = context;
         pref = _context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
@@ -109,7 +111,7 @@ public class SessionUserData {
     }
 
     public void setKeyStatus(String value) {
-        editor.putString(KEY_USER_TYPE, value);
+        editor.putString(KEY_STATUS, value);
         // commit changes
         editor.commit();
     }
@@ -121,13 +123,13 @@ public class SessionUserData {
     }
 
     public void setKeyAgentId(String value) {
-        editor.putString(KEY_USER_TYPE, value);
+        editor.putString(KEY_AGENT_ID, value);
         // commit changes
         editor.commit();
     }
 
     public void setKeyDoId(String value) {
-        editor.putString(KEY_USER_TYPE, value);
+        editor.putString(KEY_DO_ID, value);
         // commit changes
         editor.commit();
     }

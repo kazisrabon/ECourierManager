@@ -26,6 +26,8 @@ import com.ks.ecmanager.ecouriermanager.webservices.ApiParams;
 
 import java.util.HashMap;
 
+import static com.ks.ecmanager.ecouriermanager.activities.initLayer.ActivityLogin.sessionUserData;
+
 public class Main2Activity extends ActivityBase {
     private final String TAG = "Main2Activity";
     private HashMap<String, String> user = new HashMap<String, String>();
@@ -85,6 +87,10 @@ public class Main2Activity extends ActivityBase {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Main2Activity.this, ActivityDelivery.class);
+                sessionUserData.setKeyStatus("");
+                sessionUserData.setKeyNextStatus("");
+                sessionUserData.setKeyAgentId("");
+                sessionUserData.setKeyDoId("");
                 intent.putExtra(KEY_DELIVERY, "1");
                 startActivity(intent);
             }

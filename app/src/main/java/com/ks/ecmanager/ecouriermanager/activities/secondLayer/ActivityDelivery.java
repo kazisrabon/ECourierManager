@@ -31,7 +31,7 @@ import java.util.List;
 import static com.ks.ecmanager.ecouriermanager.adapters.ListItemAdapter.list_clicked_value;
 
 public class ActivityDelivery extends ActivityBase {
-    private TextView okBtn, cancleBtn;
+    private Button okBtn, cancleBtn;
     private ListView listView;
     private Context context;
     private ListItemAdapter listItemAdapter;
@@ -51,7 +51,7 @@ public class ActivityDelivery extends ActivityBase {
         listView = (ListView) findViewById(R.id.listView);
         context = ActivityDelivery.this;
         getIntentValue();
-        okBtn = (TextView) findViewById(R.id.footer_1);
+        okBtn = (Button) findViewById(R.id.footer_1);
         okBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -72,7 +72,7 @@ public class ActivityDelivery extends ActivityBase {
                     showErrorToast("Please click...", Toast.LENGTH_SHORT, MIDDLE);
             }
         });
-        cancleBtn = (TextView) findViewById(R.id.footer_2);
+        cancleBtn = (Button) findViewById(R.id.footer_2);
         cancleBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

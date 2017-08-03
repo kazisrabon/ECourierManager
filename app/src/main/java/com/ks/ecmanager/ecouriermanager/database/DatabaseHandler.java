@@ -31,6 +31,7 @@ import java.text.Bidi;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.StringJoiner;
 
 /**
  * Created by Kazi Srabon on 6/21/2017.
@@ -637,15 +638,23 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public List<ListDatum> getAllSpecificStatusforGroup(String group) {
         List<ListDatum> responseListData = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT DISTINCT current_status FROM " + TABLE_UPDATER + " WHERE " + TABLE_UPDATER+ "." + UPDATERS+" LIKE \'%" + group + "%\'";
+        String selectQuery = "SELECT DISTINCT next_status FROM " + TABLE_UPDATER + " WHERE " + TABLE_UPDATER+ "." + UPDATERS+" LIKE \'%" + group + "%\'";
 
         SQLiteDatabase db = this.getReadableDatabase ();
         @SuppressLint("Recycle") Cursor cursor = db.rawQuery(selectQuery, null);
         // looping through all rows and adding to list
         if (cursor != null && cursor.moveToFirst()){
             do {
-                ListDatum datum = new ListDatum(cursor.getString(cursor.getColumnIndex(CURRENT_STATUS)),
-                       getReadableStatus(cursor.getString(cursor.getColumnIndex(CURRENT_STATUS))) );
+                ListDatum datum;
+                if (cursor.getString(cursor.getColumnIndex(NEXT_STATUS)).replaceAll("[{}]", "").contains("S12")) {
+                    datum = new ListDatum(cursor.getString(cursor.getColumnIndex(NEXT_STATUS)).replaceAll("[{}]", ""), "Cancle");
+                }
+                else {
+                    datum = new ListDatum(
+                            cursor.getString(cursor.getColumnIndex(NEXT_STATUS)).replaceAll("[{}]", ""),
+                            getReadableStatus(cursor.getString(cursor.getColumnIndex(NEXT_STATUS)).replaceAll("[{}]", ""))
+                    );
+                }
                 responseListData.add(datum);
             } while (cursor.moveToNext());
             cursor.close();
@@ -955,5 +964,44 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
         else
             return false;
+    }
+
+    public String getCurrent_status(String nextStatus, String agentID, String doID, String group) {
+        for (Updates listData: getAllUpdaters()){
+            Log.e("update table data", listData.getCurrent_status()
+                    + " "+ listData.getNext_status()
+                    + " "+ listData.getUpdates()
+                    + " "+ listData.getUpdaters()
+            );
+        }
+
+        StringBuilder current_status = new StringBuilder();
+        String loopDelim = "";
+        String delim = ",";
+        String aDo = "do";
+        String agent = "agent";
+        String query = "SELECT * FROM "+ TABLE_UPDATER
+                +" WHERE " + TABLE_UPDATER + "." + NEXT_STATUS +" LIKE \'%" + nextStatus + "%\'";
+        if (!group.equals(""))
+            query += " AND " + TABLE_UPDATER + "." + UPDATERS +" LIKE \'%" + group + "%\'";
+        if (!agentID.equals(""))
+            query += " AND " + TABLE_UPDATER + "." + UPDATES + " LIKE \'%" +agent + "%\'";
+        if (!doID.equals(""))
+            query += " AND " + TABLE_UPDATER + "." + UPDATES + " LIKE \'%" +aDo + "%\'";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor != null && cursor.moveToFirst()){
+            do {
+                current_status.append(loopDelim);
+                current_status.append(cursor.getString(cursor.getColumnIndex(CURRENT_STATUS)));
+
+                loopDelim = delim;
+//               current_status.append(",").append(cursor.getString(cursor.getColumnIndex(CURRENT_STATUS)));
+            }while (cursor.moveToNext());
+            cursor.close();
+            return String.valueOf(current_status);
+        }
+        return null;
     }
 }

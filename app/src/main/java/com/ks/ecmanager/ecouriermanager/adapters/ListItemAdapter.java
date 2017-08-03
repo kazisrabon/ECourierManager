@@ -22,16 +22,19 @@ import com.ks.ecmanager.ecouriermanager.activities.base.ActivityBase;
 import com.ks.ecmanager.ecouriermanager.activities.secondLayer.ActivityDelivery;
 import com.ks.ecmanager.ecouriermanager.activities.thirdLayer.ActivityMultipleScan;
 import com.ks.ecmanager.ecouriermanager.pojo.ListDatum;
+import com.ks.ecmanager.ecouriermanager.session.SessionUserData;
 
 import org.apache.commons.collections4.BidiMap;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static com.ks.ecmanager.ecouriermanager.activities.base.ActivityBase.END;
 import static com.ks.ecmanager.ecouriermanager.activities.base.ActivityBase.KEY_DELIVERY;
 import static com.ks.ecmanager.ecouriermanager.activities.base.ActivityBase.MIDDLE;
+import static com.ks.ecmanager.ecouriermanager.activities.base.ActivityBase.db;
 import static com.ks.ecmanager.ecouriermanager.activities.initLayer.ActivityLogin.sessionUserData;
 
 /**
@@ -93,6 +96,8 @@ public class ListItemAdapter extends BaseAdapter {
                 alertDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        HashMap<String, String> user = SessionUserData.getSFInstance(context).getSessionDetails();
+                        String group = user.get(SessionUserData.KEY_USER_GROUP);
                         if (activityBase.stringNotNullCheck(list_clicked_value)) {
                             if (where_from.contains("1")) {
                                 sessionUserData.setKeyNextStatus(list_clicked_value);
@@ -112,6 +117,11 @@ public class ListItemAdapter extends BaseAdapter {
                                     ((Activity)context).finish();
                                     dialog.dismiss();
                                 } else {
+                                    HashMap<String, String> update = SessionUserData.getSFInstance(context).getStatusDetails();
+                                    String nextStatus = update.get(SessionUserData.KEY_NEXT_STATUS);
+                                    String agentID = update.get(SessionUserData.KEY_AGENT_ID);
+                                    String doID = update.get(SessionUserData.KEY_DO_ID);
+                                    sessionUserData.setKeyStatus(db.getCurrent_status(nextStatus, agentID, doID, group));
                                     dialog.dismiss();
                                     context.startActivity(new Intent(context, ActivityMultipleScan.class));
                                     ((Activity)context).finish();
@@ -126,6 +136,11 @@ public class ListItemAdapter extends BaseAdapter {
                                     ((Activity)context).finish();
                                     dialog.dismiss();
                                 } else {
+                                    HashMap<String, String> update = SessionUserData.getSFInstance(context).getStatusDetails();
+                                    String nextStatus = update.get(SessionUserData.KEY_NEXT_STATUS);
+                                    String agentID = update.get(SessionUserData.KEY_AGENT_ID);
+                                    String doID = update.get(SessionUserData.KEY_DO_ID);
+                                    sessionUserData.setKeyStatus(db.getCurrent_status(nextStatus, agentID, doID, group));
                                     dialog.dismiss();
                                     context.startActivity(new Intent(context, ActivityMultipleScan.class));
                                     ((Activity)context).finish();
@@ -133,6 +148,11 @@ public class ListItemAdapter extends BaseAdapter {
                             }
                             else if (where_from.contains("3")) {
                                 sessionUserData.setKeyDoId(list_clicked_value);
+                                HashMap<String, String> update = SessionUserData.getSFInstance(context).getStatusDetails();
+                                String nextStatus = update.get(SessionUserData.KEY_NEXT_STATUS);
+                                String agentID = update.get(SessionUserData.KEY_AGENT_ID);
+                                String doID = update.get(SessionUserData.KEY_DO_ID);
+                                sessionUserData.setKeyStatus(db.getCurrent_status(nextStatus, agentID, doID, group));
                                 dialog.dismiss();
                                 context.startActivity(new Intent(context, ActivityMultipleScan.class));
                                 ((Activity)context).finish();
