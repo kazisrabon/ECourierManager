@@ -238,17 +238,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 //                new String[] { id }, null, null, null, null);
         Cursor cursor = db.rawQuery("select * from " + TABLE_AGENTS + " where " + AGENT_API_ID + " = " + id, null);
         if (cursor != null && cursor.moveToFirst()) {
-            AgentListDatum agentListDatum = new AgentListDatum(cursor.getString(1),
-                    cursor.getString(2),
-                    cursor.getString(3),
-                    cursor.getString(4));
+            AgentListDatum agentListDatum = new AgentListDatum(
+                    cursor.getString(cursor.getColumnIndex(AGENT_API_ID)),
+                    cursor.getString(cursor.getColumnIndex(AGENT_NAME)),
+                    cursor.getString(cursor.getColumnIndex(AGENT_DO_NAME)),
+                    cursor.getString(cursor.getColumnIndex(AGENT_DO_ID))
+            );
             cursor.close();
             return agentListDatum;
         }
-        else{
-            cursor.close();
+        else
             return null;
-        }
+    }
+
+    public String getAgentName(String id){
+        return  getAgent(id).getAgent_name();
     }
 
     // Getting All Agents
@@ -357,6 +361,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
         else {
             return null;
+        }
+    }
+
+    public String getDoName(String id){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("select * from "+ TABLE_DOS + " where " + DO_API_ID + " = \"" + id + "\"",
+                null);
+
+        if (cursor != null && cursor.moveToFirst()){
+            String s = cursor.getString(cursor.getColumnIndex(DO_NAME));
+            cursor.close();
+            return s;
+        }
+        else {
+            return "";
         }
     }
 

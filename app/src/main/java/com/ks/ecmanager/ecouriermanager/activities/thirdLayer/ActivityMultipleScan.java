@@ -7,10 +7,13 @@ package com.ks.ecmanager.ecouriermanager.activities.thirdLayer;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.zxing.Result;
@@ -38,9 +41,11 @@ public class ActivityMultipleScan  extends ActivityBase implements ZXingScannerV
     private ZXingScannerView mScannerView;
     private Context context;
     private StringBuilder scannedECR;
-    private String loopDelim = "", delim = ",", nextStatus = "";
+    private String loopDelim = "", delim = ",", nextStatus = "", current_status;
     HashMap<String, String> statusDetails;
     HashMap<String, String> userDetails;
+    ArrayList<ConsignmentListDatum> consignmentListData = new ArrayList<>();
+    Button buttonFinish;
 
     @Override
     public void onCreate(Bundle state) {
@@ -49,6 +54,13 @@ public class ActivityMultipleScan  extends ActivityBase implements ZXingScannerV
         context = ActivityMultipleScan.this;
         setHash();
         scannedECR = new StringBuilder();
+        buttonFinish = (Button) findViewById(R.id.btnFinish);
+        buttonFinish.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gotoList();
+            }
+        });
 
 //        setupToolbar();
         ViewGroup contentFrame = (ViewGroup) findViewById(R.id.content_frame);
@@ -63,6 +75,7 @@ public class ActivityMultipleScan  extends ActivityBase implements ZXingScannerV
         String group = userDetails.get(SessionUserData.KEY_USER_GROUP);
         String authentication_key = userDetails.get(SessionUserData.KEY_USER_AUTH_KEY);
         nextStatus = statusDetails.get(SessionUserData.KEY_NEXT_STATUS);
+        current_status = statusDetails.get(SessionUserData.KEY_STATUS);
         map.put(ApiParams.PARAM_ADMIN_ID, "" + id);
         map.put(ApiParams.PARAM_GROUP, group);
         map.put(ApiParams.PARAM_AUTHENTICATION_KEY, "" + authentication_key);
@@ -77,7 +90,7 @@ public class ActivityMultipleScan  extends ActivityBase implements ZXingScannerV
         mScannerView.startCamera();
 
 //        mScannerView.setFlash(false);
-        mScannerView.setAutoFocus(true);
+//        mScannerView.setAutoFocus(true);
         mScannerView.setKeepScreenOn(true);
     }
 
@@ -105,16 +118,8 @@ public class ActivityMultipleScan  extends ActivityBase implements ZXingScannerV
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if (checkValidity(rawResult.getText().trim())){
-                    scannedECR.append(loopDelim);
-                    scannedECR.append(rawResult.getText().trim());
-                    loopDelim = delim;
-                    String status = String.valueOf(scannedECR);
-                    dialog.dismiss();
-                }
-                else {
-                    dialog.dismiss();
-                }
+                checkValidity(rawResult.getText().trim());
+                dialog.dismiss();
             }
         });
         alertDialog.show();
@@ -132,8 +137,7 @@ public class ActivityMultipleScan  extends ActivityBase implements ZXingScannerV
         }, 2000);
     }
 
-    private boolean checkValidity(String ecr) {
-        final boolean[] b = {false};
+    private void checkValidity(String ecr) {
         map.put(ApiParams.PARAM_CONSIGNMENT_NO, ecr);
         showProgressDialog(false, "", getResources().getString(R.string.loading));
 //        getSearchTypeValue();
@@ -144,17 +148,20 @@ public class ActivityMultipleScan  extends ActivityBase implements ZXingScannerV
         myApiCallback.getData(ApiParams.TAG_CONSIGNMENT_SEARCH_KEY, map, new Callback<ConsignmentList>() {
             @Override
             public void success(ConsignmentList consignment_list, Response response) {
-                hideProgressDialog();
-
                 boolean status = consignment_list.getStatus();
 
                 Log.e(FLASH_STATE, status+" ");
                 if (status) {
-                    showSuccessToast(""+status, Toast.LENGTH_SHORT, END);
+                    hideProgressDialog();
+                    showWhiteToast("Successfully added", Toast.LENGTH_SHORT, END);
                     List<ConsignmentListDatum> consignmentListDatumList;
                     consignmentListDatumList = consignment_list.getData();
-                    if (consignmentListDatumList.get(0).getStatus_code().contains(nextStatus))
-                        b[0] = true;
+                    if (current_status.contains(consignmentListDatumList.get(0).getStatus_code())) {
+                        scannedECR.append(loopDelim);
+                        scannedECR.append(consignmentListDatumList.get(0).getConsignment_no());
+                        loopDelim = delim;
+                        consignmentListData.add(consignmentListDatumList.get(0));
+                    }
                     else
                         showErrorToast("ECR not added", Toast.LENGTH_SHORT, MIDDLE);
                 }
@@ -169,11 +176,13 @@ public class ActivityMultipleScan  extends ActivityBase implements ZXingScannerV
                 showErrorToast("" + error.getMessage() + "!", Toast.LENGTH_SHORT, MIDDLE);
             }
         });
-
-        return b[0];
     }
 
     public void gotoList() {
-
+        Intent intent = new Intent(ActivityMultipleScan.this, ActivityMultipleList.class);
+        intent.putExtra(KEY_CN_DATA, consignmentListData);
+        intent.putExtra(KEY_WHERE_FROM, CN_TYPE_MULTIPLE);
+        intent.putExtra(KEY_ECRS, String.valueOf(scannedECR));
+        startActivity(intent);
     }
 }

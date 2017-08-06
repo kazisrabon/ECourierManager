@@ -109,4 +109,6 @@ public class ApiParams {
 
 //    bulk
     public static final String TAG_BULK = "andMultipleParcelStatusUpdate.php";
+    public static final String PARAM_S_DO= "s_do";
+    public static final String PARAM_CONSIGNMENTS= "consignments";
 }

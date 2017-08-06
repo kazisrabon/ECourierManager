@@ -87,10 +87,7 @@ public class Main2Activity extends ActivityBase {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Main2Activity.this, ActivityDelivery.class);
-                sessionUserData.setKeyStatus("");
-                sessionUserData.setKeyNextStatus("");
-                sessionUserData.setKeyAgentId("");
-                sessionUserData.setKeyDoId("");
+                sessionUserData.initStatus();
                 intent.putExtra(KEY_DELIVERY, "1");
                 startActivity(intent);
             }

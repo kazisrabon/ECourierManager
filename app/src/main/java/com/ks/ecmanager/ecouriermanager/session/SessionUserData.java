@@ -191,4 +191,12 @@ public class SessionUserData {
         editor.clear();
         editor.commit();
     }
+
+    public void initStatus() {
+        editor.putString(KEY_STATUS, "");
+        editor.putString(KEY_NEXT_STATUS, "");
+        editor.putString(KEY_AGENT_ID, "");
+        editor.putString(KEY_DO_ID, "");
+        editor.commit();
+    }
 }

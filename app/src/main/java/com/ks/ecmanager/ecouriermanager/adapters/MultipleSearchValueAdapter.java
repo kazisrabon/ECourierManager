@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ks.ecmanager.ecouriermanager.R;
 import com.ks.ecmanager.ecouriermanager.activities.secondLayer.ActivityConsignment;
@@ -23,6 +24,7 @@ import static com.ks.ecmanager.ecouriermanager.activities.base.ActivityBase.KEY_
 import static com.ks.ecmanager.ecouriermanager.activities.base.ActivityBase.KEY_CN_POS;
 import static com.ks.ecmanager.ecouriermanager.activities.base.ActivityBase.KEY_WHERE_FROM;
 import static com.ks.ecmanager.ecouriermanager.activities.base.ActivityBase.CN_TYPE_SEARCH;
+import static com.ks.ecmanager.ecouriermanager.activities.base.ActivityBase.FROM_BULK;
 
 /**
  * Created by Kazi Srabon on 7/17/2017.
@@ -32,10 +34,12 @@ public class MultipleSearchValueAdapter  extends BaseAdapter {
     private Context context;
     private List<ConsignmentListDatum> consignmentListDatumList;
     private LayoutInflater inflater;
+    private String where_from = "";
 
-    public MultipleSearchValueAdapter(Context context, List<ConsignmentListDatum> consignmentListDatumList) {
+    public MultipleSearchValueAdapter(Context context, List<ConsignmentListDatum> consignmentListDatumList, String where_from) {
         this.context = context;
         this.consignmentListDatumList = consignmentListDatumList;
+        this.where_from = where_from;
     }
 
     @Override
@@ -61,32 +65,42 @@ public class MultipleSearchValueAdapter  extends BaseAdapter {
         } else {
             result = convertView;
         }
-        ConsignmentListDatum listDatum = consignmentListDatumList.get(position);
-        TextView tvEcrNumber = (TextView) result.findViewById(R.id.tvEcrNumber);
-        TextView tvProductPrice = (TextView) result.findViewById(R.id.tvProductPrice);
-        TextView tvCompany = (TextView) result.findViewById(R.id.tvCompany);
-        TextView tvReciverName = (TextView) result.findViewById(R.id.tvReciverName);
-        TextView tvReceiverMobile = (TextView) result.findViewById(R.id.tvReceiverMobile);
-        TextView tvStatus = (TextView) result.findViewById(R.id.tvStatus);
+        TextView consignment_position = (TextView) result.findViewById(R.id.textPosition);
+        TextView consignment_id = (TextView) result.findViewById(R.id.textConsignmentId);
+        consignment_id.setTextColor(context.getResources().getColor(R.color.colorPrimary));
+        TextView company = (TextView) result.findViewById(R.id.textCompany);
+        TextView name = (TextView) result.findViewById(R.id.textName);
+        TextView amount = (TextView) result.findViewById(R.id.textAmount);
+        TextView mobile_no = (TextView) result.findViewById(R.id.textMobileNo);
+        TextView order_time = (TextView) result.findViewById(R.id.textOrderTime);
+        TextView parcel_status = (TextView) result.findViewById(R.id.textParcelStatus);
 
-        tvEcrNumber.setText(listDatum.getConsignment_no());
-        tvProductPrice.setText(listDatum.getProduct_price());
-        tvCompany.setText(listDatum.getEso());
-        tvReciverName.setText(listDatum.getRecipient_name());
-        tvReceiverMobile.setText(listDatum.getRecipient_mobile());
-        tvStatus.setText(listDatum.getParcel_status());
+        ConsignmentListDatum listDatum = consignmentListDatumList.get(position);
+        consignment_position.setText("" + (position + 1) + ". ");
+        consignment_id.setText(listDatum.getConsignment_no());
+        company.setText(listDatum.getEso());
+        name.setText(listDatum.getRecipient_name());
+        amount.setText(listDatum.getProduct_price());
+        mobile_no.setText(listDatum.getRecipient_mobile());
+        order_time.setText(listDatum.getOrder_time());
+        parcel_status.setText(listDatum.getParcel_status());
+
         result.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 // convert the list to array list and pass via intent
-                ArrayList<ConsignmentListDatum> ItemArray = ((ArrayList<ConsignmentListDatum>) consignmentListDatumList);
-                Intent intent = new Intent(context, ActivityConsignment.class);
-                intent.putExtra(KEY_CN_POS, 0);
-                intent.putExtra(KEY_CN_DATA, ItemArray);
-                intent.putExtra(KEY_WHERE_FROM, CN_TYPE_SEARCH);
-                context.startActivity(intent);
-
+                if (where_from.equals(FROM_BULK)){
+                    Toast.makeText(context, "Clicked", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    ArrayList<ConsignmentListDatum> ItemArray = ((ArrayList<ConsignmentListDatum>) consignmentListDatumList);
+                    Intent intent = new Intent(context, ActivityConsignment.class);
+                    intent.putExtra(KEY_CN_POS, 0);
+                    intent.putExtra(KEY_CN_DATA, ItemArray);
+                    intent.putExtra(KEY_WHERE_FROM, CN_TYPE_SEARCH);
+                    context.startActivity(intent);
+                }
             }
         });
         return result;

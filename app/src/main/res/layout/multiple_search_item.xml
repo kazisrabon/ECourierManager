@@ -3,157 +3,114 @@
   ~ Copyright (c) 2017. kazi srabon. Contact : kaziiit@gmail.com
   -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:id="@+id/linearLayout1"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="2">
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="@dimen/list_view_item_margin"
+        android:gravity="center"
+        android:orientation="horizontal">
+
         <TextView
-            android:id="@+id/tvEcrNumber"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:padding="@dimen/card_margin"
             android:text="@string/testing"
-            android:layout_gravity="center"
-            android:textStyle="bold"/>
-
-        <TextView
-            android:layout_width="0dp"
+            android:id="@+id/textPosition"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight=".5"
-            android:paddingTop="@dimen/card_margin"
-            android:paddingBottom="@dimen/card_margin"
-            android:paddingLeft="@dimen/card_margin"
-            android:paddingStart="@dimen/card_margin"
-            android:text="@string/product_price_tv"
-            android:textStyle="bold"
-            android:layout_gravity="center"/>
+            android:gravity="left"
+            android:textSize="@dimen/title_text"
+            android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/tvProductPrice"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight=".5"
-            android:paddingTop="@dimen/card_margin"
-            android:paddingBottom="@dimen/card_margin"
-            android:paddingRight="@dimen/card_margin"
-            android:paddingEnd="@dimen/card_margin"
-            android:text="@string/testing"
-            android:layout_gravity="center"/>
-    </LinearLayout>
+            android:orientation="vertical"
+            android:padding="2dp">
 
-    <view
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/black"/>
+            <TextView
+                android:text="@string/testing"
+                android:id="@+id/textConsignmentId"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/title_text"
+                android:textStyle="bold" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="2">
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight=".5"
-            android:paddingTop="@dimen/card_margin"
-            android:paddingBottom="@dimen/card_margin"
-            android:paddingLeft="@dimen/card_margin"
-            android:paddingStart="@dimen/card_margin"
-            android:text="@string/company_tv"
-            android:textStyle="bold"
-            android:layout_gravity="center"/>
+            <TextView
+                android:text="@string/testing"
+                android:id="@+id/textCompany"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:textSize="@dimen/title_text"
+                android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/tvCompany"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight=".5"
-            android:paddingTop="@dimen/card_margin"
-            android:paddingBottom="@dimen/card_margin"
-            android:paddingRight="@dimen/card_margin"
-            android:paddingEnd="@dimen/card_margin"
-            android:text="@string/testing"
-            android:layout_gravity="center"/>
+            <TextView
+                android:text="@string/testing"
+                android:id="@+id/textName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:textSize="@dimen/subtitle_text" />
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight=".5"
-            android:paddingTop="@dimen/card_margin"
-            android:paddingBottom="@dimen/card_margin"
-            android:paddingLeft="@dimen/card_margin"
-            android:paddingStart="@dimen/card_margin"
-            android:text="@string/recipient_name_tv"
-            android:textStyle="bold"
-            android:layout_gravity="center"/>
+            <TextView
+                android:text="@string/testing"
+                android:id="@+id/textAmount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:textSize="@dimen/subtitle_text" />
 
-        <TextView
-            android:id="@+id/tvReciverName"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight=".5"
-            android:paddingTop="@dimen/card_margin"
-            android:paddingBottom="@dimen/card_margin"
-            android:paddingRight="@dimen/card_margin"
-            android:paddingEnd="@dimen/card_margin"
-            android:text="@string/testing"
-            android:layout_gravity="center"/>
+            <TextView
+                android:text="@string/testing"
+                android:id="@+id/textMobileNo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:textSize="@dimen/subtitle_text" />
+
+            <TextView
+                android:text="@string/testing"
+                android:id="@+id/textOrderTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:textSize="@dimen/subtitle_text" />
+        </LinearLayout>
+
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:id="@+id/linearLayout2"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="2">
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight=".5"
-            android:paddingBottom="@dimen/card_margin"
-            android:paddingLeft="@dimen/card_margin"
-            android:paddingStart="@dimen/card_margin"
-            android:text="@string/recipient_mobile_tv"
-            android:textStyle="bold"
-            android:layout_gravity="center"/>
+        android:layout_alignBottom="@+id/linearLayout1"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="@dimen/list_view_item_margin"
+        android:layout_marginRight="@dimen/list_view_item_margin"
+        android:layout_marginTop="@dimen/list_view_item_margin"
+        android:layout_toEndOf="@+id/linearLayout1"
+        android:layout_toRightOf="@+id/linearLayout1"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:textColor="@color/status">
 
         <TextView
-            android:id="@+id/tvReceiverMobile"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight=".5"
-            android:paddingBottom="@dimen/card_margin"
-            android:paddingRight="@dimen/card_margin"
-            android:paddingEnd="@dimen/card_margin"
             android:text="@string/testing"
-            android:layout_gravity="center"/>
-
-        <TextView
-            android:layout_width="0dp"
+            android:id="@+id/textParcelStatus"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight=".5"
-            android:paddingBottom="@dimen/card_margin"
-            android:paddingLeft="@dimen/card_margin"
-            android:paddingStart="@dimen/card_margin"
-            android:text="@string/status_tv"
-            android:textStyle="bold"
-            android:layout_gravity="center"/>
+            android:gravity="right"
+            android:textSize="@dimen/subtitle_text" />
 
-        <TextView
-            android:id="@+id/tvStatus"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight=".5"
-            android:paddingBottom="@dimen/card_margin"
-            android:paddingRight="@dimen/card_margin"
-            android:paddingEnd="@dimen/card_margin"
-            android:text="@string/testing"
-            android:layout_gravity="center"/>
     </LinearLayout>
-
-</LinearLayout>
+</RelativeLayout>

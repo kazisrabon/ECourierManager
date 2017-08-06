@@ -52,6 +52,8 @@ import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
+import static com.ks.ecmanager.ecouriermanager.activities.initLayer.ActivityLogin.sessionUserData;
+
 public class ActivityMain extends ActivityBase {
 
     private final String TAG = "Main";
@@ -264,6 +266,7 @@ public class ActivityMain extends ActivityBase {
                         intent.putExtra(KEY_CN_POS, 0);
                         intent.putExtra(KEY_CN_DATA, ItemArray);
                         intent.putExtra(KEY_WHERE_FROM, CN_TYPE_SEARCH);
+                        sessionUserData.initStatus();
                         startActivity(intent);
                     }
                 }

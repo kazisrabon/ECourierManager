@@ -60,6 +60,8 @@ import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
+import static com.ks.ecmanager.ecouriermanager.activities.initLayer.ActivityLogin.sessionUserData;
+
 /**
  * Created by Kazi Srabon on 5/20/2017.
  */
@@ -69,6 +71,8 @@ public class ActivityBase extends AppCompatActivity {
     public static final String ALBUM_NAME = "eCourier";
     public static final String CN_TYPE_SEARCH = "search";
     public static final String CN_TYPE_MULTIPLE = "multiple";
+    public static final String KEY_ECRS = "ecrs";
+    public static final String FROM_BULK = "bulk";
 //    key_delivery 1 => status 2=> agent 3=> do
     public static final String KEY_DELIVERY = "delivery";
     public static final String KEY_CN_POS = "consignment_data_position";
@@ -322,6 +326,7 @@ public class ActivityBase extends AppCompatActivity {
     public String accessLevel(String status, String sdo_id, String ddo_id){
         String accessCode= "1";
         current_status = status;
+        sessionUserData.setKeyStatus(current_status);
         HashMap<String, String> user = SessionUserData.getSFInstance(this).getSessionDetails();
         String id = user.get(SessionUserData.KEY_USER_ID);
         String group = user.get(SessionUserData.KEY_USER_GROUP).toLowerCase();
@@ -611,6 +616,7 @@ public class ActivityBase extends AppCompatActivity {
 //                        setChangedAgentorDO(s[0], where_from);
                             dialog.dismiss();
                             if (where_from.equals("status")) {
+                                sessionUserData.setKeyNextStatus(finalKey);
                                 nextStatus = finalKey;
                                 if (getCheckChangeAgents()) {
                                     if (getElligibleAgent()!= null)
@@ -627,6 +633,7 @@ public class ActivityBase extends AppCompatActivity {
 //                            else
 //                                set method to update
                             } else if (where_from.equals("agent")) {
+                                sessionUserData.setKeyAgentId(finalKey);
                                 nextAgent = finalKey;
                                 if (getCheckChangeDOforAgent())
                                     if (db.getDOs()!=null)
@@ -636,6 +643,7 @@ public class ActivityBase extends AppCompatActivity {
 //                            else
 //                                set method to update
                             } else {
+                                sessionUserData.setKeyDoId(finalKey);
                                 nextDO = finalKey;
                             }
 
@@ -653,6 +661,7 @@ public class ActivityBase extends AppCompatActivity {
                             returnValue[0] = s[0];
 //                        setChangedAgentorDO(s[0], FROM_NONE);
                             Log.e(TAG, "selected " + s[0]);
+
                             dialog.dismiss();
                         }
                     });
