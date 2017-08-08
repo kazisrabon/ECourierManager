@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ks.ecmanager.ecouriermanager.R;
+import com.ks.ecmanager.ecouriermanager.activities.base.ActivityBase;
 import com.ks.ecmanager.ecouriermanager.activities.secondLayer.ActivityConsignment;
 import com.ks.ecmanager.ecouriermanager.pojo.ConsignmentListDatum;
 
@@ -25,6 +26,7 @@ import static com.ks.ecmanager.ecouriermanager.activities.base.ActivityBase.KEY_
 import static com.ks.ecmanager.ecouriermanager.activities.base.ActivityBase.KEY_WHERE_FROM;
 import static com.ks.ecmanager.ecouriermanager.activities.base.ActivityBase.CN_TYPE_SEARCH;
 import static com.ks.ecmanager.ecouriermanager.activities.base.ActivityBase.FROM_BULK;
+import static com.ks.ecmanager.ecouriermanager.activities.base.ActivityBase.MIDDLE;
 
 /**
  * Created by Kazi Srabon on 7/17/2017.
@@ -35,6 +37,7 @@ public class MultipleSearchValueAdapter  extends BaseAdapter {
     private List<ConsignmentListDatum> consignmentListDatumList;
     private LayoutInflater inflater;
     private String where_from = "";
+    private ActivityBase activityBase;
 
     public MultipleSearchValueAdapter(Context context, List<ConsignmentListDatum> consignmentListDatumList, String where_from) {
         this.context = context;
@@ -58,8 +61,9 @@ public class MultipleSearchValueAdapter  extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         final View result;
+        activityBase = new ActivityBase();
         if (convertView == null) {
             result = LayoutInflater.from(parent.getContext()).inflate(R.layout.multiple_search_item, parent, false);
         } else {
@@ -94,12 +98,18 @@ public class MultipleSearchValueAdapter  extends BaseAdapter {
                     Toast.makeText(context, "Clicked", Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    ArrayList<ConsignmentListDatum> ItemArray = ((ArrayList<ConsignmentListDatum>) consignmentListDatumList);
-                    Intent intent = new Intent(context, ActivityConsignment.class);
-                    intent.putExtra(KEY_CN_POS, 0);
-                    intent.putExtra(KEY_CN_DATA, ItemArray);
-                    intent.putExtra(KEY_WHERE_FROM, CN_TYPE_SEARCH);
-                    context.startActivity(intent);
+                    if (activityBase.canECRView(getItem(position).getStatus_code(),
+                            getItem(position).getSource_do(),
+                            getItem(position).getDestination_do())) {
+                        ArrayList<ConsignmentListDatum> ItemArray = ((ArrayList<ConsignmentListDatum>) consignmentListDatumList);
+                        Intent intent = new Intent(context, ActivityConsignment.class);
+                        intent.putExtra(KEY_CN_POS, position);
+                        intent.putExtra(KEY_CN_DATA, ItemArray);
+                        intent.putExtra(KEY_WHERE_FROM, CN_TYPE_SEARCH);
+                        context.startActivity(intent);
+                    }
+                    else
+                        activityBase.showErrorToast("Have no access!!!", Toast.LENGTH_SHORT, MIDDLE);
                 }
             }
         });

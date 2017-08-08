@@ -107,7 +107,7 @@ public class ActivityMultipleList extends ActivityBase {
         }
         map.put(ApiParams.PARAM_STATUS, nextStatus);
         map.put(ApiParams.PARAM_CONSIGNMENTS, ecrs);
-        map.put(ApiParams.PARAM_COMMENT, "BULK FROM MOBILE");
+        map.put(ApiParams.PARAM_COMMENT, "BULK FROM MANAGER APP");
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(ApiParams.TAG_BASE_URL).build();
         ParcelStatusUpdateInterface myApiCallback = restAdapter.create(ParcelStatusUpdateInterface.class);
 
@@ -119,6 +119,7 @@ public class ActivityMultipleList extends ActivityBase {
                 boolean status = parcelList.getStatus();
                 Log.e(TAG, status+" ");
                 if (status) {
+                    showSuccessToast("Successfully updated", Toast.LENGTH_SHORT, MIDDLE);
                     Intent loginActivity =  new Intent(ActivityMultipleList.this,Main2Activity.class);
                     loginActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(loginActivity);

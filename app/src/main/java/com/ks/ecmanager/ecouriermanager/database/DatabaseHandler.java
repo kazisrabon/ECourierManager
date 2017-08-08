@@ -344,25 +344,27 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     // Getting single Do
-    public DOListDatum getDo(String id) {
-        Log.e("DB DO", id);
-        SQLiteDatabase db = this.getReadableDatabase();
-
-//        Cursor cursor = db.query(TABLE_DOS, new String[] { DO_ID,
-//                        DO_API_ID, DO_NAME }, DO_API_ID + "=?",
-//                new String[] { String.valueOf(id) }, null, null, null, null);
-        Cursor cursor = db.rawQuery("select * from "+ TABLE_DOS +" where "+ DO_API_ID + " = " +id, null);
-        if (cursor != null && cursor.moveToFirst()){
-            DOListDatum doListDatum = new DOListDatum(cursor.getString(1),
-                    cursor.getString(2));
-            cursor.close();
-            // return contact
-            return doListDatum;
-        }
-        else {
-            return null;
-        }
-    }
+//    public DOListDatum getDo(String id) {
+//        Log.e("DB DO", id);
+//        SQLiteDatabase db = this.getReadableDatabase();
+//
+////        Cursor cursor = db.query(TABLE_DOS, new String[] { DO_ID,
+////                        DO_API_ID, DO_NAME }, DO_API_ID + "=?",
+////                new String[] { String.valueOf(id) }, null, null, null, null);
+//        Cursor cursor = db.rawQuery("select * from "+ TABLE_DOS +" where "+ DO_API_ID + " = " +id, null);
+//        if (cursor != null && cursor.moveToFirst()){
+//            DOListDatum doListDatum = new DOListDatum(
+//                    cursor.getString(1),
+//                    cursor.getString(2)
+//            );
+//            cursor.close();
+//            // return contact
+//            return doListDatum;
+//        }
+//        else {
+//            return null;
+//        }
+//    }
 
     public String getDoName(String id){
         SQLiteDatabase db = this.getReadableDatabase();

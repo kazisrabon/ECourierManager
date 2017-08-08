@@ -9,7 +9,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,16 +23,10 @@ import com.ks.ecmanager.ecouriermanager.activities.thirdLayer.ActivityMultipleSc
 import com.ks.ecmanager.ecouriermanager.pojo.ListDatum;
 import com.ks.ecmanager.ecouriermanager.session.SessionUserData;
 
-import org.apache.commons.collections4.BidiMap;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import static com.ks.ecmanager.ecouriermanager.activities.base.ActivityBase.END;
 import static com.ks.ecmanager.ecouriermanager.activities.base.ActivityBase.KEY_DELIVERY;
-import static com.ks.ecmanager.ecouriermanager.activities.base.ActivityBase.MIDDLE;
 import static com.ks.ecmanager.ecouriermanager.activities.base.ActivityBase.db;
 import static com.ks.ecmanager.ecouriermanager.activities.initLayer.ActivityLogin.sessionUserData;
 

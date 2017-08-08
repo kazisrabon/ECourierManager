@@ -153,14 +153,18 @@ public class ActivityMultipleScan  extends ActivityBase implements ZXingScannerV
                 Log.e(FLASH_STATE, status+" ");
                 if (status) {
                     hideProgressDialog();
-                    showWhiteToast("Successfully added", Toast.LENGTH_SHORT, END);
                     List<ConsignmentListDatum> consignmentListDatumList;
                     consignmentListDatumList = consignment_list.getData();
                     if (current_status.contains(consignmentListDatumList.get(0).getStatus_code())) {
-                        scannedECR.append(loopDelim);
-                        scannedECR.append(consignmentListDatumList.get(0).getConsignment_no());
-                        loopDelim = delim;
-                        consignmentListData.add(consignmentListDatumList.get(0));
+                        if (!String.valueOf(scannedECR).contains(consignmentListDatumList.get(0).getStatus_code())) {
+                            scannedECR.append(loopDelim);
+                            scannedECR.append(consignmentListDatumList.get(0).getConsignment_no());
+                            loopDelim = delim;
+                            consignmentListData.add(consignmentListDatumList.get(0));
+                            showWhiteToast("Successfully added", Toast.LENGTH_SHORT, MIDDLE);
+                        }
+                        else
+                            showErrorToast("Added already!!!", Toast.LENGTH_SHORT, MIDDLE);
                     }
                     else
                         showErrorToast("ECR not added", Toast.LENGTH_SHORT, MIDDLE);
@@ -179,10 +183,14 @@ public class ActivityMultipleScan  extends ActivityBase implements ZXingScannerV
     }
 
     public void gotoList() {
-        Intent intent = new Intent(ActivityMultipleScan.this, ActivityMultipleList.class);
-        intent.putExtra(KEY_CN_DATA, consignmentListData);
-        intent.putExtra(KEY_WHERE_FROM, CN_TYPE_MULTIPLE);
-        intent.putExtra(KEY_ECRS, String.valueOf(scannedECR));
-        startActivity(intent);
+        if (stringNotNullCheck(String.valueOf(scannedECR))) {
+            Intent intent = new Intent(ActivityMultipleScan.this, ActivityMultipleList.class);
+            intent.putExtra(KEY_CN_DATA, consignmentListData);
+            intent.putExtra(KEY_WHERE_FROM, CN_TYPE_MULTIPLE);
+            intent.putExtra(KEY_ECRS, String.valueOf(scannedECR));
+            startActivity(intent);
+        }
+        else
+            showWhiteToast("Scan again!!!", Toast.LENGTH_SHORT, MIDDLE);
     }
 }

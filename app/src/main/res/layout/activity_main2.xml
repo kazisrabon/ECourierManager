@@ -20,11 +20,10 @@
         <android.support.v7.widget.CardView
             android:id="@+id/cv_individual"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="@dimen/activity_horizontal_margin"
             android:layout_weight="1.0"
-            android:padding="@dimen/activity_horizontal_margin"
             card_view:cardCornerRadius="10dp"
             card_view:cardElevation="5dp">
 
@@ -36,88 +35,89 @@
                 android:text="INDIVIDUAL"
                 android:textColor="@color/black"
                 android:textAllCaps="true"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                android:padding="@dimen/activity_horizontal_margin"/>
 
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
-            android:id="@+id/cv_pick"
+            android:id="@+id/cv_bulk"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="@dimen/activity_horizontal_margin"
             android:layout_weight="1.0"
-            android:padding="@dimen/activity_horizontal_margin"
-            card_view:cardCornerRadius="8dp"
+            card_view:cardCornerRadius="10dp"
             card_view:cardElevation="5dp">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/color_pick"
-                android:gravity="center"
-                android:text="PICK MANAGEMENT"
-                android:textColor="@color/black"
-                android:textAllCaps="true"
-                android:textStyle="bold"/>
-
-        </android.support.v7.widget.CardView>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1.0"
-        android:orientation="horizontal" >
-
-        <android.support.v7.widget.CardView
-            android:id="@+id/cv_delivery"
-            android:layout_gravity="center"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            card_view:cardCornerRadius="8dp"
-            card_view:cardElevation="5dp"
-            android:layout_margin="@dimen/activity_horizontal_margin"
-            android:padding="@dimen/activity_horizontal_margin"
-            android:layout_weight="1.0">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/color_delivery"
                 android:gravity="center"
-                android:text="Delivery Management"
+                android:text="BULK"
                 android:textColor="@color/black"
                 android:textAllCaps="true"
-                android:textStyle="bold"/>
-
-        </android.support.v7.widget.CardView>
-
-        <android.support.v7.widget.CardView
-            android:id="@+id/cv_return"
-            android:layout_gravity="center"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            card_view:cardCornerRadius="8dp"
-            card_view:cardElevation="5dp"
-            android:layout_margin="@dimen/activity_horizontal_margin"
-            android:padding="@dimen/activity_horizontal_margin"
-            android:layout_weight="1.0">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/color_return"
-                android:gravity="center"
-                android:text="Return Management"
-                android:textColor="@color/black"
-                android:textAllCaps="true"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                android:padding="@dimen/activity_horizontal_margin"/>
 
         </android.support.v7.widget.CardView>
 
     </LinearLayout>
+
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_weight="1.0"-->
+        <!--android:orientation="horizontal" >-->
+
+        <!--<android.support.v7.widget.CardView-->
+            <!--android:id="@+id/cv_delivery"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--card_view:cardCornerRadius="8dp"-->
+            <!--card_view:cardElevation="5dp"-->
+            <!--android:layout_margin="@dimen/activity_horizontal_margin"-->
+            <!--android:padding="@dimen/activity_horizontal_margin"-->
+            <!--android:layout_weight="1.0">-->
+
+            <!--<TextView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:background="@color/color_delivery"-->
+                <!--android:gravity="center"-->
+                <!--android:text="Delivery Management"-->
+                <!--android:textColor="@color/black"-->
+                <!--android:textAllCaps="true"-->
+                <!--android:textStyle="bold"/>-->
+
+        <!--</android.support.v7.widget.CardView>-->
+
+        <!--<android.support.v7.widget.CardView-->
+            <!--android:id="@+id/cv_return"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--card_view:cardCornerRadius="8dp"-->
+            <!--card_view:cardElevation="5dp"-->
+            <!--android:layout_margin="@dimen/activity_horizontal_margin"-->
+            <!--android:padding="@dimen/activity_horizontal_margin"-->
+            <!--android:layout_weight="1.0">-->
+
+            <!--<TextView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:background="@color/color_return"-->
+                <!--android:gravity="center"-->
+                <!--android:text="Return Management"-->
+                <!--android:textColor="@color/black"-->
+                <!--android:textAllCaps="true"-->
+                <!--android:textStyle="bold"/>-->
+
+        <!--</android.support.v7.widget.CardView>-->
+
+    <!--</LinearLayout>-->
 
     <!--<LinearLayout-->
         <!--android:layout_width="match_parent"-->

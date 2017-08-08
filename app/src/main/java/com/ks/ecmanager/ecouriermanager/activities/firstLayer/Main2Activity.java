@@ -72,17 +72,7 @@ public class Main2Activity extends ActivityBase {
                 startActivity(new Intent(Main2Activity.this, ActivityMain.class));
             }
         });
-
-        CardView cv_pick = (CardView) findViewById(R.id.cv_pick);
-        cv_pick.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                startActivity(new Intent(Main2Activity.this, ActivityMain.class));
-                showToast("In progress...", Toast.LENGTH_SHORT, MIDDLE);
-            }
-        });
-
-        CardView cv_delivery = (CardView) findViewById(R.id.cv_delivery);
+        CardView cv_delivery = (CardView) findViewById(R.id.cv_bulk);
         cv_delivery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,15 +80,6 @@ public class Main2Activity extends ActivityBase {
                 sessionUserData.initStatus();
                 intent.putExtra(KEY_DELIVERY, "1");
                 startActivity(intent);
-            }
-        });
-
-        CardView cv_return = (CardView) findViewById(R.id.cv_return);
-        cv_return.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                startActivity(new Intent(Main2Activity.this, ActivityMain.class));
-                showToast("In progress...", Toast.LENGTH_SHORT, MIDDLE);
             }
         });
     }

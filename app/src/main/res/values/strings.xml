@@ -104,5 +104,8 @@
     <string name="access_return_confrim">return_confrim</string>
     <string name="finish">FINISH</string>
     <string name="update">UPDATE</string>
+    <string name="back">BACK</string>
+    <string name="comment">comment</string>
+    <string name="clear_review">CLEAR</string>
 
 </resources>

@@ -59,6 +59,7 @@
                     android:textSize="@dimen/subtitle_text" />
 
                 <RelativeLayout
+                    android:id="@+id/rlCompanyCall"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
@@ -66,8 +67,8 @@
                         android:id="@+id/textCompanyMobile"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_toLeftOf="@+id/txtCompanyMobile"
-                        android:layout_toStartOf="@+id/txtCompanyMobile"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentLeft="true"
                         android:textSize="@dimen/subtitle_text" />
 
                     <TextView
@@ -109,7 +110,6 @@
                         android:layout_alignParentStart="true"
                         android:layout_marginBottom="2dp"
                         android:layout_marginTop="2dp"
-
                         android:text="PRODUCT INFORMATION"
                         android:textSize="@dimen/subtitle_text"
                         android:textStyle="bold" />
@@ -225,6 +225,7 @@
                     android:textSize="@dimen/subtitle_text" />
 
                 <RelativeLayout
+                    android:id="@+id/rlRecipientCall"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
@@ -340,12 +341,12 @@
                     android:textStyle="bold"
                     android:textSize="@dimen/title_text"/>
 
-                <TextView
-                    android:id="@+id/textParcelStatusReason"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/subtitle_text"
-                    android:visibility="visible"/>
+                <!--<TextView-->
+                    <!--android:id="@+id/textParcelStatusReason"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:textSize="@dimen/subtitle_text"-->
+                    <!--android:visibility="visible"/>-->
 
                 <TextView
                     android:id="@+id/textDDO"
@@ -366,70 +367,82 @@
                 android:layout_margin="6dp"
                 android:orientation="vertical">
 
-                <LinearLayout
-                    android:id="@+id/llHold"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                <!--<LinearLayout-->
+                    <!--android:id="@+id/llHold"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:orientation="horizontal">-->
 
-                    <Button
-                        android:id="@+id/btnStatusCancel"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_gravity="center"
-                        android:layout_margin="@dimen/card_margin"
-                        android:background="@color/colorPrimaryDark"
-                        android:gravity="center"
-                        android:text="@string/button_status_cancel"
-                        android:textColor="@color/white" />
+                    <!--<Button-->
+                        <!--android:id="@+id/btnStatusCancel"-->
+                        <!--android:layout_width="0dp"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_weight="1"-->
+                        <!--android:layout_gravity="center"-->
+                        <!--android:layout_margin="@dimen/card_margin"-->
+                        <!--android:background="@color/colorPrimaryDark"-->
+                        <!--android:gravity="center"-->
+                        <!--android:text="@string/button_status_cancel"-->
+                        <!--android:textColor="@color/white" />-->
 
-                    <Button
-                        android:id="@+id/btnStatusOTW"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_gravity="center"
-                        android:layout_margin="@dimen/card_margin"
-                        android:background="@color/colorPrimaryDark"
-                        android:gravity="center"
-                        android:text="@string/button_status_OTW"
-                        android:textColor="@color/white" />
+                    <!--<Button-->
+                        <!--android:id="@+id/btnStatusOTW"-->
+                        <!--android:layout_width="0dp"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_weight="1"-->
+                        <!--android:layout_gravity="center"-->
+                        <!--android:layout_margin="@dimen/card_margin"-->
+                        <!--android:background="@color/colorPrimaryDark"-->
+                        <!--android:gravity="center"-->
+                        <!--android:text="@string/button_status_OTW"-->
+                        <!--android:textColor="@color/white" />-->
 
-                </LinearLayout>
+                <!--</LinearLayout>-->
 
-                <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                <!--<LinearLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:orientation="horizontal">-->
 
-                    <Button
-                        android:id="@+id/btnSelectDo"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_gravity="center"
-                        android:layout_margin="@dimen/card_margin"
-                        android:background="@color/colorPrimaryDark"
-                        android:gravity="center"
-                        android:text="@string/button_select_do"
-                        android:textColor="@color/white" />
+                    <!--<Button-->
+                        <!--android:id="@+id/btnSelectDo"-->
+                        <!--android:layout_width="0dp"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_weight="1"-->
+                        <!--android:layout_gravity="center"-->
+                        <!--android:layout_margin="@dimen/card_margin"-->
+                        <!--android:background="@color/colorPrimaryDark"-->
+                        <!--android:gravity="center"-->
+                        <!--android:text="@string/button_select_do"-->
+                        <!--android:textColor="@color/white" />-->
 
-                    <Button
-                        android:id="@+id/btnSelectDoAgent"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_gravity="center"
-                        android:layout_margin="@dimen/card_margin"
-                        android:background="@color/colorPrimaryDark"
-                        android:gravity="center"
-                        android:text="@string/button_select_do_agent"
-                        android:textColor="@color/white" />
+                    <!--<Button-->
+                        <!--android:id="@+id/btnSelectDoAgent"-->
+                        <!--android:layout_width="0dp"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_weight="1"-->
+                        <!--android:layout_gravity="center"-->
+                        <!--android:layout_margin="@dimen/card_margin"-->
+                        <!--android:background="@color/colorPrimaryDark"-->
+                        <!--android:gravity="center"-->
+                        <!--android:text="@string/button_select_do_agent"-->
+                        <!--android:textColor="@color/white" />-->
 
-                </LinearLayout>
+                <!--</LinearLayout>-->
+                <!--<Button-->
+                    <!--android:id="@+id/btnUpdate"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_gravity="center"-->
+                    <!--android:layout_margin="@dimen/card_margin"-->
+                    <!--android:background="@color/colorPrimaryDark"-->
+                    <!--android:gravity="center"-->
+                    <!--android:padding="7dp"-->
+                    <!--android:textt="@string/back"-->
+                    <!--android:textColor="@color/white" />-->
+
                 <Button
-                    android:id="@+id/btnUpdate"
+                    android:id="@+id/btnBack"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -437,7 +450,7 @@
                     android:background="@color/colorPrimaryDark"
                     android:gravity="center"
                     android:padding="7dp"
-                    android:text="@string/button_update"
+                    android:text="@string/back"
                     android:textColor="@color/white" />
             </LinearLayout>
 

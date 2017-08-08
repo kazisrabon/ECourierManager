@@ -93,6 +93,7 @@ public class ActivityConsignment extends ActivityBase {
     }
 
     private void gotoDetails() {
+        sessionUserData.initStatus();
         startActivity(intent);
     }
 
@@ -129,6 +130,7 @@ public class ActivityConsignment extends ActivityBase {
                     intent.putExtra(KEY_CN_POS, 0);
                     intent.putExtra(KEY_CN_DATA, myList);
                     intent.putExtra(KEY_WHERE_FROM, CN_TYPE_SEARCH);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 }
             }
         }
@@ -174,17 +176,10 @@ public class ActivityConsignment extends ActivityBase {
             tvAgent.setText(String.format(getString(R.string.delivery_agent), getString(R.string.none)));
 
         if (stringNotNullCheck(consignmentListDatum.getDestination_do())){
-            DOListDatum doListDatum= db.getDo(consignmentListDatum.getDestination_do());
-
-            if (doListDatum != null){
-                Log.e(TAG, doListDatum.getId()
-                        +" "+ doListDatum.getValue());
+            String s = db.getDoName(consignmentListDatum.getDestination_do());
+            if (!stringNotNullCheck(s)) {
+                s= getResources().getString(R.string.no_do_found);
             }
-            String s = "";
-            if (doListDatum != null) {
-                s = doListDatum.getValue();
-            }
-            else s= getResources().getString(R.string.no_do_found);
             tvDO.setText(String.format(getString(R.string.destination_do), s));
         }
 
@@ -203,36 +198,5 @@ public class ActivityConsignment extends ActivityBase {
         if (stringNotNullCheck(consignmentListDatum.getProduct_price()))
             tvProductPrice.setText(String.format(getString(R.string.product_price), consignmentListDatum.getProduct_price()));
 
-    }
-
-    private void parcelStatusUpdate(HashMap<String, String> statusMap){
-        showProgressDialog(false, "", getResources().getString(R.string.loading));
-
-        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(ApiParams.TAG_BASE_URL).build();
-        ParcelStatusUpdateInterface myApiCallback = restAdapter.create(ParcelStatusUpdateInterface.class);
-
-        printHash(TAG, statusMap);
-//      parcel update api
-//        myApiCallback.getData(ApiParams.TAG_PARCEL_STATUS_UPDATE_KEY, statusMap, new Callback<ParcelList>() {
-//            @Override
-//            public void success(ParcelList parcelList, Response response) {
-//                hideProgressDialog();
-//
-//                boolean status = parcelList.getStatus();
-//                Log.e(TAG, status+" ");
-//                if (status) {
-//                    showSuccessToast(getString(R.string.sucess), Toast.LENGTH_SHORT, END);
-////                    reloadCN(map.get(ApiParams.PARAM_CONSIGNMENT_NO));
-//                }
-//                else
-//                    showErrorToast(getString(R.string.no_data_found), Toast.LENGTH_SHORT, MIDDLE);
-//            }
-//
-//            @Override
-//            public void failure(RetrofitError error) {
-//                hideProgressDialog();
-//                showErrorToast("" + error.getMessage() + "!", Toast.LENGTH_SHORT, MIDDLE);
-//            }
-//        });
     }
 }

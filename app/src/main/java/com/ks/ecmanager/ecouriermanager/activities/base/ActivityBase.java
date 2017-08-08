@@ -26,6 +26,8 @@ import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,10 +35,9 @@ import com.ks.ecmanager.ecouriermanager.R;
 import com.ks.ecmanager.ecouriermanager.database.DatabaseHandler;
 import com.ks.ecmanager.ecouriermanager.pojo.AgentList;
 import com.ks.ecmanager.ecouriermanager.pojo.DoList;
-import com.ks.ecmanager.ecouriermanager.pojo.ListDatum;
 import com.ks.ecmanager.ecouriermanager.pojo.NextStatusandUpdates;
+import com.ks.ecmanager.ecouriermanager.pojo.ParcelList;
 import com.ks.ecmanager.ecouriermanager.pojo.ProfileList;
-import com.ks.ecmanager.ecouriermanager.pojo.ProfileListDatum;
 import com.ks.ecmanager.ecouriermanager.pojo.ResponseList;
 import com.ks.ecmanager.ecouriermanager.pojo.UpdatesListDatum;
 import com.ks.ecmanager.ecouriermanager.session.SessionUserData;
@@ -44,6 +45,7 @@ import com.ks.ecmanager.ecouriermanager.webservices.ApiParams;
 import com.ks.ecmanager.ecouriermanager.webservices.interfaces.AgentListInterface;
 import com.ks.ecmanager.ecouriermanager.webservices.interfaces.AppConfigInterface;
 import com.ks.ecmanager.ecouriermanager.webservices.interfaces.DoListInterface;
+import com.ks.ecmanager.ecouriermanager.webservices.interfaces.ParcelStatusUpdateInterface;
 import com.ks.ecmanager.ecouriermanager.webservices.interfaces.ProfileListInterface;
 
 import org.apache.commons.collections4.BidiMap;
@@ -51,7 +53,9 @@ import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -73,13 +77,13 @@ public class ActivityBase extends AppCompatActivity {
     public static final String CN_TYPE_MULTIPLE = "multiple";
     public static final String KEY_ECRS = "ecrs";
     public static final String FROM_BULK = "bulk";
+    public static final String FROM_INDI = "individual";
 //    key_delivery 1 => status 2=> agent 3=> do
     public static final String KEY_DELIVERY = "delivery";
     public static final String KEY_CN_POS = "consignment_data_position";
     public static final String KEY_CN_DATA = "consignment_data_array";
     public static final String KEY_WHERE_FROM = "where_from";
     public static final int MIDDLE = 2;
-    public static final int START = 1;
     public static final int END = 3;
     public static final int CAMERA_PERMISSIONS_REQUEST = 301,
             SELECT_PICTURE = 302,
@@ -130,7 +134,7 @@ public class ActivityBase extends AppCompatActivity {
 //                    for (DOListDatum doListDatum : db.getAllDOs()){
 //                        Log.e("DO DB 3"+TAG, doListDatum.getId() + " " + doListDatum.getValue());
 //                    }
-                    showSuccessToast("DO Loaded", 0, END);
+                    showSuccessToast("DO Loaded", 0, MIDDLE);
                 }
                 else{
                     showErrorToast(getString(R.string.no_do_found), Toast.LENGTH_SHORT, MIDDLE);
@@ -206,7 +210,7 @@ public class ActivityBase extends AppCompatActivity {
 //                                + " " + agentListDatum.getDo_id()
 //                                + " " + agentListDatum.getDo_name());
 //                    }
-                    showBlackToast("Config Loaded", 0, END);
+                    showBlackToast("Config Loaded", 0, MIDDLE);
                 }
                 else{
                     showErrorToast(getString(R.string.no_agent_found), Toast.LENGTH_SHORT, MIDDLE);
@@ -294,7 +298,7 @@ public class ActivityBase extends AppCompatActivity {
 //                    }
 //                    showSuccessToast("Config Loaded", 0, END);
                 }
-                showSuccessToast(viewersMap.size()+"", 0, END);
+                showSuccessToast(viewersMap.size()+"", 0, MIDDLE);
             }
 
             @Override
@@ -314,7 +318,7 @@ public class ActivityBase extends AppCompatActivity {
             Log.e("viewer for status", "" + dbViewers);
 //            -1 => no access 0 => has only view access 1 => can change status 2 => can change agent 3 => can change do
             if (dbViewers.contains(group)){
-                if (group.equals(getString(R.string.access_ecsz)))
+                if (group.equals("ecsz"))
                     canView = specialRuleforECZ(dbViewers, sdo_id, ddo_id, id);
             }
         }
@@ -423,11 +427,11 @@ public class ActivityBase extends AppCompatActivity {
 
     private boolean specialRuleforECZ(String dbViewers, String sdo_id, String ddo_id, String id) {
         boolean accessCode = false;
-        if (dbViewers.contains(getString(R.string.access_sdo))){
+        if (dbViewers.contains("sdo")){
             if (sdo_id.equals(id))
                 accessCode = true;
         }
-        else if (dbViewers.contains(getString(R.string.access_ddo))){
+        else if (dbViewers.contains("ddo")){
             if (ddo_id.equals(id))
                 accessCode = true;
         }
@@ -572,7 +576,10 @@ public class ActivityBase extends AppCompatActivity {
             final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context,
                     android.R.layout.select_dialog_singlechoice);
             for (String key : mapData.keySet()) {
-                arrayAdapter.add(mapData.get(key));
+                if (mapData.get(key).equals(""))
+                    arrayAdapter.add(key);
+                else
+                    arrayAdapter.add(mapData.get(key));
             }
             builderSingle.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
                 @Override
@@ -630,21 +637,26 @@ public class ActivityBase extends AppCompatActivity {
                                     else
                                         showErrorToast("DO List Error!!!", Toast.LENGTH_SHORT, MIDDLE);
                                 }
-//                            else
-//                                set method to update
-                            } else if (where_from.equals("agent")) {
+                                else
+                                    commentPopup();
+                            }
+                            else if (where_from.equals("agent")) {
                                 sessionUserData.setKeyAgentId(finalKey);
                                 nextAgent = finalKey;
-                                if (getCheckChangeDOforAgent())
-                                    if (db.getDOs()!=null)
+                                if (getCheckChangeDOforAgent()) {
+                                    if (db.getDOs() != null)
                                         showListInPopUp(context, db.getDOs(), "do");
                                     else
                                         showErrorToast("DO List Error!!!", Toast.LENGTH_SHORT, MIDDLE);
-//                            else
-//                                set method to update
-                            } else {
+                                }
+                                else
+                                    commentPopup();
+
+                            }
+                            else {
                                 sessionUserData.setKeyDoId(finalKey);
                                 nextDO = finalKey;
+                                commentPopup();
                             }
 
 //                        checkChangeAgents(finalKey);
@@ -801,6 +813,124 @@ public class ActivityBase extends AppCompatActivity {
 
     public boolean stringNotNullCheck(String s){
         return s != null && !s.isEmpty() && !s.equals("");
+    }
+
+    private void commentPopup(){
+        if (sessionUserData.getStatusDetails().get(SessionUserData.KEY_NEXT_STATUS).equals(getResources().getString(R.string.s7))
+            || sessionUserData.getStatusDetails().get(SessionUserData.KEY_NEXT_STATUS).equals(getResources().getString(R.string.s12))
+            || sessionUserData.getStatusDetails().get(SessionUserData.KEY_NEXT_STATUS).equals(getResources().getString(R.string.s24))
+                ){
+            final String[] comment = {""};
+            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+            LayoutInflater inflater = this.getLayoutInflater();
+            final View dialogViewComment = inflater.inflate(R.layout.dialog_comment, null);
+            dialogBuilder.setView(dialogViewComment);
+            final AlertDialog b = dialogBuilder.create();
+            b.setCancelable(true);
+            b.show();
+            final EditText editInput = (EditText) dialogViewComment.findViewById(R.id.editInput);
+            final Button btnClear = (Button) dialogViewComment.findViewById(R.id.btnClearComment);
+            btnClear.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    editInput.setText("");
+                }
+
+            });
+
+            final Button btnOk = (Button) dialogViewComment.findViewById(R.id.btnOkComment);
+            btnOk.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    comment[0] = editInput.getText().toString();
+                    b.dismiss();
+                    parcelUpdate(comment[0]);
+                }
+
+            });
+
+            final Button btnCancel = (Button) dialogViewComment.findViewById(R.id.btnCancelComment);
+            btnCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    editInput.setText("");
+                    b.dismiss();
+                    parcelUpdate("");
+                }
+
+            });
+        }
+        else
+            parcelUpdate("");
+
+//        return comment[0];
+    }
+
+    public void parcelUpdate(String s){
+        HashMap<String, String> statusMap = new HashMap<>();
+        HashMap<String, String> user = sessionUserData.getSessionDetails();
+        HashMap<String, String> status = sessionUserData.getStatusDetails();
+        String id = user.get(SessionUserData.KEY_USER_ID);
+        String group = user.get(SessionUserData.KEY_USER_GROUP);
+        String authentication_key = user.get(SessionUserData.KEY_USER_AUTH_KEY);
+        String nextStatus = status.get(SessionUserData.KEY_NEXT_STATUS);
+        String agentId = status.get(SessionUserData.KEY_AGENT_ID);
+        String doId = status.get(SessionUserData.KEY_DO_ID);
+        if (status.get(SessionUserData.KEY_NEXT_STATUS).equals(getResources().getString(R.string.s12))){
+            Date time = new Date();
+            String fDate = ApiParams.longDateFormat.format(time);
+            statusMap.put(ApiParams.PARAM_CANCEL_CALL_TIME, fDate);
+        }
+        if (stringNotNullCheck(s))
+            statusMap.put(ApiParams.PARAM_COMMENT, s);
+        else
+            statusMap.put(ApiParams.PARAM_COMMENT, "INDIVIDUAL FROM MOBILE");
+        statusMap.put(ApiParams.PARAM_GROUP, group);
+        statusMap.put(ApiParams.PARAM_ADMIN_ID, id);
+        status.put(ApiParams.PARAM_AUTHENTICATION_KEY, authentication_key);
+        status.put(ApiParams.PARAM_STATUS, nextStatus);
+        if (stringNotNullCheck(agentId)){
+            if (nextStatus.equals(getResources().getString(R.string.s25)))
+                status.put(ApiParams.PARAM_RETURN_AGENT, agentId);
+            else
+                status.put(ApiParams.PARAM_AGENT_ID, agentId);
+        }
+        if (stringNotNullCheck(doId)){
+            if (nextStatus.equals(getResources().getString(R.string.s2))
+                    || nextStatus.equals(getResources().getString(R.string.s14))
+                    || nextStatus.equals(getResources().getString(R.string.s15))
+                    || nextStatus.equals(getResources().getString(R.string.s7))
+                    )
+                status.put(ApiParams.PARAM_D_DO, agentId);
+        }
+//        showProgressDialog(false, "", getResources().getString(R.string.loading));
+
+        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(ApiParams.TAG_BASE_URL).build();
+        ParcelStatusUpdateInterface myApiCallback = restAdapter.create(ParcelStatusUpdateInterface.class);
+
+//      parcel update api
+
+        myApiCallback.getData(ApiParams.TAG_PARCEL_STATUS_UPDATE_KEY, statusMap, new Callback<ParcelList>() {
+            @Override
+            public void success(ParcelList parcelList, Response response) {
+                hideProgressDialog();
+
+                boolean status = parcelList.getStatus();
+                Log.e(TAG, status+" ");
+                if (status) {
+                    showSuccessToast(getString(R.string.sucess), Toast.LENGTH_SHORT, MIDDLE);
+//                    reloadCN(map.get(ApiParams.PARAM_CONSIGNMENT_NO));
+                }
+                else
+                    showErrorToast(getString(R.string.no_data_found), Toast.LENGTH_SHORT, MIDDLE);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                hideProgressDialog();
+                showErrorToast("" + error.getMessage() + "!", Toast.LENGTH_SHORT, MIDDLE);
+            }
+        });
     }
 
     @Override

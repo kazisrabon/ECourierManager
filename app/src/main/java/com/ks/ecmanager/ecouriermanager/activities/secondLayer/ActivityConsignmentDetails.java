@@ -8,6 +8,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -57,30 +58,21 @@ import static com.ks.ecmanager.ecouriermanager.activities.initLayer.ActivityLogi
 
 public class ActivityConsignmentDetails extends ActivityBase{
 
-    private final int FROM_AGENT = 2, FROM_DO = 1, FROM_NONE = 0, AGENT_VISIBLE = 1, DO_VISIBLE = 2,
-            INVISIBLE = 0;
     private final String TAG = "CN DETAILS";
-    private Button mUpdate, mSelectDO, mSelectDOAgent, mStatusCancel, mStatusOTW;
-    private LinearLayout mLayoutConsignmentInformation, mLayoutParcelInformation, mLLHold;
-    private RelativeLayout altPhoneNumberLayout;
+    private Button mBack;
+    private RelativeLayout altPhoneNumberLayout, rlCompanyCall, rlRecipientCall;
     private TextView mConsignmentId, mSenderGroup, mCompany, mCompanyPhone, editComment, mCallCompany,
-            mProductId, mOrderTime, mDeliveryTime, mParcelStatus, mCallRecipient,mCallRecipientAlt, mParcelStatusReason,
+            mProductId, mOrderTime, mDeliveryTime, mParcelStatus, mCallRecipient,mCallRecipientAlt,
             mItemType, mDeliveryAgent, mDDO;
-    private EditText editInput, etItem, etCollectedAmount, editProductPrice, editRecipientName, editRecipientMobile,editRecipientMobileAlt, editRecipientAddress;
+    private EditText editProductPrice, editRecipientName, editRecipientMobile,editRecipientMobileAlt, editRecipientAddress;
     private ConsignmentListDatum datum = null;
     private Resources res;
     private String consignment_no = "", current_parcel_status_code = "", agent_name = "", d_do = "",
             changed_parcel_status_code = "";
     private HashMap<String, String> user = new HashMap<String, String>();
     private HashMap<String, String> map = new HashMap<String, String>();
-    private HashMap<String, String> statusMap = new HashMap<String, String>();
-    private HashMap<String, String> updateButtonMap = new HashMap<String, String>();
-    private BidiMap<String, String> listData = new DualHashBidiMap();
-    private HashMap<String, Integer> visibility = new HashMap<String, Integer>();
-    private String changedAgentorDO;
-    private int changedValue = FROM_NONE;
-    private List<ConsignmentListDatum> consignmentListDatumList;
-    private AlertDialog b;
+    private ArrayList<ConsignmentListDatum> myList;
+    private String accessLevel = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,22 +86,6 @@ public class ActivityConsignmentDetails extends ActivityBase{
 //        setVisibility(INVISIBLE);
     }
 
-    private void setVisibility(int visibility) {
-        if (visibility == INVISIBLE){
-            mSelectDO.setVisibility(View.GONE);
-            mSelectDOAgent.setVisibility(View.GONE);
-        }
-        else if (visibility == AGENT_VISIBLE){
-            mSelectDO.setVisibility(View.GONE);
-            mSelectDOAgent.setVisibility(View.VISIBLE);
-        }
-        else if (visibility == DO_VISIBLE){
-            mSelectDO.setVisibility(View.VISIBLE);
-            mSelectDOAgent.setVisibility(View.GONE);
-        }
-
-    }
-
     private void setHashMap() {
         String id = user.get(SessionUserData.KEY_USER_ID);
         String group = user.get(SessionUserData.KEY_USER_GROUP);
@@ -119,53 +95,6 @@ public class ActivityConsignmentDetails extends ActivityBase{
         map.put(ApiParams.PARAM_ADMIN_ID, "" + id);
         map.put(ApiParams.PARAM_GROUP, group);
         map.put(ApiParams.PARAM_AUTHENTICATION_KEY, "" + authentication_key);
-
-//        status changing hashMap
-        statusMap.put(res.getString(R.string.s2), res.getString(R.string.s13));
-        statusMap.put(res.getString(R.string.s4), res.getString(R.string.s0));
-        statusMap.put(res.getString(R.string.s5), res.getString(R.string.s0));
-        statusMap.put(res.getString(R.string.s6), res.getString(R.string.s0));
-//      statusMap.put(res.getString(R.string.s7), res.getString(R.string.s));
-        statusMap.put(res.getString(R.string.s8), res.getString(R.string.s0));
-        statusMap.put(res.getString(R.string.s10), res.getString(R.string.s0));
-        statusMap.put(res.getString(R.string.s12), res.getString(R.string.s22));
-        statusMap.put(res.getString(R.string.s13), res.getString(R.string.s14));
-        statusMap.put(res.getString(R.string.s14), res.getString(R.string.s15));
-        statusMap.put(res.getString(R.string.s15), res.getString(R.string.s21));
-        statusMap.put(res.getString(R.string.s20), res.getString(R.string.s0));
-        statusMap.put(res.getString(R.string.s21), res.getString(R.string.s0));
-        statusMap.put(res.getString(R.string.s22), res.getString(R.string.s0));
-        statusMap.put(res.getString(R.string.s23), res.getString(R.string.s25));
-        statusMap.put(res.getString(R.string.s24), res.getString(R.string.s0));
-        statusMap.put(res.getString(R.string.s25), res.getString(R.string.s0));
-
-       updateButtonMap.put(res.getString(R.string.s0) , res.getString(R.string.status_s0) );
-        updateButtonMap.put(res.getString(R.string.s2) , res.getString(R.string.status_s2) );
-       updateButtonMap.put(res.getString(R.string.s4) , res.getString(R.string.status_s4) );
-       updateButtonMap.put(res.getString(R.string.s5) , res.getString(R.string.status_s5) );
-       updateButtonMap.put(res.getString(R.string.s6) , res.getString(R.string.status_s6) );
-       updateButtonMap.put(res.getString(R.string.s8) , res.getString(R.string.status_s8) );
-       updateButtonMap.put(res.getString(R.string.s10), res.getString(R.string.status_s10));
-       updateButtonMap.put(res.getString(R.string.s12), res.getString(R.string.status_s12));
-       updateButtonMap.put(res.getString(R.string.s13), res.getString(R.string.status_s13));
-       updateButtonMap.put(res.getString(R.string.s14), res.getString(R.string.status_s14));
-       updateButtonMap.put(res.getString(R.string.s15), res.getString(R.string.status_s15));
-       updateButtonMap.put(res.getString(R.string.s20), res.getString(R.string.status_s20));
-       updateButtonMap.put(res.getString(R.string.s21), res.getString(R.string.status_s21));
-       updateButtonMap.put(res.getString(R.string.s22), res.getString(R.string.status_s22));
-       updateButtonMap.put(res.getString(R.string.s23), res.getString(R.string.status_s23));
-       updateButtonMap.put(res.getString(R.string.s24), res.getString(R.string.status_s24));
-       updateButtonMap.put(res.getString(R.string.s25), res.getString(R.string.status_s25));
-
-//        visibility hashMap
-        visibility.put(res.getString(R.string.s0), INVISIBLE);
-        visibility.put(res.getString(R.string.s13), INVISIBLE);
-        visibility.put(res.getString(R.string.s14), DO_VISIBLE);
-        visibility.put(res.getString(R.string.s15), INVISIBLE);
-        visibility.put(res.getString(R.string.s21), AGENT_VISIBLE);
-        visibility.put(res.getString(R.string.s22), INVISIBLE);
-        visibility.put(res.getString(R.string.s25), AGENT_VISIBLE);
-        visibility.put(res.getString(R.string.s12), INVISIBLE);
     }
 
     private void receiveDataFromIntent() {
@@ -179,7 +108,9 @@ public class ActivityConsignmentDetails extends ActivityBase{
                 }
                 else if (where_from.equals(CN_TYPE_SEARCH)){
                     int position = getIntent().getIntExtra(KEY_CN_POS, 0);
-                    ArrayList<ConsignmentListDatum> myList = (ArrayList<ConsignmentListDatum>) getIntent().getSerializableExtra(KEY_CN_DATA);
+                    myList = new ArrayList<>();
+                    myList = (ArrayList<ConsignmentListDatum>) getIntent().getSerializableExtra(KEY_CN_DATA);
+                    accessLevel = accessLevel(myList.get(position).getStatus_code(), myList.get(position).getSource_do(), myList.get(position).getDestination_do());
                     datum = myList.get(position);
                     setConsignmentDetails(datum);
                 }
@@ -187,17 +118,7 @@ public class ActivityConsignmentDetails extends ActivityBase{
         }
     }
 
-    private void setConsignmentDetails(ConsignmentListDatum datum) {
-        if (!datum.getStatus_code().equals(res.getString(R.string.s7))){
-            changed_parcel_status_code = statusMap.get(datum.getStatus_code());
-            setVisibility(visibility.get(changed_parcel_status_code));
-            mLLHold.setVisibility(View.GONE);
-        }
-        else if (datum.getStatus_code().equals(res.getString(R.string.s7))){
-            mLLHold.setVisibility(View.VISIBLE);
-            setVisibility(INVISIBLE);
-        }
-
+    private void setConsignmentDetails(final ConsignmentListDatum datum) {
         if (stringNotNullCheck(datum.getConsignment_no())){
             consignment_no = datum.getConsignment_no();
             mConsignmentId.setText(String.format(res.getString(R.string.consignment_id), consignment_no));
@@ -210,11 +131,25 @@ public class ActivityConsignmentDetails extends ActivityBase{
         else
             mCompany.setText(String.format(res.getString(R.string.company), res.getString(R.string.none)));
 
-        if (stringNotNullCheck(datum.getEso_mobile()))
-            mCompany.setText(String.format(res.getString(R.string.contact), datum.getEso_mobile()));
-        else
-            mCompany.setText(String.format(res.getString(R.string.contact), res.getString(R.string.none)));
-
+        if (stringNotNullCheck(datum.getEso_mobile())) {
+            mCompanyPhone.setText(String.format(res.getString(R.string.contact), datum.getEso_mobile()));
+            mCallCompany.setVisibility(View.VISIBLE);
+            rlCompanyCall.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("tel: " + datum.getEso_mobile()));
+                        startActivity(intent);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+        else {
+            mCompanyPhone.setText(String.format(res.getString(R.string.contact), res.getString(R.string.none)));
+            mCallCompany.setVisibility(View.GONE);
+        }
 
         if (stringNotNullCheck(datum.getItem_type())) {
             mItemType.setText(datum.getItem_type());
@@ -227,6 +162,17 @@ public class ActivityConsignmentDetails extends ActivityBase{
             editRecipientMobileAlt.setVisibility(View.VISIBLE);
             mCallRecipientAlt.setVisibility(View.VISIBLE);
             editRecipientMobileAlt.setText(datum.getAlter_mobile());
+            altPhoneNumberLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("tel: " + datum.getAlter_mobile()));
+                        startActivity(intent);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
         }else {
             altPhoneNumberLayout.setVisibility(View.GONE);
             editRecipientMobileAlt.setVisibility(View.GONE);
@@ -255,10 +201,25 @@ public class ActivityConsignmentDetails extends ActivityBase{
         else
             editRecipientName.setText(res.getString(R.string.none));
 
-        if (stringNotNullCheck(datum.getRecipient_mobile()))
+        if (stringNotNullCheck(datum.getRecipient_mobile())) {
             editRecipientMobile.setText(datum.getRecipient_mobile());
-        else
+            mCallRecipient.setVisibility(View.VISIBLE);
+            rlRecipientCall.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("tel: " + datum.getRecipient_mobile()));
+                        startActivity(intent);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+        else {
             editRecipientMobile.setText(res.getString(R.string.none));
+            mCallRecipient.setVisibility(View.GONE);
+        }
 
         if (stringNotNullCheck(datum.getRecipient_address()))
             editRecipientAddress.setText(datum.getRecipient_address());
@@ -276,11 +237,6 @@ public class ActivityConsignmentDetails extends ActivityBase{
             mParcelStatus.setText(res.getString(R.string.none));
 
         current_parcel_status_code = datum.getStatus_code();
-        String status = statusMap.get(current_parcel_status_code);
-        status= updateButtonMap.get(status);
-        mUpdate.setText(status);
-        if (current_parcel_status_code.equals(res.getString(R.string.s7)))
-            mUpdate.setText("Update");
         if (stringNotNullCheck(current_parcel_status_code)){
             if (!current_parcel_status_code.equals(res.getString(R.string.s10))){
                 mDeliveryTime.setText(String.format(res.getString(R.string.delivery_time), datum.getActual_delivery_time()));
@@ -290,26 +246,12 @@ public class ActivityConsignmentDetails extends ActivityBase{
         }
         else
             mDeliveryTime.setText(String.format(res.getString(R.string.delivery_time), res.getString(R.string.none)));
-//
-//        if (stringNotNullCheck(datum.getDestination_do())){
-////            printBidiHash(TAG, doBidiList);
-//            String s = doBidiList.get(datum.getDestination_do());
-//            if (stringNotNullCheck(s))
-//                mDDO.setText(String.format(res.getString(R.string.destination_do), s));
-//            else
-//                mDDO.setText(String.format(res.getString(R.string.destination_do), datum.getDestination_do()));
-//        }
-//
-//        else
-//            mDDO.setText(String.format(res.getString(R.string.destination_do), res.getString(R.string.none)));
 
         if (stringNotNullCheck(datum.getDestination_do())){
-            DOListDatum doListDatum= db.getDo(datum.getDestination_do());
-            String s = "";
-            if (doListDatum != null) {
-                s = doListDatum.getValue();
+            String s = db.getDoName(datum.getDestination_do());
+            if (!stringNotNullCheck(s)) {
+                s= getResources().getString(R.string.no_do_found);
             }
-            else s= getResources().getString(R.string.no_do_found);
             mDDO.setText(String.format(getString(R.string.destination_do), s));
         }
         else
@@ -337,16 +279,34 @@ public class ActivityConsignmentDetails extends ActivityBase{
 
     }
 
+    private void updateCN(){
+        if (accessLevel.contains("1"))
+            showListInPopUp(ActivityConsignmentDetails.this, getNextStatusMap(), "status");
+        else
+            showErrorToast("ERROR!!!", Toast.LENGTH_SHORT, MIDDLE);
+        String current_status = getCurrent_status();
+        String next_status = getNextStatus();
+        String agent_id = getNextAgent();
+        String do_id = getNextDO();
+        Log.e("map data", current_status
+                +" "+next_status
+                +" "+agent_id
+                +" "+do_id);
+    }
+
+
     private void initialize() {
-        mUpdate = (Button) findViewById(R.id.btnUpdate);
-        mSelectDO = (Button) findViewById(R.id.btnSelectDo);
-        mSelectDOAgent = (Button) findViewById(R.id.btnSelectDoAgent);
-        mStatusCancel = (Button) findViewById(R.id.btnStatusCancel);
-        mStatusOTW = (Button) findViewById(R.id.btnStatusOTW);
-        mLayoutConsignmentInformation = (LinearLayout) findViewById(R.id.layoutConsignmentInformation);
-        mLayoutParcelInformation = (LinearLayout) findViewById(R.id.layoutParcelInformation);
-        mLLHold = (LinearLayout) findViewById(R.id.llHold);
+//        mUpdate = (Button) findViewById(R.id.btnUpdate);
+//        mSelectDO = (Button) findViewById(R.id.btnSelectDo);
+//        mSelectDOAgent = (Button) findViewById(R.id.btnSelectDoAgent);
+//        mStatusCancel = (Button) findViewById(R.id.btnStatusCancel);
+//        mStatusOTW = (Button) findViewById(R.id.btnStatusOTW);
+        mBack = (Button) findViewById(R.id.btnBack);
+
         altPhoneNumberLayout =  (RelativeLayout) findViewById(R.id.altPhoneNumberLayout);
+        rlCompanyCall =  (RelativeLayout) findViewById(R.id.rlCompanyCall);
+        rlRecipientCall =  (RelativeLayout) findViewById(R.id.rlRecipientCall);
+
         mConsignmentId = (TextView) findViewById(R.id.textConsignmentId);
         mSenderGroup = (TextView) findViewById(R.id.textSenderGroup);
         mCompany = (TextView) findViewById(R.id.textCompany);
@@ -355,116 +315,40 @@ public class ActivityConsignmentDetails extends ActivityBase{
         mProductId = (TextView) findViewById(R.id.textProductId);
         mCallRecipient = (TextView) findViewById(R.id.txtRecipientMobile);
         mCallRecipientAlt = (TextView) findViewById(R.id.txtRecipientMobileAlt);
+        mOrderTime = (TextView) findViewById(R.id.textOrderTime);
+        mDeliveryTime = (TextView) findViewById(R.id.textActualDeliveryTime);
+        mParcelStatus = (TextView) findViewById(R.id.textParcelStatus);
+        mItemType = (TextView) findViewById(R.id.tvItemType);
+        mDDO = (TextView) findViewById(R.id.textDDO);
+        mDeliveryAgent = (TextView) findViewById(R.id.textDeliveryAgent);
+
         editProductPrice = (EditText) findViewById(R.id.editProductPrice);
         editRecipientName = (EditText) findViewById(R.id.editRecipientName);
         editRecipientMobile = (EditText) findViewById(R.id.editRecipientMobile);
         editRecipientMobileAlt = (EditText) findViewById(R.id.editRecipientMobileAlt);
         editRecipientAddress = (EditText) findViewById(R.id.editRecipientAddress);
-        mOrderTime = (TextView) findViewById(R.id.textOrderTime);
-        mDeliveryTime = (TextView) findViewById(R.id.textActualDeliveryTime);
-        mParcelStatus = (TextView) findViewById(R.id.textParcelStatus);
-        mParcelStatusReason = (TextView) findViewById(R.id.textParcelStatusReason);
-        mItemType = (TextView) findViewById(R.id.tvItemType);
-        mDDO = (TextView) findViewById(R.id.textDDO);
-        mDeliveryAgent = (TextView) findViewById(R.id.textDeliveryAgent);
 
-        mUpdate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                updateParcel();
-            }
-        });
 
-        mSelectDO.setOnClickListener(new View.OnClickListener() {
+        mBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setHashMap();
-                loadDO(map);
-            }
-        });
-        mSelectDOAgent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setHashMap();
-                loadDoAgent(map);
+                Intent intent =  new Intent(ActivityConsignmentDetails.this,ActivityConsignment.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.putExtra(KEY_CN_POS, 0);
+                intent.putExtra(KEY_CN_DATA, myList);
+                intent.putExtra(KEY_WHERE_FROM, CN_TYPE_SEARCH);
+                sessionUserData.initStatus();
+                startActivity(intent);
             }
         });
 
-        mStatusCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                changed_parcel_status_code = res.getString(R.string.s12);
-                mUpdate.setText(res.getString(R.string.status_s12));
-                setVisibility(INVISIBLE);
-                showToast("Parcel Status : Cancle", Toast.LENGTH_SHORT, END);
-            }
-        });
-        mStatusOTW.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                changed_parcel_status_code = res.getString(R.string.s21);
-                mUpdate.setText(res.getString(R.string.status_s21));
-                setVisibility(AGENT_VISIBLE);
-                showToast("Parcel Status : On the Way", Toast.LENGTH_SHORT, END);
-            }
-        });
-    }
-
-    private void updateParcel() {
-        if (changed_parcel_status_code.equals(res.getString(R.string.s0))){
-            showErrorToast(res.getString(R.string.not_allowed), Toast.LENGTH_LONG, MIDDLE);
-            startActivity(new Intent(ActivityConsignmentDetails.this, ActivityMain.class));
-        }
-        else {
-            if (stringNotNullCheck(consignment_no)) {
-//            consignment_no
-                map.put(ApiParams.PARAM_CONSIGNMENT_NO, consignment_no);
-                if (changedValue != FROM_NONE) {
-                    String s = "";
-//            printHash(TAG, listData);
-                    if (changedValue == FROM_DO) {
-                        s = listData.get(d_do);
-                        //Lets pass the desired parameters
-                        map.put(ApiParams.PARAM_D_DO, s);
-                        map.put(ApiParams.PARAM_STATUS, changed_parcel_status_code);
-                        map.put(ApiParams.PARAM_COMMENT, res.getString(R.string.testing));
-                        parcelStatusUpdate(map);
-                        Log.e(TAG, s);
-                    } else if (changedValue == FROM_AGENT) {
-                        s = listData.get(agent_name);
-                        map.put(ApiParams.PARAM_STATUS, changed_parcel_status_code);
-                        map.put(ApiParams.PARAM_COMMENT, res.getString(R.string.testing));
-                        if (changed_parcel_status_code.equals(res.getString(R.string.s21))) {
-                            map.put(ApiParams.PARAM_AGENT_ID, "" + s);
-                        } else if (changed_parcel_status_code.equals(res.getString(R.string.s25))) {
-                            map.put(ApiParams.PARAM_RETURN_AGENT, "" + s);
-                        }
-                        parcelStatusUpdate(map);
-                        Log.e(TAG, s);
-                    }
-                    Log.e(TAG, s + " " + current_parcel_status_code + " " + changed_parcel_status_code + " " +
-                            visibility.get(changed_parcel_status_code));
-                } else {
-                    if (changed_parcel_status_code.equals(res.getString(R.string.s12))) {
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                        String currentDateandTime = sdf.format(new Date());
-                        map.put(ApiParams.PARAM_STATUS, changed_parcel_status_code);
-                        map.put(ApiParams.PARAM_COMMENT, res.getString(R.string.testing));
-                        map.put(ApiParams.PARAM_CANCEL_CALL_TIME, currentDateandTime);
-                        parcelStatusUpdate(map);
-                        Log.e(TAG, currentDateandTime);
-                    } else {
-                        map.put(ApiParams.PARAM_STATUS, changed_parcel_status_code);
-                        map.put(ApiParams.PARAM_COMMENT, res.getString(R.string.testing));
-                        parcelStatusUpdate(map);
-                        Log.e(TAG, "Nothing Selected" + " " + current_parcel_status_code + " "
-                                + changed_parcel_status_code + " " + visibility.get(changed_parcel_status_code));
-                    }
-                }
-            }
-            else
-                showErrorToast("PLEASE SEARCH AGAIN!!!", Toast.LENGTH_SHORT, MIDDLE);
-        }
+//
+//        mUpdate.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                updateParcel();
+//            }
+//        });
     }
 
     @Override
@@ -506,241 +390,12 @@ public class ActivityConsignmentDetails extends ActivityBase{
         }
     }
 
-    private void loadDO(HashMap<String, String> map) {
-        showProgressDialog(false, "", getResources().getString(R.string.loading));
-
-        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(ApiParams.TAG_BASE_URL).build();
-        DoListInterface myApiCallback = restAdapter.create(DoListInterface.class);
-
-        printHash(TAG, map);
-        myApiCallback.getData(ApiParams.TAG_DO_LIST_KEY, map, new Callback<DoList>() {
-            @Override
-            public void success(DoList doList, Response response) {
-                hideProgressDialog();
-
-                boolean status = doList.getStatus();
-                Log.e(TAG, status+" ");
-                if (status) {
-                    showToast("Total Do : " + doList.getTotal_dos() + "!", Toast.LENGTH_SHORT, MIDDLE);
-                    showList(doList.getDo_list(), FROM_DO);
-                }
-                else
-                    showErrorToast(getString(R.string.no_data_found), Toast.LENGTH_SHORT, MIDDLE);
-
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                hideProgressDialog();
-                showErrorToast("" + error.getMessage() + "!", Toast.LENGTH_SHORT, MIDDLE);
-            }
-        });
-    }
-
-    private void loadDoAgent(HashMap<String, String> map) {
-        showProgressDialog(false, "", getResources().getString(R.string.loading));
-
-        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(ApiParams.TAG_BASE_URL).build();
-        AgentListInterface myApiCallback = restAdapter.create(AgentListInterface.class);
-
-        printHash(TAG, map);
-        myApiCallback.getData(ApiParams.TAG_DO_AGENT_LIST_KEY, map, new Callback<AgentList>() {
-            @Override
-            public void success(AgentList agentList, Response response) {
-                hideProgressDialog();
-
-                boolean status = agentList.getStatus();
-                Log.e(TAG, status+" ");
-                if (status) {
-                    showToast("Total Agent : " + agentList.getTotal_agents() + "!", Toast.LENGTH_SHORT, MIDDLE);
-//                    load agents as do. it may need to change in future 7.3.2017
-                    List<DOListDatum> listData = new ArrayList<>();
-                    for (AgentListDatum agentListDatum : agentList.getAgent_list()){
-                        DOListDatum doListDatum = new DOListDatum(agentListDatum.getAgent_id(), agentListDatum.getAgent_name());
-                        listData.add(doListDatum);
-                    }
-                    showList(listData, FROM_AGENT);
-                }
-                else
-                    showErrorToast(getString(R.string.no_data_found), Toast.LENGTH_SHORT, MIDDLE);
-
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                hideProgressDialog();
-                showErrorToast("" + error.getMessage() + "!", Toast.LENGTH_SHORT, MIDDLE);
-            }
-        });
-    }
-
-    private void showList(List<DOListDatum> list, final int where_from) {
-        final String[] s = {""};
-        AlertDialog.Builder builderSingle = new AlertDialog.Builder(ActivityConsignmentDetails.this);
-        builderSingle.setIcon(R.mipmap.ic_launcher_new);
-        builderSingle.setTitle("Select One Name:-");
-
-        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(ActivityConsignmentDetails.this,
-                android.R.layout.select_dialog_singlechoice);
-        listData = new DualHashBidiMap();
-        for (int i = 0; i < list.size(); i++){
-            listData.put(list.get(i).getValue(), list.get(i).getId());
-            arrayAdapter.add(list.get(i).getValue());
-        }
-        builderSingle.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-
-        builderSingle.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                AlertDialog.Builder builderInner = new AlertDialog.Builder(ActivityConsignmentDetails.this);
-                if (where_from == FROM_DO)
-                    d_do = arrayAdapter.getItem(which);
-                else if (where_from == FROM_AGENT)
-                    agent_name = arrayAdapter.getItem(which);
-
-                s[0] = arrayAdapter.getItem(which);
-                builderInner.setMessage(s[0]);
-                builderInner.setTitle("Your Selection is");
-                builderInner.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog,int which) {
-                        Log.e(TAG, "selected "+s[0]+" Agent "+agent_name+" D_Do "+d_do);
-                        setChangedAgentorDO(s[0], where_from);
-                        dialog.dismiss();
-                    }
-                });
-                builderInner.setNegativeButton("Cancle", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog,int which) {
-                        if (where_from == FROM_DO)
-                            d_do = "";
-                        else if (where_from == FROM_AGENT)
-                            agent_name = "";
-                        s[0]="";
-                        setChangedAgentorDO(s[0], FROM_NONE);
-                        Log.e(TAG, "selected "+s[0]+" Agent "+agent_name+" D_Do "+d_do);
-                        dialog.dismiss();
-                    }
-                });
-                builderInner.show();
-            }
-        });
-        builderSingle.show();
-    }
-
-    public void setChangedAgentorDO(String s, int i){
-        changedAgentorDO = s;
-        changedValue = i;
-    }
-
-    private void parcelStatusUpdate (HashMap<String, String> statusMap){
-        confirmPopup();
-
-        showProgressDialog(false, "", getResources().getString(R.string.loading));
-
-        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(ApiParams.TAG_BASE_URL).build();
-        ParcelStatusUpdateInterface myApiCallback = restAdapter.create(ParcelStatusUpdateInterface.class);
-
-        printHash(TAG, statusMap);
-
-        myApiCallback.getData(ApiParams.TAG_PARCEL_STATUS_UPDATE_KEY, map, new Callback<ParcelList>() {
-            @Override
-            public void success(ParcelList parcelList, Response response) {
-                hideProgressDialog();
-
-                boolean status = parcelList.getStatus();
-                Log.e(TAG, status+" ");
-                if (status) {
-                    reloadCN(map.get(ApiParams.PARAM_CONSIGNMENT_NO));
-                }
-                else
-                    showErrorToast(getString(R.string.no_data_found), Toast.LENGTH_SHORT, MIDDLE);
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                hideProgressDialog();
-                showErrorToast("" + error.getMessage() + "!", Toast.LENGTH_SHORT, MIDDLE);
-            }
-        });
-    }
-
-    private void confirmPopup() {
-        Log.e(TAG+"confirm_popup", changedAgentorDO+" "+changedValue);
-//        AlertDialog.Builder builderInner = new AlertDialog.Builder(ActivityConsignmentDetails.this);
-//        if (changedValue == FROM_NONE){
-//            builderInner.setMessage("");
-//        }
-//        else if (changedValue == FROM_AGENT) {
-//            builderInner.setMessage("");
-//        }
-//        else if (changedValue == FROM_DO) {
-//
-//        }
-//        builderInner.setMessage("");
-//        builderInner.setTitle("Your Selection is");
-//        builderInner.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog,int which) {
-//
-//                dialog.dismiss();
-//            }
-//        });
-//        builderInner.setNegativeButton("Cancle", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog,int which) {
-//
-//                dialog.dismiss();
-//            }
-//        });
-//        builderInner.show();
-    }
-
-    private void reloadCN(String search_value){
-        showProgressDialog(false, "", getResources().getString(R.string.loading));
-
-        RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(ApiParams.TAG_BASE_URL).build();
-        ConsignmentListInterface myApiCallback = restAdapter.create(ConsignmentListInterface.class);
-        setHashMap();
-        map.put(ApiParams.TAG_CONSIGNMENT_NO, "" + search_value);
-
-//        printHash(TAG, map);
-        myApiCallback.getData(ApiParams.TAG_CONSIGNMENT_SEARCH_KEY, map, new Callback<ConsignmentList>() {
-            @Override
-            public void success(ConsignmentList consignment_list, Response response) {
-                hideProgressDialog();
-
-                boolean status = consignment_list.getStatus();
-                Log.e(TAG, status+" ");
-                if (status) {
-                    consignmentListDatumList = consignment_list.getData();
-                    Log.e("SOURCE DO", consignmentListDatumList.get(0).getSource_do());
-                    setConsignmentDetails(consignmentListDatumList.get(0));
-                }
-                else
-                    showErrorToast(getString(R.string.no_data_found), Toast.LENGTH_SHORT, MIDDLE);
-
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                hideProgressDialog();
-                showErrorToast("" + error.getMessage() + "!", Toast.LENGTH_SHORT, MIDDLE);
-            }
-        });
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id) {
             case R.id.refresh:
-                showToast(getString(R.string.refreshing), Toast.LENGTH_LONG, END);
+                showToast(getString(R.string.refreshing), Toast.LENGTH_LONG, MIDDLE);
                 setDoBidiList(map);
                 setAgentBidiList(map);
                 break;

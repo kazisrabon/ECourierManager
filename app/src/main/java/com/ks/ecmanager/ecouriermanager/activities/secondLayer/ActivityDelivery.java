@@ -62,11 +62,11 @@ public class ActivityDelivery extends ActivityBase {
                     else if (where_from.contains("2"))
                         refreshActivityforAgent();
                     else if (where_from.contains("3")) {
-                        showBlackToast("ActivityMultipleScan", Toast.LENGTH_SHORT, END);
+                        showBlackToast("ActivityMultipleScan", Toast.LENGTH_SHORT, MIDDLE);
 //                    startActivity(new Intent(ActivityDelivery.this, ActivityMultipleScan.class));
                     }
                     else
-                        showErrorToast("Something is wrong!!!", Toast.LENGTH_SHORT, END);
+                        showErrorToast("Something is wrong!!!", Toast.LENGTH_SHORT, MIDDLE);
                 }
                 else
                     showErrorToast("Please click...", Toast.LENGTH_SHORT, MIDDLE);
@@ -88,7 +88,7 @@ public class ActivityDelivery extends ActivityBase {
             startActivity(refresh);
             ActivityDelivery.this.finish();
         } else {
-            showBlackToast("ActivityMultipleScan", Toast.LENGTH_SHORT, END);
+            showBlackToast("ActivityMultipleScan", Toast.LENGTH_SHORT, MIDDLE);
 //                        startActivity(new Intent(ActivityDelivery.this, ActivityMultipleScan.class));
         }
     }
@@ -107,7 +107,7 @@ public class ActivityDelivery extends ActivityBase {
             startActivity(refresh);
             ActivityDelivery.this.finish();
         } else {
-            showBlackToast("ActivityMultipleScan", Toast.LENGTH_SHORT, END);
+            showBlackToast("ActivityMultipleScan", Toast.LENGTH_SHORT, MIDDLE);
 //                                startActivity(new Intent(ActivityDelivery.this, ActivityMultipleScan.class));
         }
     }
@@ -122,7 +122,7 @@ public class ActivityDelivery extends ActivityBase {
             else if (where_from.contains("3"))
                 loadDO("3");
             else
-                showErrorToast(""+getString(R.string.empty_field), Toast.LENGTH_SHORT, END);
+                showErrorToast(""+getString(R.string.empty_field), Toast.LENGTH_SHORT, MIDDLE);
         }
     }
 

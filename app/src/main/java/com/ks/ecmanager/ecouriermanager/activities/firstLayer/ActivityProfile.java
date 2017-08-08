@@ -425,7 +425,7 @@ public class ActivityProfile extends ActivityBase {
         int id = item.getItemId();
         switch (id) {
             case R.id.refresh:
-                showToast(getString(R.string.refreshing), Toast.LENGTH_LONG, END);
+                showToast(getString(R.string.refreshing), Toast.LENGTH_LONG, MIDDLE);
                 getProfileData();
                 break;
         }
