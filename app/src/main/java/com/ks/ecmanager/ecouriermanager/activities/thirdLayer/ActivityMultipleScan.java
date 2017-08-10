@@ -112,8 +112,8 @@ public class ActivityMultipleScan  extends ActivityBase implements ZXingScannerV
                 ", Format = " + rawResult.getBarcodeFormat().toString(), Toast.LENGTH_SHORT).show();
 
         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-        alertDialog.setTitle("Confirmation");
-        alertDialog.setMessage("Your Selection is "+rawResult.getText());
+        alertDialog.setTitle("Your Selection is");
+        alertDialog.setMessage(rawResult.getText());
         alertDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 
             @Override
@@ -155,8 +155,13 @@ public class ActivityMultipleScan  extends ActivityBase implements ZXingScannerV
                     hideProgressDialog();
                     List<ConsignmentListDatum> consignmentListDatumList;
                     consignmentListDatumList = consignment_list.getData();
-                    if (current_status.contains(consignmentListDatumList.get(0).getStatus_code())) {
-                        if (!String.valueOf(scannedECR).contains(consignmentListDatumList.get(0).getStatus_code())) {
+                    String doID = consignmentListDatumList.get(0).getDestination_do();
+                    String agentID = consignmentListDatumList.get(0).getSource_do();
+                    String statusCode = consignmentListDatumList.get(0).getStatus_code();
+                    if (current_status.contains(statusCode)) {
+                        if (!String.valueOf(scannedECR).contains(consignmentListDatumList.get(0).getConsignment_no())) {
+//                            do check
+//                            if (status )
                             scannedECR.append(loopDelim);
                             scannedECR.append(consignmentListDatumList.get(0).getConsignment_no());
                             loopDelim = delim;

@@ -245,7 +245,7 @@ public class ActivityMain extends ActivityBase {
             @Override
             public void success(ConsignmentList consignment_list, Response response) {
                 hideProgressDialog();
-
+                map.put(searchTypeValue, "");
                 boolean status = consignment_list.getStatus();
 
                 Log.e(TAG, status+" ");
@@ -280,6 +280,7 @@ public class ActivityMain extends ActivityBase {
             @Override
             public void failure(RetrofitError error) {
                 hideProgressDialog();
+                map.put(searchTypeValue, "");
                 showErrorToast("" + error.getMessage() + "!", Toast.LENGTH_SHORT, MIDDLE);
             }
         });

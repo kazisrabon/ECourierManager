@@ -107,5 +107,6 @@
     <string name="back">BACK</string>
     <string name="comment">comment</string>
     <string name="clear_review">CLEAR</string>
+    <string name="addMore">ADD</string>
 
 </resources>

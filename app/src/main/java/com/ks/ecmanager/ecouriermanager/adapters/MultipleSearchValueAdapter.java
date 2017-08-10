@@ -109,7 +109,7 @@ public class MultipleSearchValueAdapter  extends BaseAdapter {
                         context.startActivity(intent);
                     }
                     else
-                        activityBase.showErrorToast("Have no access!!!", Toast.LENGTH_SHORT, MIDDLE);
+                        Toast.makeText(context, "Have no access!!!", Toast.LENGTH_SHORT).show();
                 }
             }
         });

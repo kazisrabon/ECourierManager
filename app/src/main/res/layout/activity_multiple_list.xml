@@ -38,6 +38,21 @@
                 android:background="@android:color/darker_gray"/>
 
             <Button
+                android:text="@string/addMore"
+                android:id="@+id/btnAddMore"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_margin="@dimen/cardview_default_elevation"
+                android:layout_weight="1.0"
+                android:padding="@dimen/card_margin"
+                android:textSize="14dip"
+                android:textStyle="bold"
+                android:textColor="@android:color/holo_blue_dark"
+                android:background="@android:color/darker_gray"/>
+
+            <Button
                 android:text="@android:string/cancel"
                 android:id="@+id/btnCancle"
                 android:gravity="center"

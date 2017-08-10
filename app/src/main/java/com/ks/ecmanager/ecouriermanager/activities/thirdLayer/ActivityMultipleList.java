@@ -43,7 +43,7 @@ import static com.ks.ecmanager.ecouriermanager.activities.base.ActivityBase.db;
 
 public class ActivityMultipleList extends ActivityBase {
     private Context context;
-    private Button btnUpdate, btnCancle;
+    private Button btnUpdate, btnCancle, btnAddMore;
     private TextView tvCS, tvNS, tvAgent, tvDo;
     private ListView listView;
     private MultipleSearchValueAdapter listItemAdapter;
@@ -87,7 +87,21 @@ public class ActivityMultipleList extends ActivityBase {
                 startActivity(loginActivity);
             }
         });
+        btnAddMore = (Button) findViewById(R.id.btnAddMore);
+        btnAddMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
         listView = (ListView) findViewById(R.id.listView);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        //    finish();
+
     }
 
     private void sendData() {
@@ -100,10 +114,14 @@ public class ActivityMultipleList extends ActivityBase {
         if (stringNotNullCheck(doId)){
             if (nextStatus.equals(getResources().getString(R.string.s2))
                     || nextStatus.equals(getResources().getString(R.string.s14))
-                    || nextStatus.equals(getResources().getString(R.string.s15))
                     || nextStatus.equals(getResources().getString(R.string.s7))
                     )
-                map.put(ApiParams.PARAM_D_DO, agentId);
+                map.put(ApiParams.PARAM_D_DO, doId);
+
+            else if (nextStatus.equals(getResources().getString(R.string.s10))
+                    || nextStatus.equals(getResources().getString(R.string.s8))
+                    )
+                map.put(ApiParams.PARAM_S_DO, doId);
         }
         map.put(ApiParams.PARAM_STATUS, nextStatus);
         map.put(ApiParams.PARAM_CONSIGNMENTS, ecrs);

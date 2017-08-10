@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -49,12 +50,14 @@ public class ActivityLogin extends ActivityBase {
     public static SessionUserData sessionUserData;
     private final String TAG = "LOGIN";
     boolean alreadyExecuted;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        context = ActivityLogin.this;
         if (!doesDatabaseExist(this)){
             db = getInstance(this);
         }
@@ -117,22 +120,24 @@ public class ActivityLogin extends ActivityBase {
                 boolean status = loginModel.getStatus();
                 Log.e(TAG, status+"");
                 if (status == ApiParams.TAG_SUCCESS) {
-
                     deleteCache(ActivityLogin.this);
-
-                    sessionUserData.createUserInfo(
-                            ApiParams.USER_TYPE_USER,
-                            loginModel.getAdmin_id(),
-                            password,
-                            loginModel.getGroup(),
-                            loginModel.getAuthentication_key(),
-                            loginModel.getDo_name(),
-                            loginModel.getDo_mobile()
-                    );
-                    Intent i = new Intent(ActivityLogin.this, Main2Activity.class);
-                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(i);
-                    finish();
+                    if (checkNumber(loginModel.getDo_mobile())) {
+                        sessionUserData.createUserInfo(
+                                ApiParams.USER_TYPE_USER,
+                                loginModel.getAdmin_id(),
+                                password,
+                                loginModel.getGroup(),
+                                loginModel.getAuthentication_key(),
+                                loginModel.getDo_name(),
+                                loginModel.getDo_mobile()
+                        );
+                        Intent i = new Intent(ActivityLogin.this, Main2Activity.class);
+                        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(i);
+                        finish();
+                    }
+                    else
+                        showErrorToast("Mobile Number Mismatched", Toast.LENGTH_SHORT, MIDDLE);
                 }
                 else
                     showErrorToast(getString(R.string.no_data_found), Toast.LENGTH_SHORT, MIDDLE);
@@ -203,5 +208,13 @@ public class ActivityLogin extends ActivityBase {
     protected void onPause() {
         finish();
         super.onPause();
+    }
+
+    private boolean checkNumber(String db_number){
+        TelephonyManager tMgr = (TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);
+        String mPhoneNumber = tMgr.getLine1Number().trim();
+        if (db_number.equals(mPhoneNumber))
+            return true;
+        return  false;
     }
 }

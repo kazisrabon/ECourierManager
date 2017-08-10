@@ -141,11 +141,22 @@ public class ActivityDelivery extends ActivityBase {
     private void loadAgent(String from_where) {
         listData = new ArrayList<>();
         ListDatum listDatum;
-        List<AgentListDatum> agentListData = db.getAllAgents();
-        for (AgentListDatum agentListDatum : agentListData){
-            listDatum = new ListDatum(agentListDatum.getAgent_id(), agentListDatum.getAgent_name());
-            listData.add(listDatum);
+//        List<AgentListDatum> agentListData = db.getAllAgents();
+        HashMap<String, String> mapData = getElligibleAgent();
+        for (String key : mapData.keySet()) {
+            if (stringNotNullCheck(mapData.get(key))) {
+                listDatum = new ListDatum(key, mapData.get(key));
+                listData.add(listDatum);
+            }
+            else {
+                listDatum = new ListDatum(key, key);
+                listData.add(listDatum);
+            }
         }
+//        for (AgentListDatum agentListDatum : agentListData){
+//            listDatum = new ListDatum(agentListDatum.getAgent_id(), agentListDatum.getAgent_name());
+//            listData.add(listDatum);
+//        }
         listItemAdapter = new ListItemAdapter(ActivityDelivery.this, listData, from_where);
         listView.setAdapter(listItemAdapter);
     }

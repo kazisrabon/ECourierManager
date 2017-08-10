@@ -600,10 +600,9 @@ public class ActivityBase extends AppCompatActivity {
                     final String[] s = {""};
                     String key = "";
                     for (String name : mapData.keySet()) {
-                        key = name;
                         String value = mapData.get(name);
                         if (value.equals(arrayAdapter.getItem(which)))
-                            Log.e("status code " + TAG, "" + key);
+                            key = name;
                     }
 //                String asd= mapData.getKey(arrayAdapter.getItem(which));
 //                Log.e("status code "+TAG, ""+asd);
@@ -690,7 +689,7 @@ public class ActivityBase extends AppCompatActivity {
             showErrorToast("Invalid data to show popup!!!", Toast.LENGTH_SHORT, MIDDLE);
     }
 
-    private HashMap<String, String> getElligibleAgent() {
+    public HashMap<String, String> getElligibleAgent() {
         HashMap<String, String> user = SessionUserData.getSFInstance(this).getSessionDetails();
         String id = user.get(SessionUserData.KEY_USER_ID);
         return db.getElligibleAgent(id);
@@ -816,6 +815,7 @@ public class ActivityBase extends AppCompatActivity {
     }
 
     private void commentPopup(){
+        String asd = sessionUserData.getStatusDetails().get(SessionUserData.KEY_NEXT_STATUS);
         if (sessionUserData.getStatusDetails().get(SessionUserData.KEY_NEXT_STATUS).equals(getResources().getString(R.string.s7))
             || sessionUserData.getStatusDetails().get(SessionUserData.KEY_NEXT_STATUS).equals(getResources().getString(R.string.s12))
             || sessionUserData.getStatusDetails().get(SessionUserData.KEY_NEXT_STATUS).equals(getResources().getString(R.string.s24))
@@ -887,13 +887,13 @@ public class ActivityBase extends AppCompatActivity {
             statusMap.put(ApiParams.PARAM_COMMENT, "INDIVIDUAL FROM MOBILE");
         statusMap.put(ApiParams.PARAM_GROUP, group);
         statusMap.put(ApiParams.PARAM_ADMIN_ID, id);
-        status.put(ApiParams.PARAM_AUTHENTICATION_KEY, authentication_key);
-        status.put(ApiParams.PARAM_STATUS, nextStatus);
+        statusMap.put(ApiParams.PARAM_AUTHENTICATION_KEY, authentication_key);
+        statusMap.put(ApiParams.PARAM_STATUS, nextStatus);
         if (stringNotNullCheck(agentId)){
             if (nextStatus.equals(getResources().getString(R.string.s25)))
-                status.put(ApiParams.PARAM_RETURN_AGENT, agentId);
+                statusMap.put(ApiParams.PARAM_RETURN_AGENT, agentId);
             else
-                status.put(ApiParams.PARAM_AGENT_ID, agentId);
+                statusMap.put(ApiParams.PARAM_AGENT_ID, agentId);
         }
         if (stringNotNullCheck(doId)){
             if (nextStatus.equals(getResources().getString(R.string.s2))
@@ -901,7 +901,7 @@ public class ActivityBase extends AppCompatActivity {
                     || nextStatus.equals(getResources().getString(R.string.s15))
                     || nextStatus.equals(getResources().getString(R.string.s7))
                     )
-                status.put(ApiParams.PARAM_D_DO, agentId);
+                statusMap.put(ApiParams.PARAM_D_DO, agentId);
         }
 //        showProgressDialog(false, "", getResources().getString(R.string.loading));
 
