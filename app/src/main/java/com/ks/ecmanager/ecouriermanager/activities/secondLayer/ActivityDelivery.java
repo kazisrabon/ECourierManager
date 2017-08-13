@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -23,6 +24,7 @@ import com.ks.ecmanager.ecouriermanager.pojo.DOListDatum;
 import com.ks.ecmanager.ecouriermanager.pojo.ListDatum;
 import com.ks.ecmanager.ecouriermanager.pojo.ResponseList;
 import com.ks.ecmanager.ecouriermanager.session.SessionUserData;
+import com.ks.ecmanager.ecouriermanager.webservices.ApiParams;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,13 +39,14 @@ public class ActivityDelivery extends ActivityBase {
     private ListItemAdapter listItemAdapter;
     private List<ListDatum> listData;
     private String id = "", group = "", authentication_key = "";
+    private HashMap<String, String> user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_delivery);
 
-        HashMap<String, String> user = SessionUserData.getSFInstance(this).getSessionDetails();
+        user = SessionUserData.getSFInstance(this).getSessionDetails();
         id = user.get(SessionUserData.KEY_USER_ID);
         group = user.get(SessionUserData.KEY_USER_GROUP).toLowerCase();
         authentication_key = user.get(SessionUserData.KEY_USER_AUTH_KEY);
@@ -165,5 +168,23 @@ public class ActivityDelivery extends ActivityBase {
         listData = db.getAllSpecificStatusforGroup(group);
         listItemAdapter = new ListItemAdapter(ActivityDelivery.this, listData, from_where);
         listView.setAdapter(listItemAdapter);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.refresh:
+                HashMap<String, String> map = new HashMap<>();
+                map.put(ApiParams.PARAM_ADMIN_ID, user.get(SessionUserData.KEY_USER_ID));
+                map.put(ApiParams.PARAM_GROUP, user.get(SessionUserData.KEY_USER_GROUP));
+                map.put(ApiParams.PARAM_AUTHENTICATION_KEY, user.get(SessionUserData.KEY_USER_GROUP));
+                setDoBidiList(map);
+                setAgentBidiList(map);
+                setProfileData(map, user.get(SessionUserData.KEY_USER_GROUP));
+                getConfigData();
+                break;
+        }
+        return true;
     }
 }

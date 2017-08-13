@@ -351,9 +351,14 @@ public class ActivityMain extends ActivityBase {
         int id = item.getItemId();
         switch (id) {
             case R.id.refresh:
-                showToast(getString(R.string.refreshing), Toast.LENGTH_LONG, MIDDLE);
+                HashMap<String, String> map = new HashMap<>();
+                map.put(ApiParams.PARAM_ADMIN_ID, user.get(SessionUserData.KEY_USER_ID));
+                map.put(ApiParams.PARAM_GROUP, user.get(SessionUserData.KEY_USER_GROUP));
+                map.put(ApiParams.PARAM_AUTHENTICATION_KEY, user.get(SessionUserData.KEY_USER_GROUP));
                 setDoBidiList(map);
                 setAgentBidiList(map);
+                setProfileData(map, user.get(SessionUserData.KEY_USER_GROUP));
+                getConfigData();
                 break;
         }
         return true;

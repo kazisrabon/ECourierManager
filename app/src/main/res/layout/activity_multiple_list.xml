@@ -97,7 +97,8 @@
                 android:textSize="14dip"
                 android:textStyle="bold"
                 android:textColor="@android:color/holo_blue_dark"
-                android:background="@android:color/darker_gray"/>
+                android:background="@android:color/darker_gray"
+                android:visibility="gone"/>
 
             <TextView
                 android:text="@android:string/cancel"

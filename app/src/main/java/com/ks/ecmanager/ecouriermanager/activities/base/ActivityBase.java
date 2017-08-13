@@ -9,6 +9,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -32,6 +33,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ks.ecmanager.ecouriermanager.R;
+import com.ks.ecmanager.ecouriermanager.activities.firstLayer.ActivityMain;
+import com.ks.ecmanager.ecouriermanager.activities.firstLayer.Main2Activity;
 import com.ks.ecmanager.ecouriermanager.database.DatabaseHandler;
 import com.ks.ecmanager.ecouriermanager.pojo.AgentList;
 import com.ks.ecmanager.ecouriermanager.pojo.DoList;
@@ -566,7 +569,7 @@ public class ActivityBase extends AppCompatActivity {
         }
     }
 
-    public void showListInPopUp(final Context context, final HashMap<String, String> mapData, final String where_from){
+    public void showListInPopUp(final Context context, final HashMap<String, String> mapData, final String where_from, final String consignment_no){
         if (context!=null && mapData!=null && stringNotNullCheck(where_from)) {
             final String[] returnValue = {""};
             AlertDialog.Builder builderSingle = new AlertDialog.Builder(context);
@@ -626,36 +629,36 @@ public class ActivityBase extends AppCompatActivity {
                                 nextStatus = finalKey;
                                 if (getCheckChangeAgents()) {
                                     if (getElligibleAgent()!= null)
-                                        showListInPopUp(context, getElligibleAgent(), "agent");
+                                        showListInPopUp(context, getElligibleAgent(), "agent", consignment_no);
                                     else
                                         showErrorToast("Agent List Error!!!", Toast.LENGTH_SHORT, MIDDLE);
                                 }
                                 else if (getCheckChangeDOs()) {
                                     if (db.getDOs()!=null)
-                                        showListInPopUp(context, db.getDOs(), "do");
+                                        showListInPopUp(context, db.getDOs(), "do", consignment_no);
                                     else
                                         showErrorToast("DO List Error!!!", Toast.LENGTH_SHORT, MIDDLE);
                                 }
                                 else
-                                    commentPopup();
+                                    commentPopup(consignment_no);
                             }
                             else if (where_from.equals("agent")) {
                                 sessionUserData.setKeyAgentId(finalKey);
                                 nextAgent = finalKey;
                                 if (getCheckChangeDOforAgent()) {
                                     if (db.getDOs() != null)
-                                        showListInPopUp(context, db.getDOs(), "do");
+                                        showListInPopUp(context, db.getDOs(), "do", consignment_no);
                                     else
                                         showErrorToast("DO List Error!!!", Toast.LENGTH_SHORT, MIDDLE);
                                 }
                                 else
-                                    commentPopup();
+                                    commentPopup(consignment_no);
 
                             }
                             else {
                                 sessionUserData.setKeyDoId(finalKey);
                                 nextDO = finalKey;
-                                commentPopup();
+                                commentPopup(consignment_no);
                             }
 
 //                        checkChangeAgents(finalKey);
@@ -814,7 +817,7 @@ public class ActivityBase extends AppCompatActivity {
         return s != null && !s.isEmpty() && !s.equals("");
     }
 
-    private void commentPopup(){
+    private void commentPopup(final String consignment_no){
         String asd = sessionUserData.getStatusDetails().get(SessionUserData.KEY_NEXT_STATUS);
         if (sessionUserData.getStatusDetails().get(SessionUserData.KEY_NEXT_STATUS).equals(getResources().getString(R.string.s7))
             || sessionUserData.getStatusDetails().get(SessionUserData.KEY_NEXT_STATUS).equals(getResources().getString(R.string.s12))
@@ -844,7 +847,7 @@ public class ActivityBase extends AppCompatActivity {
                 public void onClick(View v) {
                     comment[0] = editInput.getText().toString();
                     b.dismiss();
-                    parcelUpdate(comment[0]);
+                    parcelUpdate(comment[0], consignment_no);
                 }
 
             });
@@ -855,18 +858,18 @@ public class ActivityBase extends AppCompatActivity {
                 public void onClick(View v) {
                     editInput.setText("");
                     b.dismiss();
-                    parcelUpdate("");
+                    parcelUpdate("", consignment_no);
                 }
 
             });
         }
         else
-            parcelUpdate("");
+            parcelUpdate("", consignment_no);
 
 //        return comment[0];
     }
 
-    public void parcelUpdate(String s){
+    public void parcelUpdate(String s, String consignment_no){
         HashMap<String, String> statusMap = new HashMap<>();
         HashMap<String, String> user = sessionUserData.getSessionDetails();
         HashMap<String, String> status = sessionUserData.getStatusDetails();
@@ -898,13 +901,12 @@ public class ActivityBase extends AppCompatActivity {
         if (stringNotNullCheck(doId)){
             if (nextStatus.equals(getResources().getString(R.string.s2))
                     || nextStatus.equals(getResources().getString(R.string.s14))
-                    || nextStatus.equals(getResources().getString(R.string.s15))
                     || nextStatus.equals(getResources().getString(R.string.s7))
                     )
                 statusMap.put(ApiParams.PARAM_D_DO, agentId);
         }
 //        showProgressDialog(false, "", getResources().getString(R.string.loading));
-
+        statusMap.put(ApiParams.PARAM_CONSIGNMENT_NO, consignment_no);
         RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(ApiParams.TAG_BASE_URL).build();
         ParcelStatusUpdateInterface myApiCallback = restAdapter.create(ParcelStatusUpdateInterface.class);
 
@@ -919,10 +921,11 @@ public class ActivityBase extends AppCompatActivity {
                 Log.e(TAG, status+" ");
                 if (status) {
                     showSuccessToast(getString(R.string.sucess), Toast.LENGTH_SHORT, MIDDLE);
+                    startActivity(new Intent(context, ActivityMain.class));
 //                    reloadCN(map.get(ApiParams.PARAM_CONSIGNMENT_NO));
                 }
                 else
-                    showErrorToast(getString(R.string.no_data_found), Toast.LENGTH_SHORT, MIDDLE);
+                    showErrorToast("Try Again!!!", Toast.LENGTH_SHORT, MIDDLE);
             }
 
             @Override

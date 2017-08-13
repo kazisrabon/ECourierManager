@@ -85,7 +85,7 @@ public class ListItemAdapter extends BaseAdapter {
 //                Toast.makeText(context, getItem(position).getValue()+" selected", Toast.LENGTH_LONG).show();
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
                 alertDialog.setTitle("Confirmation");
-                alertDialog.setMessage("Your Selection is "+getItem(position).getValue());
+                alertDialog.setMessage(getItem(position).getValue());
                 alertDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

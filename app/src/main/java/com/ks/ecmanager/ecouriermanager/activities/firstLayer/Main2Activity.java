@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -124,5 +125,23 @@ public class Main2Activity extends ActivityBase {
         } else {
             return super.onKeyDown(keyCode, event);
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.refresh:
+                HashMap<String, String> map = new HashMap<>();
+                map.put(ApiParams.PARAM_ADMIN_ID, user.get(SessionUserData.KEY_USER_ID));
+                map.put(ApiParams.PARAM_GROUP, user.get(SessionUserData.KEY_USER_GROUP));
+                map.put(ApiParams.PARAM_AUTHENTICATION_KEY, user.get(SessionUserData.KEY_USER_GROUP));
+                setDoBidiList(map);
+                setAgentBidiList(map);
+                setProfileData(map, user.get(SessionUserData.KEY_USER_GROUP));
+                getConfigData();
+                break;
+        }
+        return true;
     }
 }

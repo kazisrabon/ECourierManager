@@ -4,6 +4,7 @@
 
 package com.ks.ecmanager.ecouriermanager.activities.initLayer;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -212,9 +213,13 @@ public class ActivityLogin extends ActivityBase {
 
     private boolean checkNumber(String db_number){
         TelephonyManager tMgr = (TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);
-        String mPhoneNumber = tMgr.getLine1Number().trim();
-        if (db_number.equals(mPhoneNumber))
+        @SuppressLint("HardwareIds") String mPhoneNumber = tMgr.getLine1Number().trim();
+        if (!mPhoneNumber.equals("")) {
+            if (db_number.equals(mPhoneNumber))
+                return true;
+            return false;
+        }
+        else
             return true;
-        return  false;
     }
 }

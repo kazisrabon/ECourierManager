@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -43,7 +44,7 @@ public class ActivityMultipleScan  extends ActivityBase implements ZXingScannerV
     private StringBuilder scannedECR;
     private String loopDelim = "", delim = ",", nextStatus = "", current_status;
     HashMap<String, String> statusDetails;
-    HashMap<String, String> userDetails;
+    HashMap<String, String> user;
     ArrayList<ConsignmentListDatum> consignmentListData = new ArrayList<>();
     Button buttonFinish;
 
@@ -70,10 +71,10 @@ public class ActivityMultipleScan  extends ActivityBase implements ZXingScannerV
 
     private void setHash() {
         statusDetails = SessionUserData.getSFInstance(context).getStatusDetails();
-        userDetails = SessionUserData.getSFInstance(context).getSessionDetails();
-        String id = userDetails.get(SessionUserData.KEY_USER_ID);
-        String group = userDetails.get(SessionUserData.KEY_USER_GROUP);
-        String authentication_key = userDetails.get(SessionUserData.KEY_USER_AUTH_KEY);
+        user = SessionUserData.getSFInstance(context).getSessionDetails();
+        String id = user.get(SessionUserData.KEY_USER_ID);
+        String group = user.get(SessionUserData.KEY_USER_GROUP);
+        String authentication_key = user.get(SessionUserData.KEY_USER_AUTH_KEY);
         nextStatus = statusDetails.get(SessionUserData.KEY_NEXT_STATUS);
         current_status = statusDetails.get(SessionUserData.KEY_STATUS);
         map.put(ApiParams.PARAM_ADMIN_ID, "" + id);
@@ -197,5 +198,23 @@ public class ActivityMultipleScan  extends ActivityBase implements ZXingScannerV
         }
         else
             showWhiteToast("Scan again!!!", Toast.LENGTH_SHORT, MIDDLE);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.refresh:
+                HashMap<String, String> map = new HashMap<>();
+                map.put(ApiParams.PARAM_ADMIN_ID, user.get(SessionUserData.KEY_USER_ID));
+                map.put(ApiParams.PARAM_GROUP, user.get(SessionUserData.KEY_USER_GROUP));
+                map.put(ApiParams.PARAM_AUTHENTICATION_KEY, user.get(SessionUserData.KEY_USER_GROUP));
+                setDoBidiList(map);
+                setAgentBidiList(map);
+                setProfileData(map, user.get(SessionUserData.KEY_USER_GROUP));
+                getConfigData();
+                break;
+        }
+        return true;
     }
 }

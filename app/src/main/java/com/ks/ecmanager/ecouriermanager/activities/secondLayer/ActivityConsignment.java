@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -41,6 +42,7 @@ public class ActivityConsignment extends ActivityBase {
     private HashMap<String, String> user = new HashMap<String, String>();
     private HashMap<String, String> map = new HashMap<String, String>();
     private String accessLevel = "";
+    private String consignment_no = "";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -99,7 +101,7 @@ public class ActivityConsignment extends ActivityBase {
 
     private void updateCN(){
         if (accessLevel.contains("1"))
-            showListInPopUp(ActivityConsignment.this, getNextStatusMap(), "status");
+            showListInPopUp(ActivityConsignment.this, getNextStatusMap(), "status", consignment_no);
         else
             showErrorToast("ERROR!!!", Toast.LENGTH_SHORT, MIDDLE);
         String current_status = getCurrent_status();
@@ -138,6 +140,7 @@ public class ActivityConsignment extends ActivityBase {
 
     private void setConsignmentDetails(ConsignmentListDatum consignmentListDatum) {
         if (stringNotNullCheck(consignmentListDatum.getConsignment_no())) {
+            consignment_no = consignmentListDatum.getConsignment_no();
             tvECR.setText(consignmentListDatum.getConsignment_no());
             map.put(ApiParams.PARAM_CONSIGNMENT_NO, "" + consignmentListDatum.getConsignment_no());
         }
@@ -198,5 +201,23 @@ public class ActivityConsignment extends ActivityBase {
         if (stringNotNullCheck(consignmentListDatum.getProduct_price()))
             tvProductPrice.setText(String.format(getString(R.string.product_price), consignmentListDatum.getProduct_price()));
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.refresh:
+                HashMap<String, String> map = new HashMap<>();
+                map.put(ApiParams.PARAM_ADMIN_ID, user.get(SessionUserData.KEY_USER_ID));
+                map.put(ApiParams.PARAM_GROUP, user.get(SessionUserData.KEY_USER_GROUP));
+                map.put(ApiParams.PARAM_AUTHENTICATION_KEY, user.get(SessionUserData.KEY_USER_GROUP));
+                setDoBidiList(map);
+                setAgentBidiList(map);
+                setProfileData(map, user.get(SessionUserData.KEY_USER_GROUP));
+                getConfigData();
+                break;
+        }
+        return true;
     }
 }

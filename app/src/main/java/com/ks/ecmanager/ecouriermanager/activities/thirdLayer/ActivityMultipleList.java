@@ -4,11 +4,11 @@
 
 package com.ks.ecmanager.ecouriermanager.activities.thirdLayer;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -34,13 +34,6 @@ import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-import static com.ks.ecmanager.ecouriermanager.activities.base.ActivityBase.CN_TYPE_MULTIPLE;
-import static com.ks.ecmanager.ecouriermanager.activities.base.ActivityBase.FROM_BULK;
-import static com.ks.ecmanager.ecouriermanager.activities.base.ActivityBase.KEY_CN_DATA;
-import static com.ks.ecmanager.ecouriermanager.activities.base.ActivityBase.KEY_ECRS;
-import static com.ks.ecmanager.ecouriermanager.activities.base.ActivityBase.KEY_WHERE_FROM;
-import static com.ks.ecmanager.ecouriermanager.activities.base.ActivityBase.db;
-
 public class ActivityMultipleList extends ActivityBase {
     private Context context;
     private Button btnUpdate, btnCancle, btnAddMore;
@@ -49,7 +42,7 @@ public class ActivityMultipleList extends ActivityBase {
     private MultipleSearchValueAdapter listItemAdapter;
     private List<ConsignmentListDatum> myList;
     private HashMap<String, String> statusDetails = new HashMap<>();
-    private HashMap<String, String> userDetails = new HashMap<>();
+    private HashMap<String, String> user = new HashMap<>();
     private HashMap<String, String> map = new HashMap<>();
     private String ecrs = "", id = "", group = "", authentication_key = "", nextStatus = "", currentStatus = "", agentId = "", doId = "";
     private final String TAG = "ActivityMultipleList";
@@ -172,10 +165,10 @@ public class ActivityMultipleList extends ActivityBase {
 
     private void setHash() {
         statusDetails = SessionUserData.getSFInstance(context).getStatusDetails();
-        userDetails = SessionUserData.getSFInstance(context).getSessionDetails();
-        id = userDetails.get(SessionUserData.KEY_USER_ID);
-        group = userDetails.get(SessionUserData.KEY_USER_GROUP);
-        authentication_key = userDetails.get(SessionUserData.KEY_USER_AUTH_KEY);
+        user = SessionUserData.getSFInstance(context).getSessionDetails();
+        id = user.get(SessionUserData.KEY_USER_ID);
+        group = user.get(SessionUserData.KEY_USER_GROUP);
+        authentication_key = user.get(SessionUserData.KEY_USER_AUTH_KEY);
         currentStatus = statusDetails.get(SessionUserData.KEY_STATUS);
         nextStatus = statusDetails.get(SessionUserData.KEY_NEXT_STATUS);
         agentId = statusDetails.get(SessionUserData.KEY_AGENT_ID);
@@ -209,5 +202,23 @@ public class ActivityMultipleList extends ActivityBase {
             tvDo.setText(db.getDoName(doId));
         listItemAdapter = new MultipleSearchValueAdapter(context, myList, FROM_BULK);
         listView.setAdapter(listItemAdapter);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.refresh:
+                HashMap<String, String> map = new HashMap<>();
+                map.put(ApiParams.PARAM_ADMIN_ID, user.get(SessionUserData.KEY_USER_ID));
+                map.put(ApiParams.PARAM_GROUP, user.get(SessionUserData.KEY_USER_GROUP));
+                map.put(ApiParams.PARAM_AUTHENTICATION_KEY, user.get(SessionUserData.KEY_USER_GROUP));
+                setDoBidiList(map);
+                setAgentBidiList(map);
+                setProfileData(map, user.get(SessionUserData.KEY_USER_GROUP));
+                getConfigData();
+                break;
+        }
+        return true;
     }
 }
