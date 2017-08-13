@@ -167,7 +167,7 @@ public class ActivityMultipleScan  extends ActivityBase implements ZXingScannerV
                             scannedECR.append(consignmentListDatumList.get(0).getConsignment_no());
                             loopDelim = delim;
                             consignmentListData.add(consignmentListDatumList.get(0));
-                            showWhiteToast("Successfully added", Toast.LENGTH_SHORT, MIDDLE);
+                            showSuccessToast("ADDED", Toast.LENGTH_SHORT, MIDDLE);
                         }
                         else
                             showErrorToast("Added already!!!", Toast.LENGTH_SHORT, MIDDLE);
@@ -197,7 +197,7 @@ public class ActivityMultipleScan  extends ActivityBase implements ZXingScannerV
             startActivity(intent);
         }
         else
-            showWhiteToast("Scan again!!!", Toast.LENGTH_SHORT, MIDDLE);
+            showSuccessToast("Scan again!!!", Toast.LENGTH_SHORT, MIDDLE);
     }
 
     @Override

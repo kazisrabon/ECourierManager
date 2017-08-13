@@ -20,6 +20,10 @@ public class Login
     @Expose
     private String do_mobile;
 
+    @SerializedName("imei")
+    @Expose
+    private String imei = "";
+
     @SerializedName("status")
     @Expose
     private Boolean status;
@@ -104,6 +108,14 @@ public class Login
     public void setGroup (String group)
     {
         this.group = group;
+    }
+
+    public String getImei() {
+        return imei;
+    }
+
+    public void setImei(String imei) {
+        this.imei = imei;
     }
 
     @Override

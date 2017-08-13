@@ -518,7 +518,7 @@ public class ActivityBase extends AppCompatActivity {
         layout.setBackgroundColor(Color.GREEN);
         TextView text = (TextView) layout.findViewById(R.id.text);
         text.setText(message);
-        text.setTextColor(Color.WHITE);
+        text.setTextColor(Color.BLACK);
 
         Toast toast = new Toast(this);
         toast.setDuration(duration);

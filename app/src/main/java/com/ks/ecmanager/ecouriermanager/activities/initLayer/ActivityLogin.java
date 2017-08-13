@@ -9,6 +9,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -27,6 +29,7 @@ import com.ks.ecmanager.ecouriermanager.database.DatabaseHandler;
 import com.ks.ecmanager.ecouriermanager.pojo.Login;
 import com.ks.ecmanager.ecouriermanager.session.SessionUserData;
 import com.ks.ecmanager.ecouriermanager.utils.FormValidator;
+import com.ks.ecmanager.ecouriermanager.utils.TelephonyInfo;
 import com.ks.ecmanager.ecouriermanager.webservices.ApiParams;
 import com.ks.ecmanager.ecouriermanager.webservices.interfaces.LoginInterface;
 
@@ -119,10 +122,11 @@ public class ActivityLogin extends ActivityBase {
                 hideProgressDialog();
 
                 boolean status = loginModel.getStatus();
-                Log.e(TAG, status+"");
-                if (status == ApiParams.TAG_SUCCESS) {
+                if (status) {
                     deleteCache(ActivityLogin.this);
-                    if (checkNumber(loginModel.getDo_mobile())) {
+//                    loginModel.setImei("356696070044180");
+                    checkNumber(loginModel.getDo_mobile());
+                    if (checkIMEI(loginModel.getImei())) {
                         sessionUserData.createUserInfo(
                                 ApiParams.USER_TYPE_USER,
                                 loginModel.getAdmin_id(),
@@ -138,7 +142,7 @@ public class ActivityLogin extends ActivityBase {
                         finish();
                     }
                     else
-                        showErrorToast("Mobile Number Mismatched", Toast.LENGTH_SHORT, MIDDLE);
+                        showErrorToast("IMEI Mismatched", Toast.LENGTH_SHORT, MIDDLE);
                 }
                 else
                     showErrorToast(getString(R.string.no_data_found), Toast.LENGTH_SHORT, MIDDLE);
@@ -211,15 +215,40 @@ public class ActivityLogin extends ActivityBase {
         super.onPause();
     }
 
-    private boolean checkNumber(String db_number){
-        TelephonyManager tMgr = (TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);
-        @SuppressLint("HardwareIds") String mPhoneNumber = tMgr.getLine1Number().trim();
-        if (!mPhoneNumber.equals("")) {
-            if (db_number.equals(mPhoneNumber))
-                return true;
-            return false;
+    private boolean checkNumber(String db_number) {
+//        TelephonyManager tMgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+//        @SuppressLint("HardwareIds") String mPhoneNumber = tMgr.getLine1Number();
+//        return mPhoneNumber.equals("") || db_number.equals(mPhoneNumber);
+
+        String s1 = "";
+        String main_data[] = {"data1", "is_primary", "data3", "data2", "data1", "is_primary", "photo_uri", "mimetype"};
+        @SuppressLint("Recycle") Object object = getContentResolver().query(Uri.withAppendedPath(android.provider.ContactsContract.Profile.CONTENT_URI, "data"),
+                main_data, "mimetype=?",
+                new String[]{"vnd.android.cursor.item/phone_v2"},
+                "is_primary DESC");
+        if (object != null) {
+            do {
+                if (!((Cursor) (object)).moveToNext())
+                    break;
+                // This is the phoneNumber
+                s1 = ((Cursor) (object)).getString(4);
+            } while (true);
+            ((Cursor) (object)).close();
         }
-        else
-            return true;
+        return !s1.equals("");
+    }
+
+
+
+    private boolean checkIMEI(String db_imei) {
+        TelephonyInfo telephonyInfo = TelephonyInfo.getInstance(context);
+        String imeiSIM1 = telephonyInfo.getImsiSIM1();
+        String imeiSIM2 = telephonyInfo.getImsiSIM2();
+
+        boolean isSIM1Ready = telephonyInfo.isSIM1Ready();
+        boolean isSIM2Ready = telephonyInfo.isSIM2Ready();
+
+        boolean isDualSIM = telephonyInfo.isDualSIM();
+        return db_imei.equals("") || (db_imei.equals(imeiSIM1) || db_imei.equals(imeiSIM2));
     }
 }
